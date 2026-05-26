@@ -12,12 +12,29 @@ const routes: RouteRecordRaw[] = [
     path: '/user-ai-asset',
     children: [
       {
-        component: () => import('#/views/user-ai-asset/model/index.vue'),
         meta: {
           title: '模型仓库',
         },
-        name: 'UserModel',
+        name: 'UserModelRoot',
         path: '/user-ai-asset/model',
+        children: [
+          {
+            component: () => import('#/views/user-ai-asset/model/preset.vue'),
+            meta: {
+              title: '预置模型',
+            },
+            name: 'UserModelPreset',
+            path: '/user-ai-asset/model/preset',
+          },
+          {
+            component: () => import('#/views/user-ai-asset/model/custom.vue'),
+            meta: {
+              title: '自定义模型',
+            },
+            name: 'UserModelCustom',
+            path: '/user-ai-asset/model/custom',
+          },
+        ],
       },
       {
         component: () => import('#/views/user-ai-asset/model-market/index.vue'),
