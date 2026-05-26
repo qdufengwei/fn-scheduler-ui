@@ -15,18 +15,19 @@ const authStore = useAuthStore();
 
 const MOCK_USER_OPTIONS: BasicOption[] = [
   {
-    label: 'Super',
-    value: 'vben',
-  },
-  {
-    label: 'Admin',
+    label: '管理员',
     value: 'admin',
   },
   {
-    label: 'User',
-    value: 'jack',
+    label: '普通用户',
+    value: 'test01',
   },
 ];
+
+const PASSWORD_MAP: Record<string, string> = {
+  admin: 'infrawaves',
+  test01: '1qaz@WSX1234',
+};
 
 const formSchema = computed((): VbenFormSchema[] => {
   return [
@@ -34,20 +35,20 @@ const formSchema = computed((): VbenFormSchema[] => {
       component: 'VbenSelect',
       componentProps: {
         options: MOCK_USER_OPTIONS,
-        placeholder: $t('authentication.selectAccount'),
+        placeholder: '选择账号',
       },
       fieldName: 'selectAccount',
-      label: $t('authentication.selectAccount'),
+      label: '选择账号',
       rules: z
         .string()
-        .min(1, { message: $t('authentication.selectAccount') })
+        .min(1, { message: '请选择账号' })
         .optional()
-        .default('vben'),
+        .default('admin'),
     },
     {
       component: 'VbenInput',
       componentProps: {
-        placeholder: $t('authentication.usernameTip'),
+        placeholder: '请输入用户名',
       },
       dependencies: {
         trigger(values, form) {
@@ -57,7 +58,7 @@ const formSchema = computed((): VbenFormSchema[] => {
             );
             if (findUser) {
               form.setValues({
-                password: '123456',
+                password: PASSWORD_MAP[findUser.value] || '',
                 username: findUser.value,
               });
             }
@@ -66,23 +67,23 @@ const formSchema = computed((): VbenFormSchema[] => {
         triggerFields: ['selectAccount'],
       },
       fieldName: 'username',
-      label: $t('authentication.username'),
-      rules: z.string().min(1, { message: $t('authentication.usernameTip') }),
+      label: '用户名',
+      rules: z.string().min(1, { message: '请输入用户名' }),
     },
     {
       component: 'VbenInputPassword',
       componentProps: {
-        placeholder: $t('authentication.password'),
+        placeholder: '请输入密码',
       },
       fieldName: 'password',
-      label: $t('authentication.password'),
-      rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
+      label: '密码',
+      rules: z.string().min(1, { message: '请输入密码' }),
     },
     {
       component: markRaw(SliderCaptcha),
       fieldName: 'captcha',
       rules: z.boolean().refine((value) => value, {
-        message: $t('authentication.verifyRequiredTip'),
+        message: '请先完成验证',
       }),
     },
   ];

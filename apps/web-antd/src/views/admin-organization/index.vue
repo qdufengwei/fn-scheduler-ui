@@ -1,0 +1,156 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import { Page } from '@vben/common-ui';
+import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Tabs, Drawer, Form, FormItem, message } from 'ant-design-vue';
+import { LayoutGrid, Plus, Search, Settings, UserRoundPen } from '@vben/icons';
+
+const activeTab = ref('tenant');
+const searchText = ref('');
+const pageSize = ref(10);
+const currentPage = ref(1);
+
+const columns = [
+  { title: '租户/别名', dataIndex: 'tenant', width: 250 },
+  { title: '折扣', dataIndex: 'discount', width: 150 },
+  { title: '操作', dataIndex: 'action', width: 180 },
+];
+
+const dataSource = ref([
+  { id: 1, tenant: 'test-0415', alias: '-', discount: '-' },
+  { id: 2, tenant: 'shiyusuanli-testxq', alias: 'shiyusuanli-testxq', discount: '-' },
+  { id: 3, tenant: 'shiyusuanli-demandertest', alias: 'shiyusuanli-demandertest', discount: '-' },
+  { id: 4, tenant: 'moon', alias: '-', discount: '-' },
+  { id: 5, tenant: 'test01', alias: '-', discount: '-' },
+  { id: 6, tenant: 'platform-operator', alias: 'platform-operator', discount: '-' },
+]);
+
+const drawerVisible = ref(false);
+const form = ref({ name: '', alias: '', discount: '' });
+
+const notify = (text: string) => message.success(text);
+
+function handleAddTenant() {
+  drawerVisible.value = true;
+}
+
+function handleSave() {
+  notify('添加租户成功（原型）');
+  drawerVisible.value = false;
+}
+</script>
+
+<template>
+  <Page auto-content-height>
+    <div>
+      <Card :bordered="false" class="shadow-sm">
+        <div class="flex items-center gap-2 mb-4">
+          <Settings class="size-5 text-blue-500" />
+          <span class="text-lg font-semibold">组织管理</span>
+        </div>
+
+        <Tabs v-model:activeKey="activeTab">
+          <Tabs.TabPane key="tenant">
+            <template #tab>
+              <div class="flex items-center gap-1">
+                <Settings class="size-4" />
+                <span>租户管理</span>
+              </div>
+            </template>
+            <div class="flex items-center justify-between mb-4">
+              <Input v-model:value="searchText" placeholder="支持模糊搜索租户名称" style="width: 260px" allow-clear>
+                <template #prefix><Search class="size-4 text-gray-400" /></template>
+              </Input>
+              <Button type="primary" @click="handleAddTenant">
+                <template #icon><Plus class="size-4" /></template>
+                添加租户/租户管理员
+              </Button>
+            </div>
+
+            <Table
+              row-key="id"
+              :data-source="dataSource.filter(r => !searchText || r.tenant.includes(searchText) || r.alias?.includes(searchText))"
+              :pagination="false"
+              :columns="columns"
+            >
+              <template #bodyCell="{ column, record }">
+                <template v-if="column.dataIndex === 'tenant'">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+                      {{ record.tenant.charAt(0).toUpperCase() }}
+                    </div>
+                    <div>
+                      <span class="font-medium text-gray-800">{{ record.tenant }}</span>
+                      <span class="text-gray-400 ml-1">{{ record.alias }}</span>
+                    </div>
+                  </div>
+                </template>
+                <template v-if="column.dataIndex === 'action'">
+                  <Space>
+                    <Button type="link" size="small" @click="notify(`编辑租户 ${record.tenant}`)">
+                      <UserRoundPen class="size-3 mr-1" />
+                      编辑
+                    </Button>
+                    <Popconfirm title="确认删除该租户？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除租户 ${record.tenant}`)">
+                      <Button type="link" size="small" danger>
+                        删除
+                      </Button>
+                    </Popconfirm>
+                  </Space>
+                </template>
+              </template>
+            </Table>
+
+            <div class="flex items-center justify-end mt-4 pt-4 border-t">
+              <Pagination
+                v-model:current="currentPage"
+                v-model:pageSize="pageSize"
+                :total="6"
+                :show-size-changer="true"
+                :show-quick-jumper="true"
+                :page-size-options="['10', '20', '50', '100']"
+              />
+            </div>
+          </Tabs.TabPane>
+          <Tabs.TabPane key="user">
+            <template #tab>
+              <div class="flex items-center gap-1">
+                <LayoutGrid class="size-4" />
+                <span>用户管理</span>
+              </div>
+            </template>
+            <div class="text-center text-gray-400 py-12">
+              <LayoutGrid class="size-12 mx-auto mb-4 text-gray-300" />
+              <div>用户管理功能</div>
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
+      </Card>
+
+      <!-- 添加租户抽屉 -->
+      <Drawer
+        v-model:open="drawerVisible"
+        title="添加租户/租户管理员"
+        placement="right"
+        :width="480"
+      >
+        <Form layout="vertical" :model="form">
+          <FormItem label="租户名称" required>
+            <Input v-model:value="form.name" placeholder="请输入租户名称" />
+          </FormItem>
+          <FormItem label="别名">
+            <Input v-model:value="form.alias" placeholder="请输入别名" />
+          </FormItem>
+          <FormItem label="折扣">
+            <Input v-model:value="form.discount" placeholder="请输入折扣" />
+          </FormItem>
+        </Form>
+        <template #footer>
+          <Space>
+            <Button @click="drawerVisible = false">取消</Button>
+            <Button type="primary" @click="handleSave">保存</Button>
+          </Space>
+        </template>
+      </Drawer>
+    </div>
+  </Page>
+</template>

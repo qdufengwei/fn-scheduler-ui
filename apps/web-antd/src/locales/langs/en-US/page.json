@@ -11,5 +11,10 @@
     "title": "Dashboard",
     "analytics": "Analytics",
     "workspace": "Workspace"
+  },
+  "resource": {
+    "title": "Resource Management",
+    "nodeManagement": "Node Management",
+    "nodeMonitor": "Node Monitor"
   }
 }

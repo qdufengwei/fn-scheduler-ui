@@ -11,5 +11,10 @@
     "title": "概览",
     "analytics": "分析页",
     "workspace": "工作台"
+  },
+  "resource": {
+    "title": "资源管理",
+    "nodeManagement": "节点管理",
+    "nodeMonitor": "节点监控"
   }
 }

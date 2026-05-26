@@ -577,3 +577,8 @@ html.invert-mode {
 html.grayscale-mode {
   @apply grayscale;
 }
+
+/* Card spacing rules to prevent crowding */
+.ant-card:not(:last-child) {
+  margin-bottom: 16px !important;
+}
