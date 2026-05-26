@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Col, Dropdown, Input, Menu, MenuItem, Pagination, Popconfirm, Row, Select, Space, Table, Tag, Drawer, Form, FormItem, message } from 'ant-design-vue';
-import { Inbox, Copy, Eye, EyeOff, Search, LockKeyhole, Ellipsis, Plus, Check, X, Trash2, UserRoundPen, Settings } from '@vben/icons';
+import { Inbox, Copy, LockKeyhole, Plus, Check, Trash2, Ellipsis } from '@vben/icons';
 
 const selectedTenant = ref<string>();
 const pageSize = ref(10);
@@ -101,9 +101,7 @@ function copyKey(key: string) {
               style="width: 180px"
               placeholder="请选择租户"
               :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
-            >
-              <template #suffixIcon><Filter class="size-4 text-gray-400" /></template>
-            </Select>
+            />
           </Space>
           <Space>
             <Button type="primary" @click="handleCreateKey">
@@ -150,13 +148,12 @@ function copyKey(key: string) {
             <template v-if="column.dataIndex === 'action'">
               <Space>
                 <Button type="link" size="small" @click="notify(`禁用 ${record.name}`)">
-                  <Slash class="size-3 mr-1" />
                   禁用
                 </Button>
                 <Button type="link" size="small" @click="notify(`编辑 ${record.name}`)">编辑</Button>
                 <Dropdown>
                   <Button type="link" size="small" class="p-0">
-                    <MoreHorizontal class="size-4" />
+                    <Ellipsis class="size-4" />
                   </Button>
                   <template #overlay>
                     <Menu>

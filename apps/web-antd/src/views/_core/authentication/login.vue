@@ -5,7 +5,6 @@ import type { BasicOption } from '@vben/types';
 import { computed, markRaw } from 'vue';
 
 import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
-import { $t } from '@vben/locales';
 
 import { useAuthStore } from '#/store';
 
