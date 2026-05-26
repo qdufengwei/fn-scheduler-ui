@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Page } from '@vben/common-ui';
-import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
-import { Search, Inbox, Plus } from '@vben/icons';
+import { Button, Card, Input, Pagination, Space, Table, Tag, message } from 'ant-design-vue';
+import { Search } from '@vben/icons';
 
 const searchText = ref('');
 const pageSize = ref(10);
@@ -43,70 +42,63 @@ function handleDetail(record: any) {
 </script>
 
 <template>
-  <Page auto-content-height>
-    <div class="p-4">
-      <Card :bordered="false" class="shadow-sm">
-        <div class="flex items-center gap-2 mb-4">
-          <Inbox class="size-5 text-blue-500" />
-          <span class="text-lg font-semibold">预置模型</span>
-        </div>
-
-        <div class="flex items-center justify-between mb-4">
-          <Space>
-            <Input v-model:value="searchText" placeholder="支持模糊搜索模型名称" style="width: 280px" allow-clear>
-              <template #prefix><Search class="size-4 text-gray-400" /></template>
-            </Input>
-            <Button>筛选</Button>
-            <Button @click="searchText = ''">重置</Button>
-          </Space>
-          <Space>
-            <Button type="primary" :disabled="selectedRowKeys.length === 0" @click="notify('批量部署')">
-              批量部署
-            </Button>
-            <Button :disabled="selectedRowKeys.length === 0" @click="notify('批量微调')">
-              批量微调
-            </Button>
-          </Space>
-        </div>
-
-        <Table
-          row-key="id"
-          :data-source="dataSource.filter(r => !searchText || r.name.includes(searchText))"
-          :pagination="false"
-          :columns="columns"
-          :row-selection="{ selectedRowKeys, onChange: (keys: number[]) => selectedRowKeys = keys }"
-        >
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'name'">
-              <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
-            </template>
-            <template v-if="column.dataIndex === 'type'">
-              <Tag class="rounded-full">{{ record.type }}</Tag>
-            </template>
-            <template v-if="column.dataIndex === 'status'">
-              <Tag color="success" class="rounded-full">{{ record.status }}</Tag>
-            </template>
-            <template v-if="column.dataIndex === 'action'">
-              <Space>
-                <Button type="link" size="small" @click="handleDetail(record)">详情</Button>
-                <Button type="link" size="small" @click="handleDeploy(record)">部署</Button>
-                <Button type="link" size="small" @click="handleFinetune(record)">微调</Button>
-              </Space>
-            </template>
+  <div class="min-h-full bg-gray-50 p-4">
+    <Card class="mb-4">
+      <div class="flex items-center justify-between">
+        <Space>
+          <Input v-model:value="searchText" placeholder="支持模糊搜索模型名称" style="width: 280px" allow-clear>
+            <template #prefix><Search class="size-4 text-gray-400" /></template>
+          </Input>
+          <Button>筛选</Button>
+          <Button @click="searchText = ''">重置</Button>
+        </Space>
+        <Space>
+          <Button type="primary" :disabled="selectedRowKeys.length === 0" @click="notify('批量部署')">
+            批量部署
+          </Button>
+          <Button :disabled="selectedRowKeys.length === 0" @click="notify('批量微调')">
+            批量微调
+          </Button>
+        </Space>
+      </div>
+    </Card>
+    <Card title="预置模型">
+      <Table
+        row-key="id"
+        :data-source="dataSource.filter(r => !searchText || r.name.includes(searchText))"
+        :pagination="false"
+        :columns="columns"
+        :row-selection="{ selectedRowKeys, onChange: (keys: number[]) => selectedRowKeys = keys }"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'name'">
+            <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
           </template>
-        </Table>
-
-        <div class="flex items-center justify-end mt-4 pt-4 border-t">
-          <Pagination
-            v-model:current="currentPage"
-            v-model:pageSize="pageSize"
-            :total="5"
-            :show-size-changer="true"
-            :show-quick-jumper="true"
-            :page-size-options="['10', '20', '50', '100']"
-          />
-        </div>
-      </Card>
-    </div>
-  </Page>
+          <template v-if="column.dataIndex === 'type'">
+            <Tag class="rounded-full">{{ record.type }}</Tag>
+          </template>
+          <template v-if="column.dataIndex === 'status'">
+            <Tag color="success" class="rounded-full">{{ record.status }}</Tag>
+          </template>
+          <template v-if="column.dataIndex === 'action'">
+            <Space>
+              <Button type="link" size="small" @click="handleDetail(record)">详情</Button>
+              <Button type="link" size="small" @click="handleDeploy(record)">部署</Button>
+              <Button type="link" size="small" @click="handleFinetune(record)">微调</Button>
+            </Space>
+          </template>
+        </template>
+      </Table>
+      <div class="flex items-center justify-end mt-4 pt-4 border-t">
+        <Pagination
+          v-model:current="currentPage"
+          v-model:pageSize="pageSize"
+          :total="5"
+          :show-size-changer="true"
+          :show-quick-jumper="true"
+          :page-size-options="['10', '20', '50', '100']"
+        />
+      </div>
+    </Card>
+  </div>
 </template>
