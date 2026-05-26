@@ -6,7 +6,6 @@ import {
   Form,
   FormItem,
   Input,
-  Modal,
   Pagination,
   Popconfirm,
   Progress,
@@ -217,7 +216,7 @@ function handleAdd() {
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'name'">
-            <a class="text-blue-600 hover:text-blue-700" @click="openUpdateModal(record)">{{ record.name }}</a>
+            <span class="text-gray-800 dark:text-zinc-300 font-medium">{{ record.name }}</span>
           </template>
           <template v-if="column.dataIndex === 'type'">
             <Tag class="rounded-full">{{ record.type }}</Tag>
@@ -274,146 +273,144 @@ function handleAdd() {
     <Drawer
       v-model:open="visible"
       placement="right"
-      :width="1120"
+      :width="640"
       :closable="false"
       :destroy-on-close="true"
+      :footer-style="{ textAlign: 'right' }"
     >
-      <div class="drawer-content flex flex-col min-h-full">
-        <!-- 头部 -->
-        <div class="px-6 py-4 border-b border-solid border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <Button type="text" size="small" class="inline-flex items-center justify-center hover:bg-gray-100 dark:hover:bg-zinc-800 rounded" @click="visible = false">
-              <ChevronLeft class="size-4" />
-            </Button>
-            <span class="text-lg font-semibold text-gray-900 dark:text-zinc-150">添加PVC</span>
-          </div>
-        </div>
-
-        <!-- 表单主体 -->
-        <div class="flex-1 px-8 py-6 pb-24 overflow-y-auto">
-          <h3 class="text-sm font-semibold text-gray-950 dark:text-zinc-200 mb-6 flex items-center gap-2">
-            <span class="w-1 h-4 bg-blue-500 rounded"></span>
-            基础信息
-          </h3>
-
-          <Form
-            layout="horizontal"
-            :model="addForm"
-            :label-col="{ style: 'width: 120px; text-align: left;' }"
-            :wrapper-col="{ span: 18 }"
-            class="space-y-4"
-          >
-            <FormItem label="区域" required>
-              <Select
-                v-model:value="addForm.region"
-                placeholder="请选择区域"
-                :options="regionOptions"
-                size="large"
-                class="w-full"
-              />
-            </FormItem>
-            
-            <FormItem label="存储类型" required>
-              <Select
-                v-model:value="addForm.type"
-                placeholder="请选择存储类型"
-                :options="typeOptions"
-                size="large"
-                class="w-full"
-              />
-            </FormItem>
-            
-            <FormItem label="磁盘名称" required>
-              <Input
-                v-model:value="addForm.name"
-                placeholder="请输入磁盘的唯一标识符或名称，以便于管理和追踪"
-                size="large"
-              />
-            </FormItem>
-            
-            <FormItem label="PVC存储大小" required>
-              <Input
-                v-model:value="addForm.capacity"
-                placeholder="输入数字，设置实际使用的大小，确保与应用程序需求匹配"
-                size="large"
-                class="w-full"
-              >
-                <template #addonAfter>
-                  <Select
-                    v-model:value="addForm.unit"
-                    style="width: 80px"
-                    :bordered="false"
-                    :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
-                  />
-                </template>
-              </Input>
-            </FormItem>
-          </Form>
-        </div>
-
-        <!-- 底部按钮 -->
-        <div class="drawer-footer flex justify-end gap-3 px-8 py-4 border-t border-solid border-neutral-100 dark:border-neutral-800/80 bg-white dark:bg-zinc-950 absolute bottom-0 left-0 right-0 z-10">
-          <Button class="rounded-lg" size="large" @click="visible = false">取消</Button>
-          <Button type="primary" class="rounded-lg" size="large" @click="handleAdd">确认</Button>
-        </div>
-      </div>
-    </Drawer>
-
-    <!-- 更新PVC 对话框 (Modal) -->
-    <Modal
-      v-model:open="updateVisible"
-      title="更新PVC"
-      @cancel="updateVisible = false"
-      :width="540"
-      :destroy-on-close="true"
-    >
-      <Form
-        layout="horizontal"
-        :model="updateForm"
-        :label-col="{ style: 'width: 80px; text-align: left;' }"
-        :wrapper-col="{ span: 20 }"
-        class="pt-6 pb-2"
-      >
-        <FormItem label="名称" required>
-          <Input
-            v-model:value="updateForm.name"
-            disabled
-            size="large"
-          />
-        </FormItem>
-        <FormItem label="容量" required>
-          <Input
-            v-model:value="updateForm.capacity"
-            size="large"
-            class="w-full"
-          >
-            <template #addonAfter>
-              <Select
-                v-model:value="updateForm.unit"
-                style="width: 80px"
-                :bordered="false"
-                :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
-              />
-            </template>
-          </Input>
-        </FormItem>
-      </Form>
-      <template #footer>
-        <div class="flex justify-end gap-2 pt-2">
-          <Button size="large" class="rounded-lg" @click="updateVisible = false">取消</Button>
-          <Button type="primary" size="large" class="rounded-lg" @click="handleUpdate">确认</Button>
+      <template #title>
+        <div class="flex items-center gap-3 select-none">
+          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="visible = false">
+            <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
+          </Button>
+          <span class="text-base font-bold text-gray-800 dark:text-zinc-200">添加PVC</span>
         </div>
       </template>
-    </Modal>
+
+      <!-- 表单主体 -->
+      <div class="py-2">
+        <Form
+          layout="vertical"
+          :model="addForm"
+          class="space-y-4"
+        >
+          <FormItem label="区域" required>
+            <Select
+              v-model:value="addForm.region"
+              placeholder="请选择区域"
+              :options="regionOptions"
+              size="large"
+              class="w-full"
+            />
+          </FormItem>
+          
+          <FormItem label="存储类型" required>
+            <Select
+              v-model:value="addForm.type"
+              placeholder="请选择存储类型"
+              :options="typeOptions"
+              size="large"
+              class="w-full"
+            />
+          </FormItem>
+          
+          <FormItem label="磁盘名称" required>
+            <Input
+              v-model:value="addForm.name"
+              placeholder="请输入磁盘名称，例: data-volume"
+              size="large"
+            />
+          </FormItem>
+          
+          <FormItem label="PVC存储大小" required>
+            <Input
+              v-model:value="addForm.capacity"
+              placeholder="请输入容量大小"
+              size="large"
+              class="w-full"
+            >
+              <template #addonAfter>
+                <Select
+                  v-model:value="addForm.unit"
+                  style="width: 80px"
+                  :bordered="false"
+                  :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
+                />
+              </template>
+            </Input>
+          </FormItem>
+        </Form>
+      </div>
+
+      <template #footer>
+        <Space>
+          <Button @click="visible = false">取消</Button>
+          <Button type="primary" @click="handleAdd">确认</Button>
+        </Space>
+      </template>
+    </Drawer>
+
+    <!-- 更新PVC 抽屉 -->
+    <Drawer
+      v-model:open="updateVisible"
+      placement="right"
+      :width="540"
+      :closable="false"
+      :destroy-on-close="true"
+      :footer-style="{ textAlign: 'right' }"
+    >
+      <template #title>
+        <div class="flex items-center gap-3 select-none">
+          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="updateVisible = false">
+            <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
+          </Button>
+          <span class="text-base font-bold text-gray-800 dark:text-zinc-200">更新PVC</span>
+        </div>
+      </template>
+
+      <!-- 表单主体 -->
+      <div class="py-2">
+        <Form
+          layout="vertical"
+          :model="updateForm"
+          class="space-y-4"
+        >
+          <FormItem label="名称" required>
+            <Input
+              v-model:value="updateForm.name"
+              disabled
+              size="large"
+            />
+          </FormItem>
+          <FormItem label="容量" required>
+            <Input
+              v-model:value="updateForm.capacity"
+              placeholder="请输入新的容量大小"
+              size="large"
+              class="w-full"
+            >
+              <template #addonAfter>
+                <Select
+                  v-model:value="updateForm.unit"
+                  style="width: 80px"
+                  :bordered="false"
+                  :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
+                />
+              </template>
+            </Input>
+          </FormItem>
+        </Form>
+      </div>
+
+      <template #footer>
+        <Space>
+          <Button @click="updateVisible = false">取消</Button>
+          <Button type="primary" @click="handleUpdate">确认</Button>
+        </Space>
+      </template>
+    </Drawer>
   </div>
 </template>
 
 <style scoped>
-.drawer-content {
-  position: relative;
-}
-
-.drawer-footer {
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-}
 </style>
