@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Drawer, Form, FormItem, InputNumber, Pagination, Space, Table, message } from 'ant-design-vue';
+import { Button, Card, Form, FormItem, InputNumber, Pagination, Space, Table, message } from 'ant-design-vue';
 import { Download, Inbox, Settings, UserRoundPen } from '@vben/icons';
 
 const pageSize = ref(10);
@@ -24,19 +25,25 @@ const dataSource = ref([
   { id: 6, resourceType: 'local-path', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
 ]);
 
-const drawerVisible = ref(false);
 const editForm = ref<any>({});
 const notify = (text: string) => message.success(text);
 
 function openEdit(record: any) {
   editForm.value = { ...record };
-  drawerVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleEditOk() {
-  drawerVisible.value = false;
+  createDrawerApi.close();
   notify('编辑成功（原型）');
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[480px]!',
+  title: '编辑定价',
+});
 </script>
 
 <template>
@@ -90,12 +97,7 @@ function handleEditOk() {
       </Card>
 
       <!-- 编辑定价抽屉 -->
-      <Drawer
-        v-model:open="drawerVisible"
-        title="编辑定价"
-        placement="right"
-        :width="480"
-      >
+      <CreateDrawer>
         <Form layout="vertical" :model="editForm">
           <FormItem label="资源类型">
             <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -121,11 +123,11 @@ function handleEditOk() {
         </Form>
         <template #footer>
           <Space>
-            <Button @click="drawerVisible = false">取消</Button>
+            <Button @click="createDrawerApi.close()">取消</Button>
             <Button type="primary" @click="handleEditOk">保存</Button>
           </Space>
         </template>
-      </Drawer>
+      </CreateDrawer>
     </div>
   </Page>
 </template>

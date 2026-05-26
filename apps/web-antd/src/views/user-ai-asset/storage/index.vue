@@ -1,24 +1,12 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import {
-  Button,
-  Drawer,
-  Form,
-  FormItem,
-  Input,
-  Pagination,
-  Popconfirm,
-  Progress,
-  Select,
-  Table,
-  Tag,
-  message,
-} from 'ant-design-vue';
+  Button, Form, FormItem, Input, Pagination, Popconfirm, Progress, Select, Table, Tag, message,  } from 'ant-design-vue';
 import { ChevronLeft, Plus, Trash2 } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
-const visible = ref(false);
 const pageSize = ref(10);
 const currentPage = ref(1);
 const selectedRowKeys = ref<number[]>([]);
@@ -31,7 +19,6 @@ const addForm = ref({
   unit: 'GB',
 });
 
-const updateVisible = ref(false);
 const updateForm = ref({
   id: null,
   name: '',
@@ -129,7 +116,7 @@ function openUpdateModal(record: any) {
     capacity: record.capacity.toString(),
     unit: 'GB',
   };
-  updateVisible.value = true;
+  updateDrawerApi.open();
 }
 
 function handleUpdate() {
@@ -142,7 +129,7 @@ function handleUpdate() {
     record.capacity = Number(updateForm.value.capacity);
     notify(`更新存储卷 ${updateForm.value.name} 成功`);
   }
-  updateVisible.value = false;
+  updateDrawerApi.close();
 }
 
 function handleAdd() {
@@ -165,7 +152,7 @@ function handleAdd() {
   });
   
   notify(`创建存储卷 ${addForm.value.name} 成功`);
-  visible.value = false;
+  createDrawerApi.close();
   
   // reset form
   addForm.value = {
@@ -176,13 +163,27 @@ function handleAdd() {
     unit: 'GB',
   };
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[640px]!',
+  title: '',
+});
+
+const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[540px]!',
+  title: '',
+});
 </script>
 
 <template>
   <div>
     <ListPageLayout>
       <template #toolbar>
-        <Button type="primary" @click="visible = true">
+        <Button type="primary" @click="createDrawerApi.open()">
           <template #icon>
             <Plus class="size-4" />
           </template>
@@ -270,17 +271,10 @@ function handleAdd() {
     </ListPageLayout>
 
     <!-- 添加PVC 抽屉 -->
-    <Drawer
-      v-model:open="visible"
-      placement="right"
-      :width="640"
-      :closable="false"
-      :destroy-on-close="true"
-      :footer-style="{ textAlign: 'right' }"
-    >
+    <CreateDrawer>
       <template #title>
         <div class="flex items-center gap-3 select-none">
-          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="visible = false">
+          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="createDrawerApi.close()">
             <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
           </Button>
           <span class="text-base font-bold text-gray-800 dark:text-zinc-200">添加PVC</span>
@@ -344,24 +338,17 @@ function handleAdd() {
 
       <template #footer>
         <Space>
-          <Button @click="visible = false">取消</Button>
+          <Button @click="createDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleAdd">确认</Button>
         </Space>
       </template>
-    </Drawer>
+    </CreateDrawer>
 
     <!-- 更新PVC 抽屉 -->
-    <Drawer
-      v-model:open="updateVisible"
-      placement="right"
-      :width="540"
-      :closable="false"
-      :destroy-on-close="true"
-      :footer-style="{ textAlign: 'right' }"
-    >
+    <UpdateDrawer>
       <template #title>
         <div class="flex items-center gap-3 select-none">
-          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="updateVisible = false">
+          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="updateDrawerApi.close()">
             <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
           </Button>
           <span class="text-base font-bold text-gray-800 dark:text-zinc-200">更新PVC</span>
@@ -404,11 +391,11 @@ function handleAdd() {
 
       <template #footer>
         <Space>
-          <Button @click="updateVisible = false">取消</Button>
+          <Button @click="updateDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleUpdate">确认</Button>
         </Space>
       </template>
-    </Drawer>
+    </UpdateDrawer>
   </div>
 </template>
 

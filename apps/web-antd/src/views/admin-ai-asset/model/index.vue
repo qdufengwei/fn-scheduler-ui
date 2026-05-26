@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Button, Drawer, Form, FormItem, Input, Pagination, Segmented, Space, Table, Tag, message } from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Form, FormItem, Input, Pagination, Segmented, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
 import { Plus } from '@vben/icons';
 
@@ -7,7 +8,6 @@ import ListPageLayout from '#/components/business/list-page-layout.vue';
 
 const tab = ref('preset');
 const keyword = ref('');
-const visible = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const form = ref({ name: '', version: '' });
@@ -19,6 +19,13 @@ const rows = ref([
 ]);
 
 const notify = (text: string) => message.success(text);
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[420px]!',
+  title: '导入模型',
+});
 </script>
 
 <template>
@@ -37,7 +44,7 @@ const notify = (text: string) => message.success(text);
     </template>
 
     <template #toolbar>
-      <Button type="primary" @click="visible = true">
+      <Button type="primary" @click="createDrawerApi.open()">
         <template #icon><Plus class="size-4" /></template>
         导入模型
       </Button>
@@ -95,7 +102,7 @@ const notify = (text: string) => message.success(text);
     </div>
   </ListPageLayout>
 
-  <Drawer v-model:open="visible" title="导入模型" placement="right" :width="420">
+  <CreateDrawer>
     <Form layout="vertical" :model="form">
       <FormItem label="模型名称" required>
         <Input v-model:value="form.name" placeholder="请输入模型名称" />
@@ -106,9 +113,9 @@ const notify = (text: string) => message.success(text);
     </Form>
     <template #footer>
       <Space>
-        <Button @click="visible = false">取消</Button>
-        <Button type="primary" @click="notify('已提交导入模型'); visible = false">确认</Button>
+        <Button @click="createDrawerApi.close()">取消</Button>
+        <Button type="primary" @click="notify('已提交导入模型'); createDrawerApi.close()">确认</Button>
       </Space>
     </template>
-  </Drawer>
+  </CreateDrawer>
 </template>

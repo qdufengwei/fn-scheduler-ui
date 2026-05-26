@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { Button, Card, Drawer, Form, FormItem, Input, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Card, Form, FormItem, Input, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
-const visible = ref(false);
 const rows = ref([
   { id: 'INF-01', service: 'chat-qwen2', replicas: 4, qps: 128, latency: 86, status: '运行中' },
   { id: 'INF-02', service: 'ocr-prod', replicas: 2, qps: 43, latency: 112, status: '告警' },
 ]);
 const form = ref({ name: '', framework: 'vLLM' });
 const notify = (text: string) => message.info(text);
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[420px]!',
+  title: '创建推理服务',
+});
 </script>
 
 <template>
   <div class="min-h-full bg-gray-50 p-4">
-    <Card class="mb-4"><Space><Button type="primary" @click="visible = true">创建推理服务</Button><Button>筛选</Button></Space></Card>
+    <Card class="mb-4"><Space><Button type="primary" @click="createDrawerApi.open()">创建推理服务</Button><Button>筛选</Button></Space></Card>
     <Card title="推理服务">
       <Table row-key="id" :data-source="rows" :columns="[
         { title: '服务ID', dataIndex: 'id' }, { title: '服务名称', dataIndex: 'service' },
@@ -25,12 +32,12 @@ const notify = (text: string) => message.info(text);
         </template>
       </Table>
     </Card>
-    <Drawer v-model:open="visible" title="创建推理服务" placement="right" width="420">
+    <CreateDrawer>
       <Form layout="vertical" :model="form">
         <FormItem label="服务名称" required><Input v-model:value="form.name" /></FormItem>
         <FormItem label="推理框架" required><Input v-model:value="form.framework" /></FormItem>
       </Form>
-      <template #footer><Space><Button @click="visible = false">取消</Button><Button type="primary" @click="notify('已提交创建推理服务（原型）')">确认</Button></Space></template>
-    </Drawer>
+      <template #footer><Space><Button @click="createDrawerApi.close()">取消</Button><Button type="primary" @click="notify('已提交创建推理服务（原型）')">确认</Button></Space></template>
+    </CreateDrawer>
   </div>
 </template>

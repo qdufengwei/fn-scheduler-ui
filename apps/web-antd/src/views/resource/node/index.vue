@@ -1,22 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { computed, onMounted, ref } from 'vue';
 import {
-  Button,
-  Card,
-  Dropdown,
-  Drawer,
-  Form,
-  FormItem,
-  Input,
-  InputNumber,
-  Menu,
-  Popconfirm,
-  Select,
-  Space,
-  Table,
-  Tag,
-  message,
-} from 'ant-design-vue';
+  Button, Card, Dropdown, Form, FormItem, Input, InputNumber, Menu, Popconfirm, Select, Space, Table, Tag, message,  } from 'ant-design-vue';
 
 import { getNodeList } from '#/api/node';
 
@@ -122,7 +108,6 @@ const batchOffline = () => {
   message.success(`已批量下架 ${selectedRowKeys.value.length} 个节点`);
 };
 
-const distributionVisible = ref(false);
 const distributionForm = ref({
   cpu: 0,
   memory: 0,
@@ -134,10 +119,8 @@ const distributionForm = ref({
 });
 const currentNode = ref<NodeRow | null>(null);
 
-const maintenanceVisible = ref(false);
 const maintenanceAction = ref<'排空' | '恢复'>('排空');
 
-const migVisible = ref(false);
 const migAction = ref<'配置MIG' | '关闭MIG'>('配置MIG');
 
 const canConfigMig = (r: NodeRow) =>
@@ -180,7 +163,7 @@ const openDistribution = (r: NodeRow) => {
     spec: r.totalGpu > 0 ? `${r.totalGpu}x${r.gpuModel}` : '',
     tenant: undefined,
   };
-  distributionVisible.value = true;
+  distributionDrawerApi.open();
 };
 
 const submitDistribution = () => {
@@ -189,33 +172,33 @@ const submitDistribution = () => {
   node.allocationType = distributionForm.value.mode;
   node.allocatedGpu = Math.min(node.totalGpu, Math.max(1, node.allocatedGpu + 1));
   message.success(`已完成节点 ${node.name} 的资源分配（原型）`);
-  distributionVisible.value = false;
+  distributionDrawerApi.close();
 };
 
 const openMaintenance = (r: NodeRow) => {
   currentNode.value = r;
   maintenanceAction.value = r.status === '维护中' ? '恢复' : '排空';
-  maintenanceVisible.value = true;
+  maintenanceDrawerApi.open();
 };
 
 const confirmMaintenance = () => {
   if (!currentNode.value) return;
   currentNode.value.status = maintenanceAction.value === '排空' ? '维护中' : '就绪';
   message.success(`节点 ${currentNode.value.name} 已${maintenanceAction.value}`);
-  maintenanceVisible.value = false;
+  maintenanceDrawerApi.close();
 };
 
 const openMig = (r: NodeRow, action: '关闭MIG' | '配置MIG') => {
   currentNode.value = r;
   migAction.value = action;
-  migVisible.value = true;
+  migDrawerApi.open();
 };
 
 const confirmMig = () => {
   if (!currentNode.value) return;
   currentNode.value.allocationType = migAction.value === '配置MIG' ? 'MIG分配' : '整机分配';
   message.success(`节点 ${currentNode.value.name} 已${migAction.value}`);
-  migVisible.value = false;
+  migDrawerApi.close();
 };
 
 const releaseResource = (r: NodeRow) => {
@@ -265,6 +248,27 @@ async function fetchData() {
 }
 
 onMounted(fetchData);
+
+const [DistributionDrawer, distributionDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[460px]!',
+  title: '资源分配',
+});
+
+const [MaintenanceDrawer, maintenanceDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[380px]!',
+  title: '节点维护',
+});
+
+const [MigDrawer, migDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[420px]!',
+  title: '',
+});
 </script>
 
 <template>
@@ -305,7 +309,7 @@ onMounted(fetchData);
           <Button type="primary" @click="openDistribution(filteredRows[0] || rows[0])">资源分配</Button>
           <Button @click="batchOnline">批量上架</Button>
           <Button @click="batchOffline">批量下架</Button>
-          <Button @click="maintenanceVisible = true; maintenanceAction = '排空'; currentNode = filteredRows[0] || rows[0]">维护</Button>
+          <Button @click="maintenanceDrawerApi.open(); maintenanceAction = '排空'; currentNode = filteredRows[0] || rows[0]">维护</Button>
         </Space>
       </div>
       <Table
@@ -351,7 +355,7 @@ onMounted(fetchData);
       </Table>
     </Card>
 
-    <Drawer v-model:open="distributionVisible" title="资源分配" placement="right" width="460">
+    <DistributionDrawer>
       <Form layout="vertical" :model="distributionForm">
         <FormItem label="租户" required>
           <Select v-model:value="distributionForm.tenant" placeholder="请选择租户">
@@ -375,13 +379,13 @@ onMounted(fetchData);
       </Form>
       <template #footer>
         <Space>
-          <Button @click="distributionVisible = false">取消</Button>
+          <Button @click="distributionDrawerApi.close()">取消</Button>
           <Button type="primary" @click="submitDistribution">确认分配</Button>
         </Space>
       </template>
-    </Drawer>
+    </DistributionDrawer>
 
-    <Drawer v-model:open="maintenanceVisible" title="节点维护" placement="right" width="380">
+    <MaintenanceDrawer>
       <Form layout="vertical">
         <FormItem label="节点">{{ currentNode?.name }}</FormItem>
         <FormItem label="操作">
@@ -390,13 +394,14 @@ onMounted(fetchData);
       </Form>
       <template #footer>
         <Space>
-          <Button @click="maintenanceVisible = false">取消</Button>
+          <Button @click="maintenanceDrawerApi.close()">取消</Button>
           <Button type="primary" @click="confirmMaintenance">确认</Button>
         </Space>
       </template>
-    </Drawer>
+    </MaintenanceDrawer>
 
-    <Drawer v-model:open="migVisible" :title="migAction" placement="right" width="420">
+    <MigDrawer>
+      <template #title>{{ migAction }}</template>
       <div class="text-sm text-gray-600">
         <p>节点：{{ currentNode?.name }}</p>
         <p class="mt-2">
@@ -409,10 +414,10 @@ onMounted(fetchData);
       </div>
       <template #footer>
         <Space>
-          <Button @click="migVisible = false">取消</Button>
+          <Button @click="migDrawerApi.close()">取消</Button>
           <Button type="primary" @click="confirmMig">确认</Button>
         </Space>
       </template>
-    </Drawer>
+    </MigDrawer>
   </div>
 </template>

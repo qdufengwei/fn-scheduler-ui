@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Tabs, Drawer, Form, FormItem, message } from 'ant-design-vue';
+import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Tabs, Form, FormItem, message } from 'ant-design-vue';
 import { LayoutGrid, Plus, Search, Settings, UserRoundPen } from '@vben/icons';
 
 const activeTab = ref('tenant');
@@ -24,19 +25,25 @@ const dataSource = ref([
   { id: 6, tenant: 'platform-operator', alias: 'platform-operator', discount: '-' },
 ]);
 
-const drawerVisible = ref(false);
 const form = ref({ name: '', alias: '', discount: '' });
 
 const notify = (text: string) => message.success(text);
 
 function handleAddTenant() {
-  drawerVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleSave() {
   notify('添加租户成功（原型）');
-  drawerVisible.value = false;
+  createDrawerApi.close();
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[480px]!',
+  title: '添加租户/租户管理员',
+});
 </script>
 
 <template>
@@ -127,12 +134,7 @@ function handleSave() {
       </Card>
 
       <!-- 添加租户抽屉 -->
-      <Drawer
-        v-model:open="drawerVisible"
-        title="添加租户/租户管理员"
-        placement="right"
-        :width="480"
-      >
+      <CreateDrawer>
         <Form layout="vertical" :model="form">
           <FormItem label="租户名称" required>
             <Input v-model:value="form.name" placeholder="请输入租户名称" />
@@ -146,11 +148,11 @@ function handleSave() {
         </Form>
         <template #footer>
           <Space>
-            <Button @click="drawerVisible = false">取消</Button>
+            <Button @click="createDrawerApi.close()">取消</Button>
             <Button type="primary" @click="handleSave">保存</Button>
           </Space>
         </template>
-      </Drawer>
+      </CreateDrawer>
     </div>
   </Page>
 </template>

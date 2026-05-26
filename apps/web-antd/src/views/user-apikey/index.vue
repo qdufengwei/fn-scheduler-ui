@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Drawer,
-  Dropdown,
-  Form,
-  FormItem,
-  Input,
-  Menu,
-  Modal,
-  Pagination,
-  Popconfirm,
-  Radio,
-  Select,
-  Space,
-  Table,
-  Tag,
-  message
-} from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Checkbox, DatePicker, Dropdown, Form, FormItem, Input, Menu, Modal, Pagination, Popconfirm, Radio, Select, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref, computed } from 'vue';
 import {
   Plus,
@@ -51,7 +33,6 @@ interface ApiKey {
   boundTasks: BoundTask[];
 }
 
-const visible = ref(false);
 const isEdit = ref(false);
 const keyword = ref('');
 const userFilter = ref<string>();
@@ -182,7 +163,7 @@ function handleCreate() {
     expireDate: undefined,
     boundTasks: []
   };
-  visible.value = true;
+  createDrawerApi.open();
 }
 
 function handleEdit(record: any) {
@@ -195,7 +176,7 @@ function handleEdit(record: any) {
     expireDate: record.expireDate || undefined,
     boundTasks: record.boundTasks.map((t: any) => ({ tenant: t.tenant, taskName: t.taskName }))
   };
-  visible.value = true;
+  createDrawerApi.open();
 }
 
 function handleDelete(record: any) {
@@ -311,13 +292,20 @@ function handleSave() {
     });
     notify(`创建 API KEY [${form.value.name}] 成功`);
   }
-  visible.value = false;
+  createDrawerApi.close();
 }
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
   notify('已成功复制 API KEY ID 到剪贴板');
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[720px]!',
+  title: '',
+});
 </script>
 
 <template>
@@ -497,12 +485,8 @@ function copyToClipboard(text: string) {
     </ListPageLayout>
 
     <!-- Create/Edit API Key Drawer -->
-    <Drawer
-      v-model:open="visible"
-      :title="isEdit ? '编辑API KEY' : '创建API KEY'"
-      placement="right"
-      :width="720"
-    >
+    <CreateDrawer>
+      <template #title>{{ isEdit ? '编辑API KEY' : '创建API KEY' }}</template>
       <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" class="py-4">
         <!-- API KEY名称 -->
         <FormItem label="API KEY名称" required>
@@ -574,11 +558,11 @@ function copyToClipboard(text: string) {
       </Form>
       <template #footer>
         <div class="flex items-center justify-end gap-3 pr-4">
-          <Button @click="visible = false">取消</Button>
+          <Button @click="createDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleSave">确认</Button>
         </div>
       </template>
-    </Drawer>
+    </CreateDrawer>
 
     <!-- Bound Tasks View Modal -->
     <Modal

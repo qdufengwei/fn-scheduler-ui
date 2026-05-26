@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Button, Drawer, Form, FormItem, Input, Pagination, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Form, FormItem, Input, Pagination, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
 import { Plus } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
-const visible = ref(false);
 const keyword = ref('');
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -23,6 +23,13 @@ const notify = (text: string) => message.success(text);
 function handleSelectionChange(keys: Array<number | string>) {
   selectedRowKeys.value = keys.map(Number);
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[420px]!',
+  title: '添加用户',
+});
 </script>
 
 <template>
@@ -41,7 +48,7 @@ function handleSelectionChange(keys: Array<number | string>) {
     </template>
 
     <template #toolbar>
-      <Button type="primary" @click="visible = true">
+      <Button type="primary" @click="createDrawerApi.open()">
         <template #icon><Plus class="size-4" /></template>
         添加用户
       </Button>
@@ -99,7 +106,7 @@ function handleSelectionChange(keys: Array<number | string>) {
     </div>
   </ListPageLayout>
 
-  <Drawer v-model:open="visible" title="添加用户" placement="right" :width="420">
+  <CreateDrawer>
     <Form layout="vertical" :model="form">
       <FormItem label="用户" required>
         <Input v-model:value="form.user" placeholder="请输入用户名" />
@@ -113,9 +120,9 @@ function handleSelectionChange(keys: Array<number | string>) {
     </Form>
     <template #footer>
       <Space>
-        <Button @click="visible = false">取消</Button>
-        <Button type="primary" @click="notify('添加成功'); visible = false">确认</Button>
+        <Button @click="createDrawerApi.close()">取消</Button>
+        <Button type="primary" @click="notify('添加成功'); createDrawerApi.close()">确认</Button>
       </Space>
     </template>
-  </Drawer>
+  </CreateDrawer>
 </template>

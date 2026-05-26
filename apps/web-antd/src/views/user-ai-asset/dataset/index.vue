@@ -1,22 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
 import {
-  Button,
-  Divider,
-  Drawer,
-  Form,
-  FormItem,
-  Input,
-  Pagination,
-  Popconfirm,
-  Progress,
-  Select,
-  Segmented,
-  Space,
-  Table,
-  Tag,
-  message,
-} from 'ant-design-vue';
+  Button, Divider, Form, FormItem, Input, Pagination, Popconfirm, Progress, Select, Segmented, Space, Table, Tag, message,  } from 'ant-design-vue';
 import { Plus, Search, Trash2 } from '@vben/icons';
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -28,7 +14,6 @@ const currentPage = ref(1);
 const selectedRowKeys = ref<any[]>([]);
 
 // 新建数据集抽屉
-const createVisible = ref(false);
 const createForm = ref({
   name: '',
   description: '',
@@ -42,7 +27,6 @@ const createForm = ref({
 });
 
 // 添加版本抽屉
-const versionDrawerVisible = ref(false);
 const selectedDataset = ref<any>(null);
 const versionForm = ref({
   version: 'v2',
@@ -181,7 +165,7 @@ function handleCreateDataset() {
     s3Address: '',
     versionDescription: ''
   };
-  createVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleCreateSave() {
@@ -214,7 +198,7 @@ function handleCreateSave() {
   });
 
   notify(`创建数据集 ${createForm.value.name} 成功`);
-  createVisible.value = false;
+  createDrawerApi.close();
 }
 
 function handleAddVersion(record: any) {
@@ -227,7 +211,7 @@ function handleAddVersion(record: any) {
     path: '',
     versionDescription: '',
   };
-  versionDrawerVisible.value = true;
+  versionDrawerApi.open();
 }
 
 function handleVersionSave() {
@@ -243,8 +227,22 @@ function handleVersionSave() {
     record.updated = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     notify(`为数据集 ${record.name} 添加版本 ${versionForm.value.version} 成功`);
   }
-  versionDrawerVisible.value = false;
+  versionDrawerApi.close();
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[900px]!',
+  title: '新建数据集',
+});
+
+const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[900px]!',
+  title: '添加版本',
+});
 </script>
 
 <template>
@@ -375,13 +373,7 @@ function handleVersionSave() {
     </div>
 
     <!-- 新建数据集抽屉 -->
-    <Drawer
-      v-model:open="createVisible"
-      title="新建数据集"
-      placement="right"
-      width="900"
-      :destroy-on-close="true"
-    >
+    <CreateDrawer>
       <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="createForm">
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2 text-gray-900 dark:text-zinc-150">基础信息</h3>
@@ -452,20 +444,14 @@ function handleVersionSave() {
       </Form>
       <template #footer>
         <div class="flex items-center gap-3 justify-end">
-          <Button @click="createVisible = false">取消</Button>
+          <Button @click="createDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleCreateSave">确认</Button>
         </div>
       </template>
-    </Drawer>
+    </CreateDrawer>
 
     <!-- 添加版本抽屉 -->
-    <Drawer
-      v-model:open="versionDrawerVisible"
-      title="添加版本"
-      placement="right"
-      width="900"
-      :destroy-on-close="true"
-    >
+    <VersionDrawer>
       <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="versionForm">
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2 text-gray-900 dark:text-zinc-150">基础信息</h3>
@@ -494,10 +480,10 @@ function handleVersionSave() {
       </Form>
       <template #footer>
         <div class="flex items-center gap-3 justify-end">
-          <Button @click="versionDrawerVisible = false">取消</Button>
+          <Button @click="versionDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleVersionSave">确认</Button>
         </div>
       </template>
-    </Drawer>
+    </VersionDrawer>
   </ListPageLayout>
 </template>

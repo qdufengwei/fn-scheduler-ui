@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { Button, Card, Drawer, Form, FormItem, Input, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Card, Form, FormItem, Input, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
-const visible = ref(false);
 const rows = ref([
   { id: 'DV-001', owner: '张三', spec: '8C32G + A10', expire: '2026-06-30', status: '运行中' },
   { id: 'DV-002', owner: '李四', spec: '16C64G + H100', expire: '2026-05-28', status: '即将到期' },
 ]);
 const form = ref({ owner: '', spec: '' });
 const notify = (text: string) => message.info(text);
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[420px]!',
+  title: '创建开发机',
+});
 </script>
 
 <template>
   <div class="min-h-full bg-gray-50 p-4">
-    <Card class="mb-4"><Space><Button type="primary" @click="visible = true">创建开发机</Button><Button>筛选</Button></Space></Card>
+    <Card class="mb-4"><Space><Button type="primary" @click="createDrawerApi.open()">创建开发机</Button><Button>筛选</Button></Space></Card>
     <Card title="开发机">
       <Table row-key="id" :data-source="rows" :columns="[
         { title: '实例ID', dataIndex: 'id' }, { title: '归属人', dataIndex: 'owner' }, { title: '规格', dataIndex: 'spec' },
@@ -24,12 +31,12 @@ const notify = (text: string) => message.info(text);
         </template>
       </Table>
     </Card>
-    <Drawer v-model:open="visible" title="创建开发机" placement="right" width="420">
+    <CreateDrawer>
       <Form layout="vertical" :model="form">
         <FormItem label="归属人" required><Input v-model:value="form.owner" /></FormItem>
         <FormItem label="规格" required><Input v-model:value="form.spec" /></FormItem>
       </Form>
-      <template #footer><Space><Button @click="visible = false">取消</Button><Button type="primary" @click="notify('已提交创建开发机（原型）')">确认</Button></Space></template>
-    </Drawer>
+      <template #footer><Space><Button @click="createDrawerApi.close()">取消</Button><Button type="primary" @click="notify('已提交创建开发机（原型）')">确认</Button></Space></template>
+    </CreateDrawer>
   </div>
 </template>

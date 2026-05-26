@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import {
-  Button,
-  Input,
-  Pagination,
-  Popconfirm,
-  Segmented,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Drawer,
-  Form,
-  FormItem,
-  Checkbox,
-  Radio,
-  Switch,
-  Row,
-  Col,
-  message
-} from 'ant-design-vue';
+import { useVbenDrawer } from '@vben/common-ui';
+import { Button, Input, Pagination, Popconfirm, Segmented, Select, Space, Table, Tag, Form, FormItem, Checkbox, Radio, Switch, Row, Col, message } from 'ant-design-vue';
 import { ref, computed, nextTick } from 'vue';
 import { Plus, Trash2, ArrowLeft, Info, Expand, ChevronRight, Copy } from '@vben/icons';
 
@@ -78,7 +60,6 @@ const detailColumns = [
 ];
 
 // Drawer state
-const drawerVisible = ref(false);
 const isImportMode = ref(false);
 
 const createForm = ref({
@@ -208,7 +189,7 @@ function handleCreateImage() {
     sourceProtocol: 'docker',
     sourceAddress: ''
   };
-  drawerVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleSave() {
@@ -259,7 +240,7 @@ function handleSave() {
     });
     notify(`成功提交构建镜像任务 [${newName}:${createForm.value.isLatest ? 'latest' : createForm.value.version}]`);
   }
-  drawerVisible.value = false;
+  createDrawerApi.close();
 }
 
 // Delete and Batch actions
@@ -302,6 +283,13 @@ function copyText(text: string) {
   navigator.clipboard.writeText(text);
   message.success('已复制镜像地址到剪贴板');
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[840px]!',
+  title: '',
+});
 </script>
 
 <template>
@@ -505,16 +493,10 @@ function copyText(text: string) {
     </transition>
 
     <!-- Create / Import Image Drawer -->
-    <Drawer
-      v-model:open="drawerVisible"
-      placement="right"
-      :width="840"
-      :closable="false"
-      :footer-style="{ textAlign: 'right' }"
-    >
+    <CreateDrawer>
       <template #title>
         <div class="flex items-center gap-3 select-none">
-          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="drawerVisible = false">
+          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="createDrawerApi.close()">
             <ArrowLeft class="size-5 text-gray-600 dark:text-zinc-400" />
           </Button>
           <span class="text-base font-bold text-gray-800 dark:text-zinc-200">创建镜像</span>
@@ -697,11 +679,11 @@ function copyText(text: string) {
 
       <template #footer>
         <Space>
-          <Button @click="drawerVisible = false">取消</Button>
+          <Button @click="createDrawerApi.close()">取消</Button>
           <Button type="primary" @click="handleSave">确认</Button>
         </Space>
       </template>
-    </Drawer>
+    </CreateDrawer>
   </div>
 </template>
 

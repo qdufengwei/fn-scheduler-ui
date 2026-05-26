@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, Dropdown, Input, Menu, MenuItem, Pagination, Popconfirm, Row, Select, Space, Table, Tag, Drawer, Form, FormItem, message } from 'ant-design-vue';
+import { Button, Card, Col, Dropdown, Input, Menu, MenuItem, Pagination, Popconfirm, Row, Select, Space, Table, Tag, Form, FormItem, message } from 'ant-design-vue';
 import { Inbox, Copy, LockKeyhole, Plus, Check, Trash2, Ellipsis } from '@vben/icons';
 
 const selectedTenant = ref<string>();
@@ -34,24 +35,30 @@ const dataSource = ref([
   { id: 4, name: 'test-key', keyId: 'Z1yrMsztuTo', permissions: ['推理服务：读取', '推理服务：写入/执行'], status: '运行', tenant: 'test01', owner: 'test01', createTime: '2026-03-03 11:21:53', lastUsedTime: '2026-03-03 19:26:51', boundTasks: 0 },
 ]);
 
-const drawerVisible = ref(false);
 const form = ref({ name: '', tenant: '', permissions: [] as string[] });
 
 const notify = (text: string) => message.success(text);
 
 function handleCreateKey() {
-  drawerVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleSave() {
   notify('创建API KEY成功（原型）');
-  drawerVisible.value = false;
+  createDrawerApi.close();
 }
 
 function copyKey(key: string) {
   navigator.clipboard.writeText(key);
   notify('已复制到剪贴板');
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[480px]!',
+  title: '创建 API KEY',
+});
 </script>
 
 <template>
@@ -186,12 +193,7 @@ function copyKey(key: string) {
       </Card>
 
       <!-- 创建API KEY抽屉 -->
-      <Drawer
-        v-model:open="drawerVisible"
-        title="创建 API KEY"
-        placement="right"
-        :width="480"
-      >
+      <CreateDrawer>
         <Form layout="vertical" :model="form">
           <FormItem label="名称" required>
             <Input v-model:value="form.name" placeholder="请输入名称" />
@@ -205,11 +207,11 @@ function copyKey(key: string) {
         </Form>
         <template #footer>
           <Space>
-            <Button @click="drawerVisible = false">取消</Button>
+            <Button @click="createDrawerApi.close()">取消</Button>
             <Button type="primary" @click="handleSave">创建</Button>
           </Space>
         </template>
-      </Drawer>
+      </CreateDrawer>
     </div>
   </Page>
 </template>

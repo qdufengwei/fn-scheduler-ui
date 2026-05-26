@@ -1,21 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
 import {
-  Button,
-  Divider,
-  Drawer,
-  Form,
-  FormItem,
-  Input,
-  Pagination,
-  Popconfirm,
-  Progress,
-  Segmented,
-  Space,
-  Table,
-  Tag,
-  message,
-} from 'ant-design-vue';
+  Button, Divider, Form, FormItem, Input, Pagination, Popconfirm, Progress, Segmented, Space, Table, Tag, message,  } from 'ant-design-vue';
 import { Download, Plus, Search, Trash2 } from '@vben/icons';
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -27,7 +14,6 @@ const currentPage = ref(1);
 const selectedRowKeys = ref<any[]>([]);
 
 // 导入模型抽屉
-const importVisible = ref(false);
 const importForm = ref({
   name: '',
   description: '',
@@ -41,7 +27,6 @@ const importForm = ref({
 });
 
 // 新建版本抽屉
-const versionDrawerVisible = ref(false);
 const selectedModel = ref<any>(null);
 const versionForm = ref({
   version: 'V2',
@@ -163,12 +148,12 @@ function handleImport() {
     s3Address: '',
     versionDescription: ''
   };
-  importVisible.value = true;
+  importDrawerApi.open();
 }
 
 function handleImportSave() {
   notify('导入模型成功（原型）');
-  importVisible.value = false;
+  importDrawerApi.close();
 }
 
 function handleAddVersion(record: any) {
@@ -179,12 +164,12 @@ function handleAddVersion(record: any) {
     modelPath: '',
     versionDescription: '',
   };
-  versionDrawerVisible.value = true;
+  versionDrawerApi.open();
 }
 
 function handleVersionSave() {
   notify(`为模型 ${selectedModel.value?.name} 新建版本 ${versionForm.value.version} 成功`);
-  versionDrawerVisible.value = false;
+  versionDrawerApi.close();
 }
 
 function handleExport(record: any) {
@@ -199,6 +184,20 @@ function handleBatchDelete() {
   notify(`批量删除 ${selectedRowKeys.value.length} 个模型成功`);
   selectedRowKeys.value = [];
 }
+
+const [ImportDrawer, importDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[900px]!',
+  title: '导入模型',
+});
+
+const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[900px]!',
+  title: '新建版本',
+});
 </script>
 
 <template>
@@ -334,12 +333,7 @@ function handleBatchDelete() {
     </ListPageLayout>
 
     <!-- 导入模型抽屉 -->
-    <Drawer
-      v-model:open="importVisible"
-      title="导入模型"
-      placement="right"
-      width="900"
-    >
+    <ImportDrawer>
       <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="importForm">
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2">基础信息</h3>
@@ -417,18 +411,13 @@ function handleBatchDelete() {
       <template #footer>
         <div class="flex items-center gap-3">
           <Button type="primary" @click="handleImportSave">确认</Button>
-          <Button @click="importVisible = false">取消</Button>
+          <Button @click="importDrawerApi.close()">取消</Button>
         </div>
       </template>
-    </Drawer>
+    </ImportDrawer>
 
     <!-- 新建版本抽屉 -->
-    <Drawer
-      v-model:open="versionDrawerVisible"
-      title="新建版本"
-      placement="right"
-      width="900"
-    >
+    <VersionDrawer>
       <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="versionForm">
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2">基础信息</h3>
@@ -458,9 +447,9 @@ function handleBatchDelete() {
       <template #footer>
         <div class="flex items-center gap-3">
           <Button type="primary" @click="handleVersionSave">确认</Button>
-          <Button @click="versionDrawerVisible = false">取消</Button>
+          <Button @click="versionDrawerApi.close()">取消</Button>
         </div>
       </template>
-    </Drawer>
+    </VersionDrawer>
   </div>
 </template>

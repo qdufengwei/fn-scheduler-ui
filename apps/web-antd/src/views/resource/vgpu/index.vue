@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useVbenDrawer } from '@vben/common-ui';
 import { ref, computed } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Form, FormItem, Input, InputNumber, Modal, Pagination, Select, Slider, Space, Table, Tag, Drawer, message } from 'ant-design-vue';
+import { Button, Card, Form, FormItem, Input, InputNumber, Modal, Pagination, Select, Slider, Space, Table, Tag, message } from 'ant-design-vue';
 import { CircleAlert } from '@vben/icons';
 
 const searchText = ref('');
@@ -27,7 +28,6 @@ const dataSource = ref([
   { id: 2, name: 'GPU-50%-32GiB', resourceSpec: 'NVIDIA-GPU-HBM2E-80GB', status: '启用', compute: '50%', memory: '32GiB', userPurchase: 5, allocated: 5, inUse: 4, totalInstances: 5, price: '¥5.00/时' },
 ]);
 
-const drawerVisible = ref(false);
 const showWarning = ref(false);
 
 const form = ref({
@@ -50,13 +50,20 @@ function handleAddVgpu() {
 
 function handleWarningConfirm() {
   showWarning.value = false;
-  drawerVisible.value = true;
+  createDrawerApi.open();
 }
 
 function handleSave() {
   notify('添加vGPU规格成功（原型）');
-  drawerVisible.value = false;
+  createDrawerApi.close();
 }
+
+const [CreateDrawer, createDrawerApi] = useVbenDrawer({
+  contentClass: 'p-6',
+  footerClass: 'px-6 py-4',
+  class: 'w-[520px]!',
+  title: '添加vGPU规格',
+});
 </script>
 
 <template>
@@ -140,12 +147,7 @@ function handleSave() {
       </Modal>
 
       <!-- 添加vGPU规格抽屉 -->
-      <Drawer
-        v-model:open="drawerVisible"
-        title="添加vGPU规格"
-        placement="right"
-        :width="520"
-      >
+      <CreateDrawer>
         <Form layout="vertical" :model="form">
           <FormItem required>
             <template #label>资源规格</template>
@@ -176,11 +178,11 @@ function handleSave() {
         </Form>
         <template #footer>
           <Space>
-            <Button @click="drawerVisible = false">取消</Button>
+            <Button @click="createDrawerApi.close()">取消</Button>
             <Button type="primary" @click="handleSave">确认</Button>
           </Space>
         </template>
-      </Drawer>
+      </CreateDrawer>
     </div>
   </Page>
 </template>
