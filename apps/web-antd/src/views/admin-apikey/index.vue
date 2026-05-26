@@ -62,14 +62,14 @@ function copyKey(key: string) {
         <Row :gutter="24">
           <Col :span="6">
             <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-100 hover:shadow-md transition-shadow cursor-pointer">
-              <KeyRound class="size-8 mx-auto mb-3 text-blue-500" />
+              <LockKeyhole class="size-8 mx-auto mb-3 text-blue-500" />
               <div class="text-xs text-gray-500 mb-2">API KEY总数</div>
               <div class="text-3xl font-bold text-blue-600">{{ stats.total }}</div>
             </div>
           </Col>
           <Col :span="6">
             <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-100 hover:shadow-md transition-shadow cursor-pointer">
-              <Zap class="size-8 mx-auto mb-3 text-green-500" />
+              <Check class="size-8 mx-auto mb-3 text-green-500" />
               <div class="text-xs text-gray-500 mb-2">活跃API KEY</div>
               <div class="text-3xl font-bold text-green-600">{{ stats.active }}</div>
             </div>

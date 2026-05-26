@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/user-task/training/index.vue'),
         meta: {
+          icon: 'lucide:graduation-cap',
           title: '训练任务',
         },
         name: 'UserTraining',
@@ -23,6 +24,7 @@ const routes: RouteRecordRaw[] = [
           {
             component: () => import('#/views/user-task/training/latest.vue'),
             meta: {
+              icon: 'lucide:clock',
               title: '最新任务',
             },
             name: 'UserTrainingLatest',
@@ -31,6 +33,7 @@ const routes: RouteRecordRaw[] = [
           {
             component: () => import('#/views/user-task/training/template.vue'),
             meta: {
+              icon: 'lucide:file-text',
               title: '任务模板',
             },
             name: 'UserTrainingTemplate',
@@ -39,6 +42,7 @@ const routes: RouteRecordRaw[] = [
           {
             component: () => import('#/views/user-task/training/recycle.vue'),
             meta: {
+              icon: 'lucide:trash-2',
               title: '任务回收站',
             },
             name: 'UserTrainingRecycle',
@@ -71,6 +75,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/user-task/finetune/index.vue'),
         meta: {
+          icon: 'lucide:sliders-horizontal',
           title: '模型微调',
         },
         name: 'UserFinetune',
@@ -90,6 +95,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/user-task/inference/index.vue'),
         meta: {
+          icon: 'lucide:rocket',
           title: '推理服务',
         },
         name: 'UserInference',
@@ -109,6 +115,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/user-task/devbox/index.vue'),
         meta: {
+          icon: 'lucide:monitor',
           title: '开发机',
         },
         name: 'UserDevbox',

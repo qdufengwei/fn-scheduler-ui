@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { Button, Card, Input, Space, Table, Tag, message } from 'ant-design-vue';
+import { Button, Input, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
+
+import ListPageLayout from '#/components/business/list-page-layout.vue';
+
 const keyword = ref('');
 const rows = ref([
   { id: 1, image: 'registry.local/llm/train:2.1.0', size: '7.2GB', pull: 348, status: '稳定' },
@@ -10,9 +13,27 @@ const notify = (text: string) => message.info(text);
 </script>
 
 <template>
-  <div class="min-h-full bg-gray-50 p-4">
-    <Card class="mb-4"><Space><Input v-model:value="keyword" placeholder="搜索镜像名称" style="width: 260px" /><Button type="primary" @click="notify('打开创建镜像抽屉（待扩展）')">创建镜像</Button><Button>筛选</Button><Button @click="keyword = ''">重置</Button></Space></Card>
-    <Card title="镜像仓库">
+  <ListPageLayout>
+    <template #filters>
+      <div class="flex flex-wrap items-center gap-4">
+        <Input v-model:value="keyword" placeholder="搜索镜像名称" style="width: 260px" />
+      </div>
+    </template>
+
+    <template #filterActions>
+      <Space>
+        <Button type="primary">筛选</Button>
+        <Button @click="keyword = ''">重置</Button>
+      </Space>
+    </template>
+
+    <template #toolbar>
+      <Button type="primary" @click="notify('打开创建镜像抽屉（待扩展）')">创建镜像</Button>
+      <Button>批量导入</Button>
+      <Button>批量导出</Button>
+      <Button>刷新</Button>
+    </template>
+
       <Table row-key="id" :data-source="rows.filter((r) => !keyword || r.image.includes(keyword))" :columns="[
         { title: '镜像', dataIndex: 'image' }, { title: '大小', dataIndex: 'size' }, { title: '拉取次数', dataIndex: 'pull' }, { title: '状态', dataIndex: 'status' }, { title: '操作', dataIndex: 'action' },
       ]">
@@ -21,6 +42,5 @@ const notify = (text: string) => message.info(text);
           <template v-else-if="column.dataIndex === 'action'"><Space><a @click="notify(`查看镜像 ${record.image}`)">详情</a><a @click="notify(`删除镜像 ${record.image}`)">删除</a></Space></template>
         </template>
       </Table>
-    </Card>
-  </div>
+  </ListPageLayout>
 </template>

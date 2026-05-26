@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/monitor/cluster/index.vue'),
         meta: {
+          icon: 'lucide:layout-grid',
           title: '集群监控',
         },
         name: 'ClusterMonitor',
@@ -22,6 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/resource/monitor/index.vue'),
         meta: {
+          icon: 'lucide:server',
           title: '节点监控',
         },
         name: 'NodeMonitor',
@@ -30,6 +32,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/monitor/rental/index.vue'),
         meta: {
+          icon: 'lucide:chart-bar',
           title: '租售监控',
         },
         name: 'RentalMonitor',
@@ -38,6 +41,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/monitor/task/index.vue'),
         meta: {
+          icon: 'lucide:list-checks',
           title: '任务监控',
         },
         name: 'TaskMonitor',

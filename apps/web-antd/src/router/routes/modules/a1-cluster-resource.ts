@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/resource/node/index.vue'),
         meta: {
+          icon: 'lucide:hard-drive',
           title: '节点管理',
         },
         name: 'ClusterNode',
@@ -22,6 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/cluster-resource/tenant/index.vue'),
         meta: {
+          icon: 'lucide:users',
           title: '租户资源',
         },
         name: 'ClusterTenant',
@@ -30,6 +32,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/resource/vgpu/index.vue'),
         meta: {
+          icon: 'lucide:cpu',
           title: 'vGPU',
         },
         name: 'ClusterVgpu',
@@ -38,6 +41,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/cluster-resource/audit/index.vue'),
         meta: {
+          icon: 'lucide:file-text',
           title: '审计日志',
         },
         name: 'ClusterAudit',
@@ -46,6 +50,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/cluster-resource/service-config/index.vue'),
         meta: {
+          icon: 'lucide:settings',
           title: '服务配置',
         },
         name: 'ServiceConfig',

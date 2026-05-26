@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/billing/revenue/index.vue'),
         meta: {
+          icon: 'lucide:trending-up',
           title: '收益',
         },
         name: 'Revenue',
@@ -22,6 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         component: () => import('#/views/billing/pricing/index.vue'),
         meta: {
+          icon: 'lucide:tag',
           title: '商品定价',
         },
         name: 'Pricing',
