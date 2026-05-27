@@ -7,6 +7,16 @@ import { initStores } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/antd';
 
+import { Pagination } from 'ant-design-vue';
+
+// 统一为全站所有的 Pagination 分页组件配置默认显示总条数
+if (Pagination.props) {
+  Pagination.props.showTotal = {
+    type: Function,
+    default: (total: number) => `共 ${total} 条`,
+  };
+}
+
 import { useTitle } from '@vueuse/core';
 
 import { $t, setupI18n } from '#/locales';

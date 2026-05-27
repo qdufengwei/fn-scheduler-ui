@@ -558,7 +558,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
     <!-- Bound Tasks View Modal -->
     <Modal
       v-model:open="tasksModalVisible"
-      :title="`API KEY [${selectedKeyForTasks?.name}] 绑定推理任务`"
+      :title="selectedKeyForTasks ? 'API KEY [' + selectedKeyForTasks.name + '] 绑定推理任务' : ''"
       :footer="null"
       :width="540"
     >
