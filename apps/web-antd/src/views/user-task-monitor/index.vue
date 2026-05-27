@@ -241,24 +241,24 @@ onBeforeUnmount(() => {
 }
 
 .user-task-monitor__summary {
-  justify-content: space-between;
   flex: 1;
-  min-width: 0;
   gap: 16px;
+  min-width: 0;
+  justify-content: space-between;
 }
 
 .user-task-monitor__title-row,
 .user-task-monitor__task-switch,
 .user-task-monitor__filter-left {
-  min-width: 0;
   gap: 10px;
+  min-width: 0;
 }
 
 .user-task-monitor__name {
   overflow: hidden;
-  color: #1f2329;
   font-size: 22px;
   font-weight: 700;
+  color: #1f2329;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -266,20 +266,20 @@ onBeforeUnmount(() => {
 .user-task-monitor__runtime {
   flex-shrink: 0;
   gap: 6px;
-  color: #4e5969;
   font-size: 13px;
+  color: #4e5969;
 }
 
 .user-task-monitor__task-switch,
 .user-task-monitor__filter-right {
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 16px;
+  justify-content: flex-end;
 }
 
 .user-task-monitor__filter-left {
-  flex-wrap: wrap;
   flex: 1;
+  flex-wrap: wrap;
   gap: 12px;
   min-width: 0;
 }
@@ -289,8 +289,8 @@ onBeforeUnmount(() => {
 }
 
 .user-task-monitor__label {
-  color: #6b7280;
   font-size: 13px;
+  color: #6b7280;
   white-space: nowrap;
 }
 
@@ -337,8 +337,8 @@ onBeforeUnmount(() => {
   .user-task-monitor__filter-left,
   .user-task-monitor__filter-right,
   .user-task-monitor__view-switch {
-    align-items: stretch;
     flex-direction: column;
+    align-items: stretch;
   }
 
   .user-task-monitor__filters,

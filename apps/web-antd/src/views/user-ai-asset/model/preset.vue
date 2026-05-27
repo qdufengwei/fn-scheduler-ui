@@ -461,9 +461,9 @@ function getIconComponent(icon: string) {
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
+  overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* 卡片hover效果增强 */

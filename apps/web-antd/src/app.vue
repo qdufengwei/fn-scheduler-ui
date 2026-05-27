@@ -41,16 +41,16 @@ const tokenTheme = computed(() => {
 <style>
 /* 统一优化表格最左侧复选框，使其完美居中并保持安全宽度 */
 .ant-table-wrapper .ant-table-selection-column {
-  min-width: 55px !important;
   width: 55px !important;
+  min-width: 55px !important;
   padding: 0 !important;
   text-align: center !important;
 }
 
 .ant-table-wrapper .ant-table-selection {
   display: flex !important;
-  justify-content: center !important;
   align-items: center !important;
+  justify-content: center !important;
   width: 100% !important;
   height: 100% !important;
 }

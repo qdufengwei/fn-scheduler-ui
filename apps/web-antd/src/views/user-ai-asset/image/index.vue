@@ -693,10 +693,12 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 .fade-slide-leave-active {
   transition: all 0.25s ease-in-out;
 }
+
 .fade-slide-enter-from {
   opacity: 0;
   transform: translateX(20px);
 }
+
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateX(-20px);

@@ -70,15 +70,15 @@ withDefaults(
 
 /* Table Header Styles */
 :global(.fn-list-content .ant-table-thead > tr > th) {
-  background: #f8fafc !important;
-  color: #475569;
   font-weight: 600;
+  color: #475569;
+  background: #f8fafc !important;
   border-bottom: 1px solid #f1f5f9 !important;
 }
 
 :global(.dark .fn-list-content .ant-table-thead > tr > th) {
-  background: #18181b !important;
   color: #a1a1aa;
+  background: #18181b !important;
   border-bottom: 1px solid #27272a !important;
 }
 
@@ -119,14 +119,14 @@ withDefaults(
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-top: 1px solid #f1f5f9 !important;
-  background: #ffffff;
   padding: 12px 16px !important;
+  background: #fff;
+  border-top: 1px solid #f1f5f9 !important;
 }
 
 :global(.dark .fn-list-pagination) {
-  border-top: 1px solid #27272a !important;
   background: #09090b;
+  border-top: 1px solid #27272a !important;
 }
 
 /* Ant pagination component adjustments */
@@ -149,9 +149,9 @@ withDefaults(
 :global(.dark .fn-list-pagination .ant-pagination-next),
 :global(.dark .fn-list-pagination .ant-select-selector),
 :global(.dark .fn-list-pagination .ant-pagination-options-quick-jumper input) {
-  border-color: #27272a !important;
-  background-color: #18181b !important;
   color: #d4d4d8 !important;
+  background-color: #18181b !important;
+  border-color: #27272a !important;
 }
 
 :global(.fn-list-content > .fn-list-pagination:first-child) {
