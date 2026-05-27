@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
-import { Button, Input, Pagination, Popconfirm, Progress, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import { Button, Input, Pagination, Popconfirm, Progress, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref, computed } from 'vue';
 import { RotateCw } from '@vben/icons';
 
@@ -22,51 +22,40 @@ const tenantOptions = [
   { label: 'platform', value: 'platform' },
 ];
 
-// 数据集数据
-const datasets = ref([
+// 自定义模型数据
+const customModels = ref([
   {
-    id: 'D01KJSMM1JD3Z4A9NX6XAP31R1E',
-    name: 'dataset',
-    size: '19.90 KB',
+    id: 'M01KJSMHA2W53GX0ACXTB8KZW4S',
+    name: 'finetune',
     status: '已完成',
     progress: 100,
     version: 'V1',
-    updateTime: '2026-03-03 10:41:38',
+    updateTime: '2026-03-03 10:40:09',
     user: 'test01',
     tenant: 'test01',
+    alias: '-',
   },
   {
-    id: 'D01KJSMM2KD5A6BOY7YBQ42S2F',
-    name: 'training-data',
-    size: '2.5 GB',
-    status: '已完成',
-    progress: 100,
-    version: 'V3',
+    id: 'M01KJSMMABC123456789DEF0GHI',
+    name: 'custom-llama',
+    status: '上传中',
+    progress: 45,
+    version: 'V2',
     updateTime: '2026-03-05 14:22:33',
     user: 'admin',
     tenant: 'platform',
+    alias: 'my-model',
   },
   {
-    id: 'D01KJSMM3LE7B8CPZ8ZCR53T3G',
-    name: 'corpus-chinese',
-    size: '156 MB',
-    status: '上传中',
-    progress: 67,
-    version: 'V2',
-    updateTime: '2026-03-06 09:15:20',
-    user: 'test02',
-    tenant: 'test02',
-  },
-  {
-    id: 'D01KJSMM4MF9C0DQ09DS64U4H',
-    name: 'image-dataset',
-    size: '8.2 GB',
+    id: 'M01KJSMHXYZ987654321ABC0DEF',
+    name: 'qwen-finetune-v2',
     status: '失败',
     progress: 0,
-    version: 'V1',
-    updateTime: '2026-03-07 16:30:45',
-    user: 'test01',
-    tenant: 'test01',
+    version: 'V3',
+    updateTime: '2026-03-06 09:15:20',
+    user: 'test02',
+    tenant: 'tenant-a',
+    alias: '-',
   },
 ]);
 
@@ -81,7 +70,7 @@ const getStatusTag = (status: string) => {
 
 // 筛选后的数据
 const filteredData = computed(() => {
-  let data = [...datasets.value];
+  let data = [...customModels.value];
   if (tenantId.value) {
     data = data.filter((item) => item.tenant === tenantId.value);
   }
@@ -117,20 +106,20 @@ function handleRefresh() {
 }
 
 function handleDelete(record: any) {
-  message.success(`已删除数据集 ${record.name}`);
-  const index = datasets.value.findIndex((item) => item.id === record.id);
+  message.success(`已删除模型 ${record.name}`);
+  const index = customModels.value.findIndex((item) => item.id === record.id);
   if (index > -1) {
-    datasets.value.splice(index, 1);
+    customModels.value.splice(index, 1);
   }
 }
 
 function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择要删除的数据集');
+    message.warning('请选择要删除的模型');
     return;
   }
-  message.success(`已批量删除 ${selectedRowKeys.value.length} 个数据集`);
-  datasets.value = datasets.value.filter(
+  message.success(`已批量删除 ${selectedRowKeys.value.length} 个模型`);
+  customModels.value = customModels.value.filter(
     (item) => !selectedRowKeys.value.includes(item.id),
   );
   selectedRowKeys.value = [];
@@ -142,12 +131,6 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     width: 220,
-  },
-  {
-    title: '大小',
-    dataIndex: 'size',
-    key: 'size',
-    width: 120,
   },
   {
     title: '状态',
@@ -185,10 +168,10 @@ const columns = [
     width: 100,
   },
   {
-    title: '租户',
+    title: '租户/别名',
     dataIndex: 'tenant',
     key: 'tenant',
-    width: 100,
+    width: 150,
   },
   {
     title: '操作',
@@ -220,7 +203,7 @@ const rowSelection = {
         />
         <Input
           v-model:value="keyword"
-          placeholder="支持模糊搜索数据集名称/ID"
+          placeholder="支持模糊搜索模型仓库名称/ID"
           style="width: 280px"
           allow-clear
           @press-enter="handleFilter"
@@ -237,7 +220,7 @@ const rowSelection = {
 
     <template #toolbar>
       <Popconfirm
-        title="确定要批量删除选中的数据集吗？"
+        title="确定要批量删除选中的模型吗？"
         ok-text="确定"
         cancel-text="取消"
         @confirm="handleBatchDelete"
@@ -256,7 +239,7 @@ const rowSelection = {
       :columns="columns"
       :row-selection="rowSelection"
       :pagination="false"
-      :scroll="{ x: 1200 }"
+      :scroll="{ x: 1100 }"
       size="middle"
     >
       <template #bodyCell="{ column, record }">
@@ -282,9 +265,15 @@ const rowSelection = {
             <span class="text-xs text-gray-500">{{ record.progress }}%</span>
           </div>
         </template>
+        <template v-else-if="column.key === 'tenant'">
+          <div class="flex flex-col gap-0.5">
+            <span>{{ record.tenant }}</span>
+            <span class="text-xs text-gray-400">{{ record.alias }}</span>
+          </div>
+        </template>
         <template v-else-if="column.key === 'action'">
           <Popconfirm
-            title="确定要删除该数据集吗？"
+            title="确定要删除该模型吗？"
             ok-text="确定"
             cancel-text="取消"
             @confirm="handleDelete(record)"
