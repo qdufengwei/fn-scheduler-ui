@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, Divider, Popconfirm, Row, Select, Space, Table, Tag, message } from 'ant-design-vue';
-import { Download, Plus, Grid, Inbox, LayoutGrid, Settings, Shrink } from '@vben/icons';
+import { Button, Card, Col, Divider, Popconfirm, Row, Select, Space, Table, message } from 'ant-design-vue';
+
 
 const selectedTenant = ref<string>();
 

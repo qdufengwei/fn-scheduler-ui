@@ -3,7 +3,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Tabs, Form, FormItem, message } from 'ant-design-vue';
-import { LayoutGrid, Plus, Search, Settings, UserRoundPen } from '@vben/icons';
+import { LayoutGrid, Plus, Search, Settings } from '@vben/icons';
 
 const activeTab = ref('tenant');
 const searchText = ref('');

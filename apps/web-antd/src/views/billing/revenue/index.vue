@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, DatePicker, Pagination, Radio, RadioGroup, Row, Select, Space, Table, Tag } from 'ant-design-vue';
-import { BookOpenText, Download, Eye, Inbox, Settings } from '@vben/icons';
+import { Button, Card, Col, DatePicker, Pagination, Radio, RadioGroup, Row, Select, Space, Table } from 'ant-design-vue';
+import { BookOpenText, Download, Inbox, Settings } from '@vben/icons';
 
 const billingCycle = ref('day');
 const selectedTenant = ref<string>();

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Col, DatePicker, Progress, Row, Select, Space, Table, Tag } from 'ant-design-vue';
-import { BookOpenText, CircleAlert, Download, Grid, LayoutGrid, List, RotateCw, Settings } from '@vben/icons';
+import { Download, Grid, LayoutGrid, List, RotateCw, Settings } from '@vben/icons';
 
 const resourceSpec = ref<string>();
 const autoRefresh = ref('40s');

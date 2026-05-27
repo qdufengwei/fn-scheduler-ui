@@ -3,7 +3,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Col, Dropdown, Input, Menu, MenuItem, Pagination, Popconfirm, Row, Select, Space, Table, Tag, Form, FormItem, message } from 'ant-design-vue';
-import { Inbox, Copy, LockKeyhole, Plus, Check, Trash2, Ellipsis } from '@vben/icons';
+import { Inbox, Copy, LockKeyhole, Plus, Check } from '@vben/icons';
 
 const selectedTenant = ref<string>();
 const pageSize = ref(10);

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, DatePicker, Pagination, Select, Space, Table, Tag } from 'ant-design-vue';
-import { BookOpenText, Download, Inbox, Check, UserRoundPen } from '@vben/icons';
+import { Download } from '@vben/icons';
 
 const selectedTenant = ref<string>();
 const selectedUser = ref<string>();

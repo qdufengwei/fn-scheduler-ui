@@ -3,7 +3,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Form, FormItem, InputNumber, Pagination, Space, Table, message } from 'ant-design-vue';
-import { Download, Inbox, Settings, UserRoundPen } from '@vben/icons';
+import { Download, Inbox, Settings } from '@vben/icons';
 
 const pageSize = ref(10);
 const currentPage = ref(1);

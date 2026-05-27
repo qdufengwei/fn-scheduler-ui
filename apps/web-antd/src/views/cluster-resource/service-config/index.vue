@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, Divider, Form, FormItem, Input, InputNumber, Row, Select, Space, Switch, message } from 'ant-design-vue';
-import { Settings as SettingsIcon, CircleAlert, Grid, List, Download, RotateCw } from '@vben/icons';
+import { Button, Card, Col, Divider, Form, FormItem, Input, InputNumber, Row, Switch, message } from 'ant-design-vue';
+import { Settings as SettingsIcon } from '@vben/icons';
 
 const config = ref({
   memoryLimit: 150,

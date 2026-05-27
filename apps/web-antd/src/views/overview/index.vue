@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, DatePicker, Progress, Row, Select, Space, Statistic, Tag } from 'ant-design-vue';
-import { ArrowRight, BookOpenText, CircleAlert, Download, Grid, Inbox, Info, LayoutGrid, LockKeyhole, Plus, RotateCw, Search, Settings, Shrink } from '@vben/icons';
+import { Button, Card, Col, Progress, Row, Select } from 'ant-design-vue';
+import { ArrowRight, BookOpenText, CircleAlert, Grid, Inbox, LayoutGrid, Settings } from '@vben/icons';
 
 const billingCycle = ref('day');
 const taskStats = ref({

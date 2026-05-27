@@ -2,16 +2,7 @@
 import { useVbenDrawer } from '@vben/common-ui';
 import { Button, Checkbox, DatePicker, Dropdown, Form, FormItem, Input, Menu, Modal, Pagination, Popconfirm, Radio, Select, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref, computed } from 'vue';
-import {
-  Plus,
-  Trash2,
-  Copy,
-  Ellipsis,
-  Info,
-  LockKeyhole,
-  Check,
-  Inbox
-} from '@vben/icons';
+import { Plus, Trash2, Copy, Info, LockKeyhole, Check, Inbox } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 

@@ -3,7 +3,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
 import {
   Button, Divider, Form, FormItem, Input, Pagination, Popconfirm, Progress, Segmented, Space, Table, Tag, message,  } from 'ant-design-vue';
-import { Download, Plus, Search, Trash2 } from '@vben/icons';
+import { Plus, Search, Trash2 } from '@vben/icons';
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
 const ownership = ref('all');

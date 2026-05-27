@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, Card, Col, DatePicker, Progress, Row, Select, Space, Table, Tag } from 'ant-design-vue';
-import { Inbox, Download, Grid, List, CircleAlert, Settings } from '@vben/icons';
+import { Inbox, Download, Grid, List, Settings } from '@vben/icons';
 
 const taskType = ref<string>();
 const taskName = ref('test');

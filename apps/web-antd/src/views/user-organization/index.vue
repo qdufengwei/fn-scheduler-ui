@@ -33,6 +33,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 </script>
 
 <template>
+  <div>
   <ListPageLayout>
     <template #filters>
       <div class="flex flex-wrap items-center gap-4">
@@ -125,4 +126,6 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       </Space>
     </template>
   </CreateDrawer>
+
+  </div>
 </template>
