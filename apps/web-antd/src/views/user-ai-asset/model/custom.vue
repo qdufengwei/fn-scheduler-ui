@@ -304,7 +304,6 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
                 新建版本
               </Button>
               <Button type="link" size="small" @click="handleExport(record)">
-                <Download class="size-3 mr-0.5" />
                 导出
               </Button>
               <Popconfirm

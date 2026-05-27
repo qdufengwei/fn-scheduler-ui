@@ -94,7 +94,6 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
                 <template v-if="column.dataIndex === 'action'">
                   <Space>
                     <Button type="link" size="small" @click="notify(`编辑租户 ${record.tenant}`)">
-                      <UserRoundPen class="size-3 mr-1" />
                       编辑
                     </Button>
                     <Popconfirm title="确认删除该租户？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除租户 ${record.tenant}`)">

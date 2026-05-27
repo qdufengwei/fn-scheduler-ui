@@ -37,7 +37,7 @@ const rows = ref([
             <Tag :color="record.status === '运行中' ? 'success' : 'default'">{{ record.status }}</Tag>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
-            <Space :size="0"><a>进入</a><a>停止</a><a>删除</a></Space>
+            <Space :size="0"><a>进入</a><a>停止</a><a class="text-red-500">删除</a></Space>
           </template>
         </template>
       </Table>

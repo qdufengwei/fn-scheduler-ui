@@ -160,16 +160,13 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
                 <Button type="link" size="small" @click="notify(`编辑 ${record.name}`)">编辑</Button>
                 <Dropdown>
                   <Button type="link" size="small" class="p-0">
-                    <Ellipsis class="size-4" />
+                    更多
                   </Button>
                   <template #overlay>
                     <Menu>
                       <MenuItem>
                         <Popconfirm title="确认删除该API KEY？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除 ${record.name}`)">
-                          <a class="text-red-500 flex items-center gap-1">
-                            <Trash2 class="size-3" />
-                            删除
-                          </a>
+                          <a class="text-red-500">删除</a>
                         </Popconfirm>
                       </MenuItem>
                     </Menu>

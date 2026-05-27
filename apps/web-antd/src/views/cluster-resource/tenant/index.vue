@@ -135,7 +135,6 @@ const notify = (text: string) => message.success(text);
             <template v-if="column.dataIndex === 'action'">
               <Space>
                 <Button type="link" size="small" @click="notify(`缩减资源 ${record.tenant}`)">
-                  <Shrink class="size-3 mr-1" />
                   缩减资源
                 </Button>
                 <Popconfirm
@@ -145,7 +144,6 @@ const notify = (text: string) => message.success(text);
                   @confirm="notify(`释放资源 ${record.tenant}`)"
                 >
                   <Button type="link" size="small" danger>
-                    <ArrowDownToLine class="size-3 mr-1" />
                     释放资源
                   </Button>
                 </Popconfirm>

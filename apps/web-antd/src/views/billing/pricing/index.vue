@@ -77,7 +77,6 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             </template>
             <template v-if="column.dataIndex === 'action'">
               <Button type="link" size="small" @click="openEdit(record)">
-                <UserRoundPen class="size-3 mr-1" />
                 编辑
               </Button>
             </template>

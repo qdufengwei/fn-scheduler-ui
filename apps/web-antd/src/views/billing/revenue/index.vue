@@ -124,7 +124,6 @@ const dataSource = ref([
             </template>
             <template v-if="column.dataIndex === 'action'">
               <Button type="link" size="small">
-                <Eye class="size-3 mr-1" />
                 查看详情
               </Button>
             </template>

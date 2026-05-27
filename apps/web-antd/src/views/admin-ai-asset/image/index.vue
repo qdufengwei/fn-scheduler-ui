@@ -39,7 +39,7 @@ const notify = (text: string) => message.info(text);
       ]">
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'status'"><Tag :color="record.status === '稳定' ? 'success' : 'warning'">{{ record.status }}</Tag></template>
-          <template v-else-if="column.dataIndex === 'action'"><Space><a @click="notify(`查看镜像 ${record.image}`)">详情</a><a @click="notify(`删除镜像 ${record.image}`)">删除</a></Space></template>
+          <template v-else-if="column.dataIndex === 'action'"><Space><a @click="notify(`查看镜像 ${record.image}`)">详情</a><a class="text-red-500" @click="notify(`删除镜像 ${record.image}`)">删除</a></Space></template>
         </template>
       </Table>
   </ListPageLayout>
