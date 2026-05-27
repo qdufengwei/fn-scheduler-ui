@@ -105,6 +105,69 @@ pnpm check:type
 pnpm lint
 ```
 
+## Project Positioning
+
+This is a **frontend prototype project**. It does not call backend APIs. All page data should be written in mock data files under `src/mock/` directory, and page components should import mock data directly.
+
+## UI Guidelines
+
+Follow Vben Admin Antd UI design standards:
+- Use existing project component libraries and icon systems (`@vben/icons`, `@vben/common-ui`)
+- Reference existing page layouts and styles in the project
+- Maintain consistency with Vben Admin framework component styles and interaction patterns
+
+## Reference System Page Observation Checklist
+
+When viewing pages from the reference system (e.g., https://aicloud.infrawaves.com/), check each item in this list:
+
+### 1. Page Structure Type
+- Is it a table-centric page (contains table, filters, toolbar, etc.)
+- Are there additional elements (stats cards, explanatory text, other blocks)
+- **Special rule: If not a table-centric page or page logic is complex → record page path and description, handle separately**
+
+### 2. Page Menu Structure
+- Menu levels (second/third level menus)
+- Tabs levels and names
+- **See main tabs group → split into second-level pages**
+- **See sub tabs group → split into third-level pages**
+
+### 3. Filter Conditions
+- Filter area position and layout
+- Filter item types (dropdown/input)
+- Filter item placeholder text
+- Batch action buttons (presence, disabled state)
+- Refresh button
+- **See filter conditions → add filter components to corresponding page**
+
+### 4. List Fields (Table Headers)
+- All column names
+- Column order
+- Which columns have filter icons
+- Which columns have sort icons
+- Filter dropdown content (option list, buttons)
+- Data display format (e.g., name/ID two-line display, Tag style, status color)
+- **See list fields → display corresponding fields in page table**
+- **See filter icon → add corresponding filter condition**
+
+### 5. Action Button Logic (observe only, do not interact)
+- Toolbar button click behavior (modal/navigation/toast)
+- Toolbar button click content (modal title, form fields, buttons, etc.)
+- Action column button click behavior
+- Action column button click content
+- Is there secondary confirmation (Popconfirm)
+- **See action buttons → record button name and interaction method (for implementing corresponding functionality)**
+
+### 6. Pagination
+- Pagination component configuration
+- Per-page options
+- **See pagination config → configure corresponding page pagination component**
+
+### 7. Additional Elements
+- Stats cards
+- Explanatory text
+- Other non-table blocks
+- **See additional elements → add corresponding components to page**
+
 ## Reference System
 
 Use this platform as the primary reference target for interaction and page behavior:

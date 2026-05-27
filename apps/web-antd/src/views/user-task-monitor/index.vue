@@ -1,68 +1,360 @@
 <script setup lang="ts">
-import { Button, Card, DatePicker, Select, Space, Switch, Table } from 'ant-design-vue';
-import { ref } from 'vue';
+import type { Dayjs } from 'dayjs';
 
-const metric = ref('avg');
-const refresh = ref(40);
-const taskType = ref('训练任务');
-const taskName = ref('测试1');
-const view = ref('card');
-const quickRange = ref('1h');
-const autoRefresh = ref(true);
-const metrics = [
-  'GPU功率', 'GPU温度', 'NVLink带宽', 'NVLink传输字节数', 'NVLink接收字节数', 'GPU利用率',
-  'GPU显存利用率', 'GPU SM利用率', 'GPU显存使用量', 'GPU Tensor Core利用率', 'CPU使用量', '内存使用量',
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+
+import { IconifyIcon } from '@vben/icons';
+
+import { Button, Card, DatePicker, Select, Space, Tag, Tooltip, message } from 'ant-design-vue';
+import dayjs from 'dayjs';
+
+import MetricChart from '../resource/monitor/components/MetricChart.vue';
+
+interface MetricItem {
+  key: string;
+  points: number[];
+  title: string;
+  unit: string;
+}
+
+interface TaskItem {
+  id: string;
+  name: string;
+  runTime: string;
+  status: '排队中' | '运行中' | '已停止';
+  type: string;
+}
+
+const RangePicker = DatePicker.RangePicker;
+
+const tasks: TaskItem[] = [
+  { id: 'user-train-test1', name: '测试1', runTime: '7h 18m 26s', status: '运行中', type: '训练任务' },
+  { id: 'user-devbox-a10', name: '开发机-a10', runTime: '2h 06m 11s', status: '运行中', type: '开发机' },
+  { id: 'user-finetune-demo', name: '微调任务-demo', runTime: '0h 42m 08s', status: '排队中', type: '模型微调' },
 ];
+
+const metrics: MetricItem[] = [
+  { key: 'cpu', title: 'CPU使用量', unit: '%', points: [8, 12, 15, 18, 17, 22, 24] },
+  { key: 'memory', title: '内存使用量', unit: 'GB', points: [10, 10.4, 10.9, 11.2, 11.8, 12.1, 12] },
+  { key: 'gpu', title: 'GPU利用率', unit: '%', points: [42, 48, 51, 57, 55, 60, 64] },
+  { key: 'gpuMemory', title: 'GPU显存使用量', unit: 'GB', points: [16, 17, 17.4, 18.1, 18.5, 19, 19.2] },
+  { key: 'networkIn', title: '网络入流量', unit: 'MB/s', points: [34, 39, 42, 37, 45, 48, 46] },
+  { key: 'networkOut', title: '网络出流量', unit: 'MB/s', points: [22, 24, 23, 27, 31, 29, 32] },
+  { key: 'diskRead', title: '磁盘读取', unit: 'MB/s', points: [72, 76, 80, 84, 82, 88, 91] },
+  { key: 'diskWrite', title: '磁盘写入', unit: 'MB/s', points: [38, 40, 43, 41, 46, 49, 48] },
+  { key: 'gpuTemp', title: 'GPU温度', unit: '℃', points: [52, 54, 55, 57, 56, 58, 59] },
+];
+
+const taskType = ref(tasks[0]?.type);
+const taskId = ref(tasks[0]?.id);
+const aggregation = ref<'avg' | 'max' | 'median' | 'min' | 'raw'>('avg');
+const autoRefresh = ref(40);
+const viewMode = ref<'large' | 'small'>('small');
+const timeRange = ref<[Dayjs, Dayjs]>([dayjs().subtract(1, 'hour'), dayjs()]);
+let refreshTimer: null | ReturnType<typeof setInterval> = null;
+
+const aggregationOptions = [
+  { label: '原始值', value: 'raw' },
+  { label: '平均值', value: 'avg' },
+  { label: '中位数', value: 'median' },
+  { label: '最大值', value: 'max' },
+  { label: '最小值', value: 'min' },
+];
+
+const refreshOptions = [
+  { label: '关闭', value: 0 },
+  { label: '10s', value: 10 },
+  { label: '30s', value: 30 },
+  { label: '40s', value: 40 },
+  { label: '60s', value: 60 },
+  { label: '120s', value: 120 },
+];
+
+const taskTypeOptions = computed(() =>
+  Array.from(new Set(tasks.map((task) => task.type))).map((type) => ({
+    label: type,
+    value: type,
+  })),
+);
+
+const taskNameOptions = computed(() =>
+  tasks
+    .filter((task) => !taskType.value || task.type === taskType.value)
+    .map((task) => ({
+      label: task.name,
+      value: task.id,
+    })),
+);
+
+const currentTask = computed<TaskItem>(() => tasks.find((task) => task.id === taskId.value) ?? tasks[0]!);
+const metricGridClass = computed(() => (viewMode.value === 'small' ? 'user-task-monitor__metrics--small' : 'user-task-monitor__metrics--large'));
+
+function toMetricChartData(metric: MetricItem) {
+  return {
+    data: metric.points.map((value, index) => ({
+      timestamp: dayjs()
+        .subtract(metric.points.length - index - 1, 'minute')
+        .toISOString(),
+      value,
+    })),
+    metricKey: metric.key,
+    nodeId: 1,
+    nodeName: currentTask.value.name,
+    unit: metric.unit,
+  };
+}
+
+function resetAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  if (autoRefresh.value > 0) {
+    refreshTimer = setInterval(() => {}, autoRefresh.value * 1000);
+  }
+}
+
+function onDownloadReport() {
+  message.success(`正在按${aggregationOptions.find((item) => item.value === aggregation.value)?.label}生成报表`);
+}
+
+watch(taskType, () => {
+  taskId.value = taskNameOptions.value[0]?.value;
+});
+
+watch(autoRefresh, resetAutoRefresh, { immediate: true });
+
+onBeforeUnmount(() => {
+  if (refreshTimer) clearInterval(refreshTimer);
+});
 </script>
 
 <template>
-  <div class="min-h-full bg-gray-50 p-4">
-    <Card class="mb-4">
-      <div class="flex items-center justify-between mb-3">
-        <div>
-          <div class="font-semibold">任务名称：{{ taskName }}</div>
-          <div class="text-xs text-gray-500">状态：排队中 · 已运行：0h 0m 0s</div>
+  <div class="user-task-monitor">
+    <Card :bordered="false" class="user-task-monitor__panel">
+      <section class="user-task-monitor__top">
+        <div class="user-task-monitor__summary">
+          <div class="user-task-monitor__title-row">
+            <span class="user-task-monitor__name">{{ currentTask.name }}</span>
+            <Tag :color="currentTask.status === '运行中' ? 'success' : currentTask.status === '排队中' ? 'warning' : 'default'">
+              {{ currentTask.status }}
+            </Tag>
+            <Tag>{{ currentTask.type }}</Tag>
+            <span class="user-task-monitor__runtime">
+              <IconifyIcon icon="lucide:clock-3" class="size-4" />
+              <span>已运行: {{ currentTask.runTime }}</span>
+            </span>
+          </div>
         </div>
-        <Button disabled>报表下载</Button>
-      </div>
-      <Space wrap>
-        <span>切换任务</span>
-        <Select v-model:value="taskType" style="width: 130px" :options="[{ label: '训练任务', value: '训练任务' }, { label: '开发机', value: '开发机' }]" />
-        <Select v-model:value="taskName" style="width: 140px" :options="[{ label: '测试1', value: '测试1' }, { label: '测试2', value: '测试2' }]" />
-        <Select v-model:value="metric" style="width: 100px" :options="[{ label: '平均值', value: 'avg' }]" />
-        <Switch v-model:checked="autoRefresh" />
-        <Select v-model:value="refresh" style="width: 90px" :options="[10,30,40,60].map((v)=>({label:`${v}s`,value:v}))" />
-        <DatePicker.RangePicker />
-      </Space>
-      <Space class="mt-3">
-        <Button :type="quickRange === '1h' ? 'primary' : 'default'" size="small" @click="quickRange='1h'">近一小时</Button>
-        <Button :type="quickRange === '3h' ? 'primary' : 'default'" size="small" @click="quickRange='3h'">近三小时</Button>
-        <Button :type="quickRange === '6h' ? 'primary' : 'default'" size="small" @click="quickRange='6h'">近六小时</Button>
-        <Button :type="quickRange === '1d' ? 'primary' : 'default'" size="small" @click="quickRange='1d'">近一天</Button>
-        <Button :type="quickRange === '3d' ? 'primary' : 'default'" size="small" @click="quickRange='3d'">近三天</Button>
-      </Space>
-      <Space class="mt-3">
-        <Button :type="view === 'card' ? 'primary' : 'default'" size="small" @click="view='card'">卡片视图</Button>
-        <Button :type="view === 'list' ? 'primary' : 'default'" size="small" @click="view='list'">列表视图</Button>
-      </Space>
+        <div class="user-task-monitor__task-switch">
+          <span class="user-task-monitor__label">切换任务</span>
+          <Select v-model:value="taskType" class="user-task-monitor__select" :options="taskTypeOptions" />
+          <Select v-model:value="taskId" class="user-task-monitor__name-select" :options="taskNameOptions" />
+        </div>
+      </section>
     </Card>
 
-    <Card v-if="view === 'card'" title="指标卡片">
-      <div class="grid grid-cols-3 gap-3">
-        <Card v-for="item in metrics" :key="item" size="small">
-          <div class="text-xs text-gray-500">{{ item }}</div>
-          <div class="mt-2 text-sm font-semibold">当前值：--</div>
-          <div class="mt-2 h-10 rounded bg-blue-50" />
-        </Card>
-      </div>
+    <Card :bordered="false" class="user-task-monitor__panel">
+      <section class="user-task-monitor__filters">
+        <div class="user-task-monitor__filter-left">
+          <Space>
+            <span class="user-task-monitor__label">筛选条件</span>
+            <Select v-model:value="aggregation" class="user-task-monitor__short-select" :options="aggregationOptions" />
+          </Space>
+          <Space>
+            <span class="user-task-monitor__label">自动刷新</span>
+            <Select v-model:value="autoRefresh" class="user-task-monitor__short-select" :options="refreshOptions" />
+          </Space>
+          <Space>
+            <span class="user-task-monitor__label">时间范围</span>
+            <RangePicker v-model:value="timeRange" class="user-task-monitor__range" />
+          </Space>
+          <Button type="primary" @click="onDownloadReport">
+            <template #icon><IconifyIcon icon="lucide:download" class="size-4" /></template>
+            报表下载
+          </Button>
+        </div>
+        <Space align="center" class="user-task-monitor__view-switch">
+          <span class="user-task-monitor__label">展示方式</span>
+          <Tooltip title="小卡片">
+            <Button :type="viewMode === 'small' ? 'primary' : 'default'" @click="viewMode = 'small'">
+              <template #icon><IconifyIcon icon="lucide:layout-grid" class="size-4" /></template>
+            </Button>
+          </Tooltip>
+          <Tooltip title="大卡片">
+            <Button :type="viewMode === 'large' ? 'primary' : 'default'" @click="viewMode = 'large'">
+              <template #icon><IconifyIcon icon="lucide:list" class="size-4" /></template>
+            </Button>
+          </Tooltip>
+        </Space>
+      </section>
     </Card>
-    <Card v-else title="指标列表">
-      <Table
-        row-key="name"
-        :data-source="metrics.map((m)=>({name:m,value:'--',trend:'--'}))"
-        :columns="[{title:'指标',dataIndex:'name'},{title:'当前值',dataIndex:'value'},{title:'趋势',dataIndex:'trend'}]"
-        :pagination="false"
-      />
-    </Card>
+
+    <section class="user-task-monitor__metrics" :class="metricGridClass">
+      <MetricChart v-for="metric in metrics" :key="metric.key" :data="toMetricChartData(metric)" :metric-key="metric.key" :size="viewMode" :title="metric.title" />
+    </section>
   </div>
 </template>
+
+<style scoped>
+.user-task-monitor {
+  min-height: 100%;
+  padding: 12px;
+  background:
+    radial-gradient(circle at 92% -10%, rgb(214 225 255 / 72%), transparent 24%),
+    linear-gradient(180deg, #f5f9ff 0%, #eef4fb 100%);
+}
+
+.user-task-monitor__panel {
+  margin-bottom: 12px;
+  border: 1px solid #edf1f7;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
+
+:global(.user-task-monitor__panel > .ant-card-body) {
+  padding: 0;
+}
+
+.user-task-monitor__top,
+.user-task-monitor__filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.user-task-monitor__top {
+  padding: 20px 28px;
+}
+
+.user-task-monitor__filters {
+  flex-wrap: wrap;
+  padding: 16px 28px;
+}
+
+.user-task-monitor__summary,
+.user-task-monitor__title-row,
+.user-task-monitor__runtime,
+.user-task-monitor__task-switch,
+.user-task-monitor__filter-left,
+.user-task-monitor__filter-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-task-monitor__summary {
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+  gap: 16px;
+}
+
+.user-task-monitor__title-row,
+.user-task-monitor__task-switch,
+.user-task-monitor__filter-left {
+  min-width: 0;
+  gap: 10px;
+}
+
+.user-task-monitor__name {
+  overflow: hidden;
+  color: #1f2329;
+  font-size: 22px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-task-monitor__runtime {
+  flex-shrink: 0;
+  gap: 6px;
+  color: #4e5969;
+  font-size: 13px;
+}
+
+.user-task-monitor__task-switch,
+.user-task-monitor__filter-right {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.user-task-monitor__filter-left {
+  flex-wrap: wrap;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+}
+
+.user-task-monitor__view-switch {
+  flex-shrink: 0;
+}
+
+.user-task-monitor__label {
+  color: #6b7280;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.user-task-monitor__select {
+  width: 132px;
+}
+
+.user-task-monitor__name-select {
+  width: 220px;
+}
+
+.user-task-monitor__short-select {
+  width: 100px;
+}
+
+.user-task-monitor__range {
+  width: 280px;
+}
+
+.user-task-monitor__metrics {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.user-task-monitor__metrics--small {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.user-task-monitor__metrics--large {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 1200px) {
+  .user-task-monitor__metrics--small {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .user-task-monitor__top,
+  .user-task-monitor__summary,
+  .user-task-monitor__task-switch,
+  .user-task-monitor__filter-left,
+  .user-task-monitor__filter-right,
+  .user-task-monitor__view-switch {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .user-task-monitor__filters,
+  .user-task-monitor__filter-right {
+    justify-content: flex-start;
+  }
+
+  .user-task-monitor__select,
+  .user-task-monitor__name-select,
+  .user-task-monitor__short-select,
+  .user-task-monitor__range {
+    width: 100%;
+  }
+
+  .user-task-monitor__metrics--small {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
