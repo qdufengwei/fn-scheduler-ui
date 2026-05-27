@@ -2,7 +2,7 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { BasicOption } from '@vben/types';
 
-import { computed, markRaw } from 'vue';
+import { computed, markRaw, onMounted } from 'vue';
 
 import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
 
@@ -27,6 +27,10 @@ const PASSWORD_MAP: Record<string, string> = {
   admin: 'infrawaves',
   test01: '1qaz@WSX1234',
 };
+
+// 清除记住的用户名缓存，避免与默认选项不一致
+const REMEMBER_ME_KEY = `REMEMBER_ME_USERNAME_${location.hostname}`;
+localStorage.removeItem(REMEMBER_ME_KEY);
 
 const formSchema = computed((): VbenFormSchema[] => {
   return [
