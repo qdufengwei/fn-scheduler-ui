@@ -166,6 +166,13 @@ const openDistribution = (r: NodeRow) => {
   distributionDrawerApi.open();
 };
 
+const handleDistributionClick = () => {
+  const node = filteredRows.value.length > 0 ? filteredRows.value[0] : (rows.value.length > 0 ? rows.value[0] : null);
+  if (node) {
+    openDistribution(node);
+  }
+};
+
 const submitDistribution = () => {
   const node = rows.value.find((n) => n.id === distributionForm.value.nodeId);
   if (!node) return;
@@ -179,6 +186,13 @@ const openMaintenance = (r: NodeRow) => {
   currentNode.value = r;
   maintenanceAction.value = r.status === '维护中' ? '恢复' : '排空';
   maintenanceDrawerApi.open();
+};
+
+const handleMaintenanceClick = () => {
+  const node = filteredRows.value.length > 0 ? filteredRows.value[0] : (rows.value.length > 0 ? rows.value[0] : null);
+  if (node) {
+    openMaintenance(node);
+  }
 };
 
 const confirmMaintenance = () => {
@@ -306,10 +320,10 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
     <Card>
       <div class="mb-3 flex items-center justify-between">
         <Space wrap>
-          <Button type="primary" @click="openDistribution(filteredRows[0] || rows[0])">资源分配</Button>
+          <Button type="primary" @click="handleDistributionClick">资源分配</Button>
           <Button @click="batchOnline">批量上架</Button>
           <Button @click="batchOffline">批量下架</Button>
-          <Button @click="maintenanceDrawerApi.open(); maintenanceAction = '排空'; currentNode = filteredRows[0] || rows[0]">维护</Button>
+          <Button @click="handleMaintenanceClick">维护</Button>
         </Space>
       </div>
       <Table
@@ -317,34 +331,34 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
         :columns="columns"
         :data-source="filteredRows"
         :loading="loading"
-        :row-selection="{ selectedRowKeys, onChange: (keys: number[]) => (selectedRowKeys = keys) }"
+        :row-selection="{ selectedRowKeys, onChange: (keys: any[]) => (selectedRowKeys = keys as number[]) }"
         :pagination="{ pageSize: 10, showSizeChanger: true }"
         :scroll="{ x: 2200 }"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'allocatedGpu'">{{ record.allocatedGpu }} 卡</template>
+          <template v-if="column.key === 'allocatedGpu'">{{ (record as NodeRow).allocatedGpu }} 卡</template>
           <template v-else-if="column.key === 'allocationType'">
-            <Tag :color="allocationTagColor(record.allocationType)">{{ record.allocationType }}</Tag>
+            <Tag :color="allocationTagColor((record as NodeRow).allocationType)">{{ (record as NodeRow).allocationType }}</Tag>
           </template>
           <template v-else-if="column.key === 'status'">
-            <Tag :color="statusColor[record.status]">{{ record.status }}</Tag>
+            <Tag :color="statusColor[(record as NodeRow).status]">{{ (record as NodeRow).status }}</Tag>
           </template>
-          <template v-else-if="column.key === 'isOnline'">{{ record.isOnline ? '是' : '否' }}</template>
-          <template v-else-if="column.key === 'price'">¥{{ Number(record.price || 0).toFixed(2) }} / 时</template>
+          <template v-else-if="column.key === 'isOnline'">{{ (record as NodeRow).isOnline ? '是' : '否' }}</template>
+          <template v-else-if="column.key === 'price'">¥{{ Number((record as NodeRow).price || 0).toFixed(2) }} / 时</template>
           <template v-else-if="column.key === 'action'">
             <Space :size="0">
-              <Button type="link" size="small" :disabled="record.isOnline || record.status !== '就绪'" @click="onShelf(record)">上架</Button>
-              <Popconfirm title="下架后该节点将无法被分配，确认下架吗？" @confirm="offShelf(record)">
-                <Button type="link" size="small" :disabled="!record.isOnline">下架</Button>
+              <Button type="link" size="small" :disabled="(record as NodeRow).isOnline || (record as NodeRow).status !== '就绪'" @click="onShelf(record as NodeRow)">上架</Button>
+              <Popconfirm title="下架后该节点将无法被分配，确认下架吗？" @confirm="offShelf(record as NodeRow)">
+                <Button type="link" size="small" :disabled="!(record as NodeRow).isOnline">下架</Button>
               </Popconfirm>
               <Dropdown trigger="click">
                 <Button type="link" size="small">...</Button>
                 <template #overlay>
-                  <Menu @click="({ key }) => onMoreAction(record, String(key))">
-                    <Menu.Item key="distribute" :disabled="!canDistribute(record)">资源分配</Menu.Item>
+                  <Menu @click="({ key }) => onMoreAction(record as NodeRow, String(key))">
+                    <Menu.Item key="distribute" :disabled="!canDistribute(record as NodeRow)">资源分配</Menu.Item>
                     <Menu.Item key="maintain">维护</Menu.Item>
-                    <Menu.Item key="migConfig" :disabled="!canConfigMig(record)">MIG配置</Menu.Item>
-                    <Menu.Item key="migClose" :disabled="!canCloseMig(record)">关闭MIG</Menu.Item>
+                    <Menu.Item key="migConfig" :disabled="!canConfigMig(record as NodeRow)">MIG配置</Menu.Item>
+                    <Menu.Item key="migClose" :disabled="!canCloseMig(record as NodeRow)">关闭MIG</Menu.Item>
                     <Menu.Item key="release">资源释放</Menu.Item>
                   </Menu>
                 </template>
