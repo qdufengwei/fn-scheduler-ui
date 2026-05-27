@@ -48,6 +48,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       component: 'VbenInput',
       componentProps: {
         placeholder: '请输入用户名',
+        disabled: true,
       },
       dependencies: {
         trigger(values, form) {
@@ -67,23 +68,36 @@ const formSchema = computed((): VbenFormSchema[] => {
       },
       fieldName: 'username',
       label: '用户名',
-      rules: z.string().min(1, { message: '请输入用户名' }),
+      rules: z.string().min(1, { message: '请输入用户名' }).default('admin'),
     },
     {
       component: 'VbenInputPassword',
       componentProps: {
         placeholder: '请输入密码',
+        disabled: true,
+      },
+      dependencies: {
+        trigger(values, form) {
+          if (values.selectAccount) {
+            const findUser = MOCK_USER_OPTIONS.find(
+              (item) => item.value === values.selectAccount,
+            );
+            if (findUser) {
+              form.setValues({
+                password: PASSWORD_MAP[findUser.value] || '',
+              });
+            }
+          }
+        },
+        triggerFields: ['selectAccount'],
       },
       fieldName: 'password',
       label: '密码',
-      rules: z.string().min(1, { message: '请输入密码' }),
+      rules: z.string().min(1, { message: '请输入密码' }).default('infrawaves'),
     },
     {
       component: markRaw(SliderCaptcha),
       fieldName: 'captcha',
-      rules: z.boolean().refine((value) => value, {
-        message: '请先完成验证',
-      }),
     },
   ];
 });
