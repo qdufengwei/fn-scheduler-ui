@@ -1,63 +1,148 @@
 <script setup lang="ts">
-import { Button, Card, Input, Popconfirm, Segmented, Space, Table, Tag, message } from 'ant-design-vue';
+import { Button, Input, Pagination, Popconfirm, Segmented, Space, Table, Tag, message } from 'ant-design-vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { Plus, RotateCw } from '@vben/icons';
+
+import ListPageLayout from '#/components/business/list-page-layout.vue';
 
 const router = useRouter();
 const ownership = ref('all');
 const keyword = ref('');
-const rowSelection = ref<number[]>([]);
+const rowSelection = ref<string[]>([]);
+const currentPage = ref(1);
+const pageSize = ref(10);
+
 const rows = ref([
-  { id: 'TR-001', name: 'llm-pretrain-v3', type: '分布式训练', status: '运行中', ready: 'Ready', duration: '3h 21m', created: '2026-05-26 09:20', instances: 8, priority: '高', recycle: '保留', gpu: 16, spec: 'H100', user: 'test01' },
-  { id: 'TR-002', name: 'moe-stage2', type: '单机训练', status: '排队中', ready: 'NotReady', duration: '-', created: '2026-05-26 11:10', instances: 1, priority: '中', recycle: '删除', gpu: 2, spec: 'A800', user: 'test01' },
+  { id: 'TR-001', name: 'llm-pretrain-v3', model: 'Qwen2-72B', status: '运行中', progress: 67, duration: '12h 30m', created: '2026-05-26 08:00', instances: 4, gpu: 32, spec: 'A800' },
+  { id: 'TR-002', name: 'cv-foundation', model: 'ViT-Large', status: '排队中', progress: 0, duration: '-', created: '2026-05-27 09:30', instances: 2, gpu: 16, spec: 'A100' },
+  { id: 'TR-003', name: 'speech-asr', model: 'Whisper-Large', status: '成功', progress: 100, duration: '8h 15m', created: '2026-05-24 10:00', instances: 2, gpu: 8, spec: 'A10' },
+  { id: 'TR-004', name: 'nlp-ner', model: 'BERT-Large', status: '失败', progress: 23, duration: '1h 45m', created: '2026-05-23 14:20', instances: 1, gpu: 4, spec: 'A800' },
 ]);
 
 const notify = (text: string) => message.info(text);
+
+const filteredRows = () => {
+  return rows.value.filter((r) => {
+    if (keyword.value && !`${r.name}${r.id}`.includes(keyword.value)) return false;
+    return true;
+  });
+};
+
+const getStatusColor = (status: string) => {
+  const colorMap: Record<string, string> = {
+    运行中: 'processing',
+    成功: 'success',
+    失败: 'error',
+    排队中: 'default',
+  };
+  return colorMap[status] || 'default';
+};
 </script>
 
 <template>
-  <div class="min-h-full bg-gray-50 p-4">
-    <Card class="mb-4">
-      <Space wrap>
-        <Segmented v-model:value="ownership" :options="[{ label: '全部', value: 'all' }, { label: '我创建的', value: 'mine' }]" />
-        
-        <Input 
-          v-model:value="keyword" 
-          placeholder="支持模糊搜索任务名称/ID" 
-          style="width: 260px" 
+  <ListPageLayout>
+    <template #filters>
+      <div class="flex flex-wrap items-center gap-4">
+        <Segmented
+          v-model:value="ownership"
+          :options="[
+            { label: '全部', value: 'all' },
+            { label: '我创建的', value: 'mine' },
+          ]"
         />
-        
-        <Button type="primary" @click="router.push('/user-task/training/create')">创建任务</Button>
+        <Input
+          v-model:value="keyword"
+          placeholder="支持模糊搜索任务名称/ID"
+          style="width: 260px"
+          allow-clear
+        />
+      </div>
+    </template>
 
-        <Button danger :disabled="rowSelection.length === 0">批量删除</Button>
-        
-        <Button @click="notify('列表已刷新')">刷新</Button>
+    <template #filterActions>
+      <Space>
+        <Button type="primary">筛选</Button>
+        <Button @click="(keyword = ''); ownership = 'all'">重置</Button>
       </Space>
-    </Card>
-    <Card title="训练任务列表">
-      <Table
-        row-key="id"
-        :row-selection="{ selectedRowKeys: rowSelection, onChange: (keys: any[]) => (rowSelection = keys) }"
-        :data-source="rows.filter((r) => (ownership === 'all' || r.user === 'test01') && (!keyword || `${r.name}${r.id}`.includes(keyword)))"
-        :columns="[
-        { title: '名称/ID', dataIndex: 'name' }, { title: '任务类型', dataIndex: 'type' }, { title: '状态', dataIndex: 'status' },
-        { title: '就绪状态', dataIndex: 'ready' }, { title: '运行时长', dataIndex: 'duration' }, { title: '创建时间', dataIndex: 'created' },
-        { title: '实例数量', dataIndex: 'instances' }, { title: '任务优先级', dataIndex: 'priority' }, { title: '回收策略', dataIndex: 'recycle' },
-        { title: 'GPU数量', dataIndex: 'gpu' }, { title: '资源规格', dataIndex: 'spec' }, { title: '用户', dataIndex: 'user' }, { title: '操作', dataIndex: 'action' },
-      ]">
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'status'">
-            <Tag :color="record.status === '运行中' ? 'processing' : 'default'">{{ record.status }}</Tag>
-          </template>
-          <template v-else-if="column.dataIndex === 'action'">
-            <Space>
-              <a @click="notify(`查看任务 ${record.id}`)">详情</a>
-              <a :class="{ 'pointer-events-none text-gray-300': record.status !== '运行中' }" @click="record.status === '运行中' && notify(`停止任务 ${record.id}`)">停止</a>
-              <Popconfirm title="确认删除该任务？" @confirm="notify(`删除任务 ${record.id}`)"><a class="text-red-500">删除</a></Popconfirm>
-            </Space>
-          </template>
+    </template>
+
+    <template #toolbar>
+      <Button type="primary" @click="router.push('/user-task/training/create')">
+        <template #icon><Plus class="size-4" /></template>
+        创建任务
+      </Button>
+      <Button @click="notify('列表已刷新')">
+        <template #icon><RotateCw class="size-4" /></template>
+        刷新
+      </Button>
+      <Popconfirm
+        title="确认删除选中的任务？"
+        @confirm="notify(`已删除 ${rowSelection.length} 个任务`)"
+      >
+        <Button danger :disabled="rowSelection.length === 0">批量删除</Button>
+      </Popconfirm>
+    </template>
+
+    <Table
+      row-key="id"
+      :row-selection="{
+        selectedRowKeys: rowSelection,
+        onChange: (keys: any[]) => (rowSelection = keys),
+      }"
+      :data-source="filteredRows()"
+      :pagination="false"
+      :columns="[
+        { title: '任务名称', dataIndex: 'name' },
+        { title: '任务ID', dataIndex: 'id' },
+        { title: '状态', dataIndex: 'status' },
+        { title: '模型名称', dataIndex: 'model' },
+        { title: '运行时长', dataIndex: 'duration' },
+        { title: '实例数', dataIndex: 'instances' },
+        { title: 'GPU数', dataIndex: 'gpu' },
+        { title: '资源规格', dataIndex: 'spec' },
+        { title: '创建时间', dataIndex: 'created' },
+        { title: '操作', dataIndex: 'action' },
+      ]"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'name'">
+          <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
         </template>
-      </Table>
-    </Card>
-  </div>
+        <template v-if="column.dataIndex === 'status'">
+          <Tag :color="getStatusColor(record.status)" class="rounded-full">
+            {{ record.status }}
+          </Tag>
+        </template>
+        <template v-if="column.dataIndex === 'action'">
+          <Space :size="12">
+            <a @click="notify(`查看任务 ${record.id}`)">详情</a>
+            <a
+              :class="{ 'pointer-events-none text-gray-300': record.status !== '运行中' }"
+              @click="record.status === '运行中' && notify(`停止任务 ${record.id}`)"
+            >
+              停止
+            </a>
+            <Popconfirm
+              title="确认删除该任务？"
+              @confirm="notify(`删除任务 ${record.id}`)"
+            >
+              <a class="text-red-500">删除</a>
+            </Popconfirm>
+          </Space>
+        </template>
+      </template>
+    </Table>
+
+    <div class="fn-list-pagination flex items-center justify-end">
+      <Pagination
+        v-model:current="currentPage"
+        v-model:pageSize="pageSize"
+        :total="filteredRows().length"
+        :show-size-changer="true"
+        :show-quick-jumper="true"
+        :page-size-options="['10', '20', '50', '100']"
+      />
+    </div>
+  </ListPageLayout>
 </template>
