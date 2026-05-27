@@ -216,9 +216,9 @@ onBeforeUnmount(() => {
 .user-task-monitor__top,
 .user-task-monitor__filters {
   display: flex;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
 }
 
 .user-task-monitor__top {
@@ -243,8 +243,8 @@ onBeforeUnmount(() => {
 .user-task-monitor__summary {
   flex: 1;
   gap: 16px;
-  min-width: 0;
   justify-content: space-between;
+  min-width: 0;
 }
 
 .user-task-monitor__title-row,
@@ -256,10 +256,10 @@ onBeforeUnmount(() => {
 
 .user-task-monitor__name {
   overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 22px;
   font-weight: 700;
   color: #1f2329;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
