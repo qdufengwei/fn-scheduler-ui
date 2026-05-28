@@ -125,8 +125,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 </script>
 
 <template>
-  <div>
-    <ListPageLayout>
+  <ListPageLayout>
       <template #filters>
         <Input
           v-model:value="searchText"
@@ -287,5 +286,4 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
         </Space>
       </template>
     </CreateDrawer>
-  </div>
 </template>

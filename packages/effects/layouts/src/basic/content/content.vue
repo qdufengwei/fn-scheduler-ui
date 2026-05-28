@@ -46,23 +46,25 @@ const showComponent = (route: RouteLocationNormalizedLoadedGeneric) => {
         appear
         mode="out-in"
       >
-        <KeepAlive
-          v-if="keepAlive"
-          :exclude="getExcludeCachedTabs"
-          :include="getCachedTabs"
-        >
+        <div :key="getTabKey(route)" class="h-full w-full">
+          <KeepAlive
+            v-if="keepAlive"
+            :exclude="getExcludeCachedTabs"
+            :include="getCachedTabs"
+          >
+            <component
+              :is="transformComponent(Component, route)"
+              v-if="showComponent(route)"
+              v-show="!route.meta.iframeSrc"
+              :key="getTabKey(route)"
+            />
+          </KeepAlive>
           <component
-            :is="transformComponent(Component, route)"
-            v-if="showComponent(route)"
-            v-show="!route.meta.iframeSrc"
+            :is="Component"
+            v-else-if="showComponent(route)"
             :key="getTabKey(route)"
           />
-        </KeepAlive>
-        <component
-          :is="Component"
-          v-else-if="showComponent(route)"
-          :key="getTabKey(route)"
-        />
+        </div>
       </Transition>
       <template v-else>
         <KeepAlive

@@ -78,8 +78,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 </script>
 
 <template>
-  <div>
-    <ListPageLayout>
+  <ListPageLayout>
     <template #filters>
       <span class="text-lg font-semibold">商品定价</span>
     </template>
@@ -193,7 +192,6 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       </Space>
     </template>
   </CreateDrawer>
-  </div>
 </template>
 
 <style scoped>
