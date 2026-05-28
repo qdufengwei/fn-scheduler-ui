@@ -354,30 +354,30 @@ const detailRowSelection = computed(() => ({
 
       <!-- 基本信息区域 -->
       <Card :bordered="false" class="shadow-sm rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 px-2 py-1 bg-gray-50 rounded-lg border border-gray-100">
-          <div class="flex py-3 border-b border-gray-100 md:border-b-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-1">
+          <div class="flex py-3 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">ID</span>
             <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{ activeRecord.id }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100 md:border-b-0">
+          <div class="flex py-3 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">创建时间</span>
             <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.updateTime }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100 md:border-b-0">
+          <div class="flex py-3 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">创建者</span>
             <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.user }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100 md:border-b-0">
+          <div class="flex py-3 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">租户</span>
             <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.tenant }}</span>
           </div>
-          <div class="flex py-3 md:col-span-2 border-b border-gray-100 md:border-b-0">
+          <div class="flex py-3 md:col-span-2 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">描述</span>
             <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.description }}</span>
           </div>
-          <div class="flex py-3 md:col-span-2">
+          <div class="flex py-3 md:col-span-2 border-b border-gray-100">
             <span class="w-32 text-gray-400 text-sm">失败原因</span>
-            <span class="flex-1 text-sm" :class="activeRecord.status === '失败' ? 'text-red-500 font-medium' : 'text-gray-500'">
+            <span class="flex-1 text-sm font-medium" :class="activeRecord.status === '失败' ? 'text-red-500' : 'text-gray-500'">
               {{ activeRecord.failedReason }}
             </span>
           </div>
