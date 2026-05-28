@@ -67,7 +67,7 @@ withDefaults(
 <style scoped>
 /* Page Layout Wrapper */
 :global(.fn-list-page-content) {
-  padding: 12px !important;
+  padding: 16px !important;
 }
 
 /* Table container styling */

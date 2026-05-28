@@ -6,8 +6,6 @@ import type {
 
 import { ref } from 'vue';
 
-import { Page } from '@vben/common-ui';
-
 import { Button, Input, Radio, Select, Space } from 'ant-design-vue';
 
 import { mockUserDetailRows, mockUserImageRows } from '#/mock/user-image';
@@ -126,11 +124,10 @@ function handleResetFilters() {
 </script>
 
 <template>
-  <Page auto-content-height>
-    <div>
-      <Transition name="fade-slide" mode="out-in">
-        <div v-if="!showDetail" key="list">
-          <ImageList
+  <div class="h-full">
+    <Transition name="fade-slide" mode="out-in">
+      <div v-if="!showDetail" key="list">
+        <ImageList
             :data="paginatedData"
             :selected-row-keys="selectedRowKeys"
             :total="total"
@@ -146,21 +143,28 @@ function handleResetFilters() {
             @update:page-size="pageSize = $event"
           >
             <template #filters>
-              <div class="flex flex-wrap items-center gap-4">
+              <div class="flex flex-wrap items-center gap-3">
                 <Radio.Group v-model:value="imageScope" button-style="solid">
                   <Radio.Button value="public">公共镜像</Radio.Button>
                   <Radio.Button value="private">私有镜像</Radio.Button>
                 </Radio.Group>
-                <Select
-                  v-model:value="project"
-                  class="w-[180px]"
-                  :options="PROJECT_OPTIONS"
-                />
-                <Input
-                  v-model:value="keyword"
-                  placeholder="请输入镜像名称"
-                  class="w-[220px]"
-                />
+                <div class="filter-control">
+                  <span class="filter-label">项目</span>
+                  <Select
+                    v-model:value="project"
+                    class="filter-select"
+                    :options="PROJECT_OPTIONS"
+                  />
+                </div>
+                <div class="filter-control">
+                  <span class="filter-label">镜像名称</span>
+                  <Input
+                    v-model:value="keyword"
+                    allow-clear
+                    class="filter-input"
+                    placeholder="请输入"
+                  />
+                </div>
               </div>
             </template>
 
@@ -195,7 +199,7 @@ function handleResetFilters() {
         @save-import="handleSaveImport"
       />
     </div>
-  </Page>
+  </div>
 </template>
 
 <style scoped>
@@ -212,5 +216,38 @@ function handleResetFilters() {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateX(-20px);
+}
+
+.filter-control {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.filter-label {
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.filter-select {
+  width: 168px;
+}
+
+.filter-input {
+  width: 180px;
+}
+
+@media (max-width: 768px) {
+  .filter-control {
+    width: 100%;
+  }
+
+  .filter-select,
+  .filter-input {
+    width: min(100%, 240px);
+  }
 }
 </style>
