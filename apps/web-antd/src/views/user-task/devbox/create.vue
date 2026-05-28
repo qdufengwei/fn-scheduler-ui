@@ -35,7 +35,7 @@ const form = ref({
 });
 
 const goBack = () => {
-  router.push('/user-task/devbox');
+  router.push('/user-task/latest/devbox');
 };
 </script>
 

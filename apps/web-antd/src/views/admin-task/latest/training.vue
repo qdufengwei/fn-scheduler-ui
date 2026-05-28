@@ -10,11 +10,13 @@ import {
   Tag,
 } from 'ant-design-vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { RotateCw, Search, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
+const router = useRouter();
 const selectedTenant = ref<string>();
 const searchText = ref('');
 const rowSelection = ref<number[]>([]);
@@ -290,7 +292,7 @@ const handleReset = () => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div>
-            <a class="font-medium text-blue-600 hover:text-blue-700">{{
+            <a class="font-medium text-blue-600 hover:text-blue-700" @click="router.push(`/admin-task/latest/detail/${record.taskId}`)">{{
               record.name
             }}</a>
             <div class="text-xs text-gray-400">{{ record.taskId }}</div>
@@ -311,14 +313,17 @@ const handleReset = () => {
           </div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <Popconfirm
-            title="确认删除该任务？"
-            ok-text="确认"
-            cancel-text="取消"
-            @confirm="showNotify(`删除任务 ${record.name}`)"
-          >
-            <a class="text-red-500">删除</a>
-          </Popconfirm>
+          <Space :size="12">
+            <a @click="router.push(`/admin-task/latest/detail/${record.taskId}`)">详情</a>
+            <Popconfirm
+              title="确认删除该任务？"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="showNotify(`删除任务 ${record.name}`)"
+            >
+              <a class="text-red-500">删除</a>
+            </Popconfirm>
+          </Space>
         </template>
       </template>
     </Table>

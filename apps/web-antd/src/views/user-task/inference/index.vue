@@ -110,7 +110,7 @@ const getStatusColor = (status: string) => {
       <template #toolbar>
         <Button
           type="primary"
-          @click="router.push('/user-task/inference/create')"
+          @click="router.push('/user-task/latest/inference/create')"
         >
           <template #icon><Plus class="size-4" /></template>
           创建推理服务

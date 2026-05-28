@@ -24,7 +24,7 @@ const router = useRouter();
 const createForm = ref({ name: '', type: '分布式训练' });
 
 const goBack = () => {
-  router.push('/user-task/training');
+  router.push('/user-task/template');
 };
 </script>
 

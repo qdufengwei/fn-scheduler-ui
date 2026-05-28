@@ -115,7 +115,7 @@ const getStatusColor = (status: string) => {
       <template #toolbar>
         <Button
           type="primary"
-          @click="router.push('/user-task/finetune/create')"
+          @click="router.push('/user-task/latest/finetune/create')"
         >
           <template #icon><Plus class="size-4" /></template>
           创建微调任务

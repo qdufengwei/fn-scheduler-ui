@@ -23,7 +23,7 @@ const router = useRouter();
 const createForm = ref({ name: '' });
 
 const goBack = () => {
-  router.push('/user-task/inference');
+  router.push('/user-task/latest/inference');
 };
 </script>
 

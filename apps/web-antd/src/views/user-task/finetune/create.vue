@@ -22,7 +22,7 @@ const router = useRouter();
 const createForm = ref({ name: '', model: '' });
 
 const goBack = () => {
-  router.push('/user-task/finetune');
+  router.push('/user-task/latest/finetune');
 };
 </script>
 

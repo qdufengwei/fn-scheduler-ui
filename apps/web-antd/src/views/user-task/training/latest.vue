@@ -127,7 +127,7 @@ const getStatusColor = (status: string) => {
     </template>
 
     <template #toolbar>
-      <Button type="primary" @click="router.push('/user-task/training/create')">
+      <Button type="primary" @click="router.push('/user-task/latest/training/create')">
         <template #icon><Plus class="size-4" /></template>
         创建任务
       </Button>
@@ -167,7 +167,7 @@ const getStatusColor = (status: string) => {
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
-          <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+          <a class="text-blue-600 hover:text-blue-700" @click="router.push(`/user-task/latest/training/detail/${record.id}`)">{{ record.name }}</a>
         </template>
         <template v-if="column.dataIndex === 'status'">
           <Tag :color="getStatusColor(record.status)" class="rounded-full">
@@ -176,7 +176,7 @@ const getStatusColor = (status: string) => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="showInfo(`查看任务 ${record.id}`)">详情</a>
+            <a @click="router.push(`/user-task/latest/training/detail/${record.id}`)">详情</a>
             <a
               :class="{
                 'pointer-events-none text-gray-300': record.status !== '运行中',

@@ -77,7 +77,7 @@ const filteredRows = () => {
     <template #toolbar>
       <Button
         type="primary"
-        @click="router.push('/user-task/training/template/create')"
+        @click="router.push('/user-task/template/create')"
       >
         <template #icon><Plus class="size-4" /></template>
         创建任务模版
@@ -122,10 +122,8 @@ const filteredRows = () => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="router.push('/user-task/training/create')">创建任务</a>
-            <a @click="router.push('/user-task/training/template/create')"
-              >修改</a
-            >
+            <a @click="router.push('/user-task/latest/training/create')">创建任务</a>
+            <a @click="router.push('/user-task/template/create')">修改</a>
             <Popconfirm
               title="确认删除模板？"
               @confirm="showInfo(`删除模板 ${record.id}`)"

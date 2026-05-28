@@ -57,6 +57,17 @@ const routes: RouteRecordRaw[] = [
             name: 'AdminTaskLatestDevbox',
             path: 'devbox',
           },
+          {
+            component: () => import('#/views/admin-task/latest/detail.vue'),
+            meta: {
+              title: '任务详情',
+              hideInMenu: true,
+              hideInTab: true,
+              activeMenu: '/admin-task/latest',
+            },
+            name: 'AdminTaskLatestDetail',
+            path: 'detail/:id',
+          },
         ],
       },
       {

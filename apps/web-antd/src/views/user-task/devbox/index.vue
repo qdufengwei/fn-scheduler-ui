@@ -126,7 +126,7 @@ const resetFilters = () => {
       </template>
 
       <template #toolbar>
-        <Button type="primary" @click="router.push('/user-task/devbox/create')">
+        <Button type="primary" @click="router.push('/user-task/latest/devbox/create')">
           <template #icon><Plus class="size-4" /></template>
           创建开发机
         </Button>
