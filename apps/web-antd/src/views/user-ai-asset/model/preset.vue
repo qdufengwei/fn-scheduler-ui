@@ -333,18 +333,14 @@ function getModelIcon(model: { name: string; provider: string }): string {
           >
             <!-- 卡片头部 - 简洁白色背景 -->
             <div
-              class="relative h-28 flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-white"
+              class="relative h-24 flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-white"
             >
               <!-- 模型图标 -->
               <img
                 :src="getModelIcon(model)"
                 :alt="model.provider"
-                class="size-14 object-contain mb-1.5"
+                class="size-16 object-contain"
               />
-              <!-- 提供商名称 -->
-              <span class="text-xs text-slate-500 font-medium">{{
-                model.provider
-              }}</span>
 
               <!-- 参数量标签 -->
               <Tag
