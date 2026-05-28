@@ -7,6 +7,8 @@ import { initStores } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/antd';
 
+import './styles/global-fixes.css';
+
 import { Pagination } from 'ant-design-vue';
 
 // 统一为全站所有的 Pagination 分页组件配置默认显示总条数

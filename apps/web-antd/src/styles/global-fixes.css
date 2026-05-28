@@ -1,0 +1,39 @@
+/**
+ * 全局样式修复
+ * 确保禁用按钮和禁用元素完全阻止点击事件
+ */
+
+/* 禁用按钮阻止所有鼠标事件 */
+.ant-btn-disabled,
+.ant-btn[disabled],
+button[disabled],
+.ant-btn-disabled *,
+.ant-btn[disabled] * {
+  pointer-events: none !important;
+}
+
+/* Popconfirm 内的禁用按钮 */
+.ant-popconfirm .ant-btn-disabled,
+.ant-popconfirm .ant-btn[disabled] {
+  pointer-events: none !important;
+}
+
+/* Tooltip 内的禁用按钮 */
+.ant-tooltip-trigger .ant-btn-disabled,
+.ant-tooltip-trigger .ant-btn[disabled] {
+  pointer-events: none !important;
+}
+
+/* 禁用下拉菜单项 */
+.ant-dropdown-menu-item-disabled,
+.ant-dropdown-menu-item[disabled] {
+  pointer-events: none !important;
+}
+
+/* 禁用输入框 */
+.ant-input-disabled,
+.ant-input[disabled],
+.ant-select-disabled,
+.ant-select[disabled] {
+  pointer-events: none !important;
+}
