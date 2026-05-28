@@ -7,7 +7,8 @@ import { Button, Pagination, Popconfirm, Table } from 'ant-design-vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
-const _props = defineProps<{
+// ============ 类型定义 ============
+interface Props {
   currentPage: number;
   data: ImageRecord[];
   loading?: boolean;
@@ -15,17 +16,22 @@ const _props = defineProps<{
   pageSizeOptions: number[];
   selectedRowKeys: (number | string)[];
   total: number;
-}>()
+}
+
+// ============ Props & Emits ============
+const _props = withDefaults(defineProps<Props>(), {
+  loading: false,
+});
 
 const emit = defineEmits<{
-  (e: 'viewDetail', record: ImageRecord): void;
-  (e: 'delete', record: ImageRecord): void;
-  (e: 'create'): void;
   (e: 'batchDelete'): void;
+  (e: 'create'): void;
+  (e: 'delete', record: ImageRecord): void;
   (e: 'selectionChange', keys: (number | string)[]): void;
   (e: 'update:currentPage', page: number): void;
   (e: 'update:pageSize', size: number): void;
-}>()
+  (e: 'viewDetail', record: ImageRecord): void;
+}>();
 
 const columns = [
   { title: '镜像名称', dataIndex: 'name', key: 'name', width: 280 },

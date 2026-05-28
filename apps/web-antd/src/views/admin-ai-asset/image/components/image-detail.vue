@@ -13,12 +13,19 @@ import {
   Tag,
 } from 'ant-design-vue';
 
-const _props = defineProps<{
+// ============ 类型定义 ============
+interface Props {
   detailData: ImageDetailRecord[];
-  detailPage: number;
-  detailPageSize: number;
+  detailPage?: number;
+  detailPageSize?: number;
   image: ImageRecord | null;
-}>()
+}
+
+// ============ Props & Emits ============
+const _props = withDefaults(defineProps<Props>(), {
+  detailPage: 1,
+  detailPageSize: 10,
+});
 
 const emit = defineEmits<{
   (e: 'back'): void;

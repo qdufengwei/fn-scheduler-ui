@@ -3,6 +3,8 @@ import type { CreateForm, ImageDetailRecord, ImageRecord } from './types';
 
 import { ref } from 'vue';
 
+import { Page } from '@vben/common-ui';
+
 import {
   Button,
   Input,
@@ -11,6 +13,8 @@ import {
   Space,
 } from 'ant-design-vue';
 
+import { mockDetailRows, mockImageRows } from '#/mock/image';
+
 import ImageDetail from './components/image-detail.vue';
 import ImageDrawer from './components/image-drawer.vue';
 import ImageList from './components/image-list.vue';
@@ -18,7 +22,6 @@ import { useImageFilter } from './composables/use-image-filter';
 import { useImageList } from './composables/use-image-list';
 import { usePagination } from './composables/use-pagination';
 import { PROJECT_OPTIONS } from './constants';
-import { mockDetailRows, mockImageRows } from './mock-data';
 import { formatDateTime, safeCopyText, showNotify } from './utils';
 
 // ============ 列表逻辑 ============
@@ -129,8 +132,9 @@ function handleResetFilters() {
 </script>
 
 <template>
-  <div>
-    <Transition name="fade-slide" mode="out-in">
+  <Page auto-content-height>
+    <div>
+      <Transition name="fade-slide" mode="out-in">
       <!-- 镜像列表视图 -->
       <div v-if="!showDetail" key="list">
         <ImageList
@@ -156,13 +160,13 @@ function handleResetFilters() {
               </Radio.Group>
               <Select
                 v-model:value="project"
-                style="width: 180px"
+                class="w-[180px]"
                 :options="PROJECT_OPTIONS"
               />
               <Input
                 v-model:value="keyword"
                 placeholder="请输入镜像名称"
-                style="width: 220px"
+                class="w-[220px]"
               />
             </div>
           </template>
@@ -200,6 +204,7 @@ function handleResetFilters() {
       @save-import="handleSaveImport"
     />
   </div>
+</Page>
 </template>
 
 <style scoped>
