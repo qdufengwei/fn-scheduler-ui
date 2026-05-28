@@ -83,20 +83,25 @@ const rows = ref([
     </Card>
 
     <Card title="账单明细">
-      <Space class="mb-4" wrap>
-        <Button>导出</Button>
-        <DatePicker.RangePicker />
-        <Select
-          v-model:value="user"
-          allow-clear
-          placeholder="请选择用户"
-          style="width: 180px"
-          :options="[{ label: 'test01', value: 'test01' }]"
-        />
-        <Input placeholder="搜索账单项" style="width: 220px" />
-        <Button>筛选</Button>
-        <Button @click="user = undefined">重置</Button>
-      </Space>
+      <template #title>
+        <span class="text-base font-semibold">账单明细</span>
+      </template>
+      <div class="mb-4 pb-4 border-b border-gray-100">
+        <Space wrap>
+          <Button>导出</Button>
+          <DatePicker.RangePicker />
+          <Select
+            v-model:value="user"
+            allow-clear
+            placeholder="请选择用户"
+            style="width: 180px"
+            :options="[{ label: 'test01', value: 'test01' }]"
+          />
+          <Input placeholder="搜索账单项" style="width: 220px" />
+          <Button>筛选</Button>
+          <Button @click="user = undefined">重置</Button>
+        </Space>
+      </div>
       <Table
         row-key="id"
         :data-source="rows.filter((r) => !user || r.user === user)"
