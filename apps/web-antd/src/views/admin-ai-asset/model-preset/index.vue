@@ -33,8 +33,6 @@ const presetModels = ref([
     provider: '阿里云',
     category: '推理模型',
     params: '4B',
-    color: 'from-violet-500 to-purple-600',
-    icon: 'brain',
   },
   {
     id: 2,
@@ -45,8 +43,6 @@ const presetModels = ref([
     provider: '阿里云',
     category: '大语言模型',
     params: '30B',
-    color: 'from-blue-500 to-cyan-600',
-    icon: 'sparkles',
   },
   {
     id: 3,
@@ -57,8 +53,6 @@ const presetModels = ref([
     provider: '阿里云',
     category: '大语言模型',
     params: '72B',
-    color: 'from-indigo-500 to-blue-600',
-    icon: 'sparkles',
   },
   {
     id: 4,
@@ -69,8 +63,6 @@ const presetModels = ref([
     provider: '阿里云',
     category: '大语言模型',
     params: '32B',
-    color: 'from-blue-400 to-indigo-500',
-    icon: 'sparkles',
   },
   {
     id: 5,
@@ -81,8 +73,6 @@ const presetModels = ref([
     provider: '阿里云',
     category: '多模态模型',
     params: '72B',
-    color: 'from-teal-500 to-emerald-600',
-    icon: 'zap',
   },
   // 国内大模型 - DeepSeek
   {
@@ -94,8 +84,6 @@ const presetModels = ref([
     provider: 'DeepSeek',
     category: '推理模型',
     params: '671B',
-    color: 'from-indigo-500 to-violet-600',
-    icon: 'brain',
   },
   {
     id: 7,
@@ -106,8 +94,6 @@ const presetModels = ref([
     provider: 'DeepSeek',
     category: '大语言模型',
     params: '70B',
-    color: 'from-rose-500 to-pink-600',
-    icon: 'zap',
   },
   {
     id: 8,
@@ -118,8 +104,6 @@ const presetModels = ref([
     provider: 'DeepSeek',
     category: '轻量模型',
     params: '8B',
-    color: 'from-fuchsia-500 to-purple-600',
-    icon: 'sparkles',
   },
   {
     id: 9,
@@ -130,8 +114,6 @@ const presetModels = ref([
     provider: 'DeepSeek',
     category: '大语言模型',
     params: '671B',
-    color: 'from-blue-600 to-indigo-700',
-    icon: 'sparkles',
   },
   {
     id: 10,
@@ -142,8 +124,6 @@ const presetModels = ref([
     provider: 'DeepSeek',
     category: '代码模型',
     params: '33B',
-    color: 'from-slate-500 to-gray-600',
-    icon: 'cpu',
   },
   // 国内大模型 - 智谱AI
   {
@@ -155,8 +135,6 @@ const presetModels = ref([
     provider: '智谱AI',
     category: '大语言模型',
     params: '9B',
-    color: 'from-teal-600 to-cyan-700',
-    icon: 'sparkles',
   },
   {
     id: 12,
@@ -167,8 +145,6 @@ const presetModels = ref([
     provider: '智谱AI',
     category: '大语言模型',
     params: 'Plus',
-    color: 'from-emerald-500 to-green-600',
-    icon: 'brain',
   },
   {
     id: 13,
@@ -179,8 +155,6 @@ const presetModels = ref([
     provider: '智谱AI',
     category: '多模态模型',
     params: '9B',
-    color: 'from-lime-500 to-emerald-600',
-    icon: 'zap',
   },
   // 国内大模型 - 百川智能
   {
@@ -192,8 +166,6 @@ const presetModels = ref([
     provider: '百川智能',
     category: '大语言模型',
     params: '旗舰',
-    color: 'from-indigo-600 to-purple-700',
-    icon: 'sparkles',
   },
   {
     id: 15,
@@ -204,8 +176,6 @@ const presetModels = ref([
     provider: '百川智能',
     category: '大语言模型',
     params: '13B',
-    color: 'from-purple-400 to-fuchsia-500',
-    icon: 'sparkles',
   },
   // 国内大模型 - 月之暗面
   {
@@ -217,8 +187,6 @@ const presetModels = ref([
     provider: '月之暗面',
     category: '大语言模型',
     params: 'MoE',
-    color: 'from-violet-600 to-indigo-700',
-    icon: 'brain',
   },
   {
     id: 17,
@@ -229,8 +197,6 @@ const presetModels = ref([
     provider: '月之暗面',
     category: '大语言模型',
     params: 'Chat',
-    color: 'from-purple-500 to-violet-600',
-    icon: 'sparkles',
   },
   // 国内大模型 - 零一万物
   {
@@ -242,8 +208,6 @@ const presetModels = ref([
     provider: '零一万物',
     category: '大语言模型',
     params: 'Large',
-    color: 'from-cyan-500 to-teal-600',
-    icon: 'sparkles',
   },
   {
     id: 19,
@@ -254,8 +218,6 @@ const presetModels = ref([
     provider: '零一万物',
     category: '大语言模型',
     params: '34B',
-    color: 'from-sky-400 to-cyan-500',
-    icon: 'sparkles',
   },
   // 国际大模型 - Meta
   {
@@ -267,8 +229,6 @@ const presetModels = ref([
     provider: 'Meta',
     category: '多模态模型',
     params: '17B',
-    color: 'from-emerald-500 to-teal-600',
-    icon: 'zap',
   },
   {
     id: 21,
@@ -279,8 +239,6 @@ const presetModels = ref([
     provider: 'Meta',
     category: '大语言模型',
     params: '70B',
-    color: 'from-orange-500 to-amber-600',
-    icon: 'cpu',
   },
   {
     id: 22,
@@ -291,8 +249,6 @@ const presetModels = ref([
     provider: 'Meta',
     category: '轻量模型',
     params: '3B',
-    color: 'from-sky-500 to-blue-600',
-    icon: 'sparkles',
   },
   {
     id: 23,
@@ -303,8 +259,6 @@ const presetModels = ref([
     provider: 'Meta',
     category: '大语言模型',
     params: '405B',
-    color: 'from-sky-600 to-indigo-700',
-    icon: 'brain',
   },
   {
     id: 24,
@@ -315,8 +269,6 @@ const presetModels = ref([
     provider: 'Meta',
     category: '轻量模型',
     params: '8B',
-    color: 'from-blue-400 to-sky-500',
-    icon: 'sparkles',
   },
   // 国际大模型 - OpenAI
   {
@@ -328,8 +280,6 @@ const presetModels = ref([
     provider: 'OpenAI',
     category: '多模态模型',
     params: '旗舰',
-    color: 'from-emerald-600 to-teal-700',
-    icon: 'zap',
   },
   {
     id: 26,
@@ -340,8 +290,6 @@ const presetModels = ref([
     provider: 'OpenAI',
     category: '轻量模型',
     params: 'mini',
-    color: 'from-green-400 to-emerald-500',
-    icon: 'sparkles',
   },
   {
     id: 27,
@@ -352,8 +300,6 @@ const presetModels = ref([
     provider: 'OpenAI',
     category: '大语言模型',
     params: 'Turbo',
-    color: 'from-teal-500 to-cyan-600',
-    icon: 'brain',
   },
   // 国际大模型 - Anthropic
   {
@@ -365,8 +311,6 @@ const presetModels = ref([
     provider: 'Anthropic',
     category: '大语言模型',
     params: 'Sonnet',
-    color: 'from-amber-500 to-orange-600',
-    icon: 'brain',
   },
   {
     id: 29,
@@ -377,8 +321,6 @@ const presetModels = ref([
     provider: 'Anthropic',
     category: '大语言模型',
     params: 'Opus',
-    color: 'from-orange-400 to-amber-500',
-    icon: 'brain',
   },
   {
     id: 30,
@@ -389,8 +331,6 @@ const presetModels = ref([
     provider: 'Anthropic',
     category: '轻量模型',
     params: 'Haiku',
-    color: 'from-yellow-400 to-orange-500',
-    icon: 'sparkles',
   },
   // 国际大模型 - Google
   {
@@ -402,8 +342,6 @@ const presetModels = ref([
     provider: 'Google',
     category: '多模态模型',
     params: 'Pro',
-    color: 'from-rose-500 to-pink-600',
-    icon: 'zap',
   },
   {
     id: 32,
@@ -414,8 +352,6 @@ const presetModels = ref([
     provider: 'Google',
     category: '轻量模型',
     params: 'Flash',
-    color: 'from-pink-400 to-rose-500',
-    icon: 'sparkles',
   },
   // 国际大模型 - Mistral
   {
@@ -427,8 +363,6 @@ const presetModels = ref([
     provider: 'Mistral AI',
     category: '大语言模型',
     params: 'Large',
-    color: 'from-orange-600 to-red-700',
-    icon: 'brain',
   },
   {
     id: 34,
@@ -439,8 +373,6 @@ const presetModels = ref([
     provider: 'Mistral AI',
     category: '轻量模型',
     params: '7B',
-    color: 'from-red-400 to-orange-500',
-    icon: 'sparkles',
   },
   {
     id: 35,
@@ -451,8 +383,6 @@ const presetModels = ref([
     provider: 'Mistral AI',
     category: '大语言模型',
     params: '8x7B',
-    color: 'from-amber-500 to-red-600',
-    icon: 'zap',
   },
   // 国际大模型 - xAI
   {
@@ -464,8 +394,6 @@ const presetModels = ref([
     provider: 'xAI',
     category: '大语言模型',
     params: 'Grok-2',
-    color: 'from-zinc-500 to-gray-600',
-    icon: 'sparkles',
   },
   // 国际大模型 - Cohere
   {
@@ -477,8 +405,6 @@ const presetModels = ref([
     provider: 'Cohere',
     category: '大语言模型',
     params: 'R+',
-    color: 'from-fuchsia-600 to-purple-700',
-    icon: 'brain',
   },
   {
     id: 38,
@@ -489,8 +415,6 @@ const presetModels = ref([
     provider: 'Cohere',
     category: '大语言模型',
     params: 'R',
-    color: 'from-purple-400 to-fuchsia-500',
-    icon: 'sparkles',
   },
   // 国际大模型 - Microsoft
   {
@@ -502,8 +426,6 @@ const presetModels = ref([
     provider: 'Microsoft',
     category: '轻量模型',
     params: '14B',
-    color: 'from-sky-600 to-blue-700',
-    icon: 'sparkles',
   },
   {
     id: 40,
@@ -513,8 +435,6 @@ const presetModels = ref([
     provider: 'Microsoft',
     category: '轻量模型',
     params: '3.8B',
-    color: 'from-blue-400 to-sky-500',
-    icon: 'sparkles',
   },
   // 国内大模型 - 上海AI实验室
   {
@@ -526,8 +446,6 @@ const presetModels = ref([
     provider: '上海AI实验室',
     category: '多模态模型',
     params: '26B',
-    color: 'from-pink-500 to-rose-600',
-    icon: 'zap',
   },
   {
     id: 42,
@@ -538,8 +456,6 @@ const presetModels = ref([
     provider: '上海AI实验室',
     category: '大语言模型',
     params: '20B',
-    color: 'from-rose-400 to-pink-500',
-    icon: 'sparkles',
   },
 ]);
 
@@ -616,42 +532,33 @@ function getModelIcon(model: { name: string; provider: string }): string {
         >
           <Card
             :bordered="false"
-            class="model-card h-full shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden"
+            class="model-card h-full shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden"
             :body-style="{ padding: 0 }"
           >
-            <!-- 卡片头部 - 渐变背景 -->
+            <!-- 卡片头部 - 简洁白色背景 -->
             <div
-              class="relative h-32 flex flex-col items-center justify-center bg-gradient-to-br"
-              :class="model.color"
+              class="relative h-28 flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-white"
             >
-              <!-- 背景图标 -->
-              <div
-                class="absolute inset-0 flex items-center justify-center opacity-15"
-              >
-                <img
-                  :src="getModelIcon(model)"
-                  :alt="model.provider"
-                  class="size-20 object-contain"
-                />
-              </div>
               <!-- 模型图标 -->
-              <div class="relative z-10 flex flex-col items-center">
-                <img
-                  :src="getModelIcon(model)"
-                  :alt="model.provider"
-                  class="size-14 object-contain mb-2"
-                />
-                <div class="text-xs text-white/80">{{ model.provider }}</div>
-              </div>
+              <img
+                :src="getModelIcon(model)"
+                :alt="model.provider"
+                class="size-16 object-contain mb-2"
+              />
+              <!-- 提供商名称 -->
+              <span class="text-xs text-slate-500 font-medium">{{
+                model.provider
+              }}</span>
+
               <!-- 参数量标签 -->
               <Tag
-                class="absolute top-3 right-3 !rounded-full !bg-white/20 !border-white/30 !text-white !px-2 !text-xs"
+                class="absolute top-2 right-2 !rounded-md !bg-slate-100 !border-slate-200 !text-slate-600 !px-2 !text-xs"
               >
                 {{ model.params }}
               </Tag>
               <!-- 分类标签 -->
               <Tag
-                class="absolute top-3 left-3 !rounded-full !bg-white/20 !border-white/30 !text-white !px-2 !text-xs"
+                class="absolute top-2 left-2 !rounded-md !bg-blue-50 !border-blue-100 !text-blue-600 !px-2 !text-xs"
               >
                 {{ model.category }}
               </Tag>
@@ -662,25 +569,25 @@ function getModelIcon(model: { name: string; provider: string }): string {
               <!-- 模型名称 -->
               <Tooltip :title="model.name">
                 <h3
-                  class="font-semibold text-gray-900 truncate mb-2 group-hover:text-blue-600 transition-colors text-sm"
+                  class="font-semibold text-slate-800 truncate mb-2 group-hover:text-blue-600 transition-colors text-sm"
                 >
                   {{ model.name }}
                 </h3>
               </Tooltip>
 
-              <!-- 简介 - 最多三行，悬浮显示全部 -->
+              <!-- 简介 - 最多两行 -->
               <Tooltip :title="model.description" placement="bottom">
-                <p class="model-description text-xs text-gray-500 mb-3">
+                <p class="model-description text-xs text-slate-500 mb-3">
                   {{ model.description }}
                 </p>
               </Tooltip>
 
               <!-- 更新时间 -->
               <div
-                class="flex items-center text-xs text-gray-400 pt-3 border-t border-gray-100"
+                class="flex items-center text-xs text-slate-400 pt-3 border-t border-slate-100"
               >
                 <RotateCw class="size-3 mr-1.5" />
-                <span>更新于 {{ model.updateTime }}</span>
+                <span>{{ model.updateTime }}</span>
               </div>
             </div>
           </Card>
@@ -713,52 +620,24 @@ function getModelIcon(model: { name: string; provider: string }): string {
 </template>
 
 <style scoped>
-/* 模型简介三行截断 */
+/* 模型简介两行截断 */
 .model-description {
   display: -webkit-box;
-  min-height: 54px;
+  min-height: 36px;
   overflow: hidden;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   line-height: 1.5;
   -webkit-box-orient: vertical;
 }
 
 /* 卡片悬浮效果 */
 .model-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+  border-color: theme('colors.slate.200');
 }
 
-/* 渐变背景悬浮增强 */
-.model-card:hover .bg-gradient-to-br {
-  filter: brightness(1.1);
-}
-
-/* 卡片边框光效 */
+/* 卡片边框 */
 .model-card {
-  position: relative;
-}
-
-.model-card::before {
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  content: '';
-  background: linear-gradient(
-    135deg,
-    transparent 40%,
-    rgb(255 255 255 / 30%) 50%,
-    transparent 60%
-  );
-  border-radius: inherit;
-  opacity: 0;
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  transition: opacity 0.3s;
-}
-
-.model-card:hover::before {
-  opacity: 1;
+  border: 1px solid theme('colors.slate.100');
 }
 </style>

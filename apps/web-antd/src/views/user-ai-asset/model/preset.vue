@@ -15,16 +15,10 @@ import {
   Tag,
   Tooltip,
 } from 'ant-design-vue';
-import {
-  BookOpenText,
-  Eye,
-  Grid,
-  LayoutGrid,
-  Search,
-  Settings,
-} from '@vben/icons';
+import { RotateCw, Search } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { getModelIconSrc } from '#/utils/model-icon';
 import { showNotify } from '#/utils/notify';
 
 const router = useRouter();
@@ -42,8 +36,7 @@ interface Model {
   updated: string;
   category: string;
   tags: string[];
-  color: string;
-  icon: string;
+  params: string;
 }
 
 const presetModels = ref<Model[]>([
@@ -57,8 +50,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-20',
     category: '大语言模型',
     tags: ['128K上下文', '多语言', '代码生成'],
-    color: 'from-slate-600 to-slate-700',
-    icon: 'book',
+    params: '72B',
   },
   {
     id: 2,
@@ -69,8 +61,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-18',
     category: '大语言模型',
     tags: ['MoE架构', '推理增强', '代码生成'],
-    color: 'from-blue-600 to-blue-700',
-    icon: 'grid',
+    params: '671B',
   },
   {
     id: 3,
@@ -81,8 +72,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-15',
     category: '大语言模型',
     tags: ['多模态', '工具调用', '中文优化'],
-    color: 'from-teal-600 to-teal-700',
-    icon: 'layout',
+    params: '9B',
   },
   {
     id: 4,
@@ -92,8 +82,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-12',
     category: '大语言模型',
     tags: ['长文本', '知识问答', '角色扮演'],
-    color: 'from-indigo-600 to-indigo-700',
-    icon: 'book',
+    params: '旗舰',
   },
   {
     id: 5,
@@ -103,8 +92,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-10',
     category: '大语言模型',
     tags: ['推理能力', '创意写作', '多语言'],
-    color: 'from-cyan-600 to-cyan-700',
-    icon: 'grid',
+    params: 'Large',
   },
   {
     id: 6,
@@ -114,8 +102,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-08',
     category: '大语言模型',
     tags: ['超长上下文', '文档理解', '信息检索'],
-    color: 'from-violet-600 to-violet-700',
-    icon: 'eye',
+    params: 'MoE',
   },
   // 国际大模型
   {
@@ -127,8 +114,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-25',
     category: '大语言模型',
     tags: ['多模态', '快速响应', '复杂推理'],
-    color: 'from-emerald-600 to-emerald-700',
-    icon: 'grid',
+    params: '旗舰',
   },
   {
     id: 8,
@@ -138,8 +124,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-22',
     category: '大语言模型',
     tags: ['代码专家', '安全可靠', '长上下文'],
-    color: 'from-amber-600 to-amber-700',
-    icon: 'book',
+    params: 'Sonnet',
   },
   {
     id: 9,
@@ -149,8 +134,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-20',
     category: '大语言模型',
     tags: ['开源', '多语言', '可定制'],
-    color: 'from-sky-600 to-sky-700',
-    icon: 'layout',
+    params: '405B',
   },
   {
     id: 10,
@@ -161,8 +145,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-18',
     category: '多模态模型',
     tags: ['百万上下文', '多模态', '视频理解'],
-    color: 'from-rose-600 to-rose-700',
-    icon: 'eye',
+    params: 'Pro',
   },
   {
     id: 11,
@@ -172,8 +155,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-15',
     category: '大语言模型',
     tags: ['高效推理', '开源友好', '多语言'],
-    color: 'from-orange-600 to-orange-700',
-    icon: 'settings',
+    params: 'Large',
   },
   {
     id: 12,
@@ -183,8 +165,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-12',
     category: '大语言模型',
     tags: ['实时信息', '幽默风格', '实时更新'],
-    color: 'from-zinc-600 to-zinc-700',
-    icon: 'grid',
+    params: 'Grok-2',
   },
   {
     id: 13,
@@ -194,8 +175,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-10',
     category: '大语言模型',
     tags: ['RAG优化', '企业级', '多语言'],
-    color: 'from-fuchsia-600 to-fuchsia-700',
-    icon: 'eye',
+    params: 'R+',
   },
   {
     id: 14,
@@ -205,8 +185,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-08',
     category: '轻量模型',
     tags: ['轻量高效', '端侧部署', '多任务'],
-    color: 'from-sky-600 to-blue-700',
-    icon: 'grid',
+    params: '14B',
   },
   {
     id: 15,
@@ -216,8 +195,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-05',
     category: '多模态模型',
     tags: ['视觉理解', '视频分析', 'OCR'],
-    color: 'from-stone-600 to-stone-700',
-    icon: 'eye',
+    params: '72B',
   },
   {
     id: 16,
@@ -227,8 +205,7 @@ const presetModels = ref<Model[]>([
     updated: '2026-05-03',
     category: '多模态模型',
     tags: ['开源', '视觉理解', '科研友好'],
-    color: 'from-pink-600 to-pink-700',
-    icon: 'eye',
+    params: '26B',
   },
 ]);
 
@@ -286,15 +263,8 @@ function handleFinetune(model: Model) {
   showNotify(`开始微调 ${model.name}`);
 }
 
-function getIconComponent(icon: string) {
-  const icons: Record<string, any> = {
-    book: BookOpenText,
-    eye: Eye,
-    grid: Grid,
-    layout: LayoutGrid,
-    settings: Settings,
-  };
-  return icons[icon] || Grid;
+function getModelIcon(model: { name: string; provider: string }): string {
+  return getModelIconSrc(model.name, model.provider);
 }
 </script>
 
@@ -330,7 +300,10 @@ function getIconComponent(icon: string) {
     </template>
 
     <template #toolbar>
-      <Button @click="handleSearch">刷新</Button>
+      <Button @click="handleSearch">
+        <template #icon><RotateCw class="size-4" /></template>
+        刷新
+      </Button>
     </template>
 
     <template #viewSwitch>
@@ -355,34 +328,33 @@ function getIconComponent(icon: string) {
         >
           <Card
             :bordered="false"
-            class="h-full shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden"
+            class="model-card h-full shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden"
             :body-style="{ padding: 0 }"
           >
-            <!-- 卡片头部 - 渐变背景 -->
+            <!-- 卡片头部 - 简洁白色背景 -->
             <div
-              class="relative h-44 flex flex-col items-center justify-center bg-gradient-to-br"
-              :class="model.color"
+              class="relative h-28 flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-white"
             >
               <!-- 模型图标 -->
-              <div
-                class="absolute inset-0 flex items-center justify-center opacity-20"
+              <img
+                :src="getModelIcon(model)"
+                :alt="model.provider"
+                class="size-14 object-contain mb-1.5"
+              />
+              <!-- 提供商名称 -->
+              <span class="text-xs text-slate-500 font-medium">{{
+                model.provider
+              }}</span>
+
+              <!-- 参数量标签 -->
+              <Tag
+                class="absolute top-2 right-2 !rounded-md !bg-slate-100 !border-slate-200 !text-slate-600 !px-2 !text-xs"
               >
-                <component
-                  :is="getIconComponent(model.icon)"
-                  class="size-24 text-white"
-                />
-              </div>
-              <div class="relative z-10 text-white text-center">
-                <div class="text-3xl font-bold tracking-tight mb-1">
-                  {{ model.name.split('-')[0] }}
-                </div>
-                <div class="text-sm opacity-80 font-medium">
-                  {{ model.provider }}
-                </div>
-              </div>
+                {{ model.params }}
+              </Tag>
               <!-- 分类标签 -->
               <Tag
-                class="absolute top-3 left-3 !rounded-full !bg-white/20 !border-white/30 !text-white !px-2"
+                class="absolute top-2 left-2 !rounded-md !bg-blue-50 !border-blue-100 !text-blue-600 !px-2 !text-xs"
               >
                 {{ model.category }}
               </Tag>
@@ -393,14 +365,14 @@ function getIconComponent(icon: string) {
               <!-- 模型名称 -->
               <Tooltip :title="model.name">
                 <h3
-                  class="font-semibold text-gray-900 truncate mb-2 group-hover:text-blue-600 transition-colors"
+                  class="font-semibold text-slate-800 truncate mb-2 group-hover:text-blue-600 transition-colors text-sm"
                 >
                   {{ model.name }}
                 </h3>
               </Tooltip>
 
               <!-- 简介 -->
-              <p class="text-sm text-gray-500 line-clamp-2 mb-3 h-10 leading-5">
+              <p class="model-desc text-xs text-slate-500 mb-3">
                 {{ model.description }}
               </p>
 
@@ -409,31 +381,33 @@ function getIconComponent(icon: string) {
                 <Tag
                   v-for="tag in model.tags.slice(0, 3)"
                   :key="tag"
-                  class="!rounded-full !text-xs !px-2 !py-0.5 !border-gray-200 !text-gray-600"
+                  class="!rounded-md !text-xs !px-2 !py-0.5 !border-slate-200 !text-slate-500 !bg-slate-50"
                 >
                   {{ tag }}
                 </Tag>
               </div>
 
               <!-- 更新时间 -->
-              <div class="flex items-center text-xs text-gray-400 mb-4">
-                <Settings class="size-3 mr-1.5" />
-                <span>更新于 {{ model.updated }}</span>
+              <div
+                class="flex items-center text-xs text-slate-400 mb-3 pt-3 border-t border-slate-100"
+              >
+                <RotateCw class="size-3 mr-1.5" />
+                <span>{{ model.updated }}</span>
               </div>
 
               <!-- 操作按钮 -->
-              <div class="flex gap-3 pt-3 border-t border-gray-100">
+              <div class="flex gap-3">
                 <Button
                   type="primary"
                   size="small"
-                  class="!flex-1 !rounded-lg !h-8"
+                  class="!flex-1 !rounded-md !h-8"
                   @click.stop="handleDeploy(model)"
                 >
                   部署
                 </Button>
                 <Button
                   size="small"
-                  class="!flex-1 !rounded-lg !h-8"
+                  class="!flex-1 !rounded-md !h-8"
                   @click.stop="handleFinetune(model)"
                 >
                   微调
@@ -470,20 +444,23 @@ function getIconComponent(icon: string) {
 </template>
 
 <style scoped>
-.line-clamp-2 {
+.model-desc {
   display: -webkit-box;
+  min-height: 32px;
   overflow: hidden;
   -webkit-line-clamp: 2;
+  line-height: 1.4;
   -webkit-box-orient: vertical;
 }
 
-/* 卡片hover效果增强 */
-.ant-card:hover {
-  transform: translateY(-4px);
+/* 卡片悬浮效果 */
+.model-card:hover {
+  transform: translateY(-2px);
+  border-color: theme('colors.slate.200');
 }
 
-/* 渐变背景动画 */
-.group:hover .bg-gradient-to-br {
-  filter: brightness(1.1);
+/* 卡片边框 */
+.model-card {
+  border: 1px solid theme('colors.slate.100');
 }
 </style>
