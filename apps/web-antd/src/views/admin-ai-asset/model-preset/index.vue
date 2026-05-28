@@ -633,11 +633,11 @@ function getModelIcon(model: { name: string; provider: string }): string {
 /* 卡片悬浮效果 */
 .model-card:hover {
   transform: translateY(-2px);
-  border-color: theme('colors.slate.200');
+  border-color: #e2e8f0;
 }
 
 /* 卡片边框 */
 .model-card {
-  border: 1px solid theme('colors.slate.100');
+  border: 1px solid #f1f5f9;
 }
 </style>
