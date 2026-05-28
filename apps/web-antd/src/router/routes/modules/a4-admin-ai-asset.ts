@@ -22,7 +22,8 @@ const routes: RouteRecordRaw[] = [
         redirect: '/admin-ai-asset/model/preset',
         children: [
           {
-            component: () => import('#/views/admin-ai-asset/model-preset/index.vue'),
+            component: () =>
+              import('#/views/admin-ai-asset/model-preset/index.vue'),
             meta: {
               icon: 'lucide:package',
               title: '预置模型',
@@ -31,7 +32,8 @@ const routes: RouteRecordRaw[] = [
             path: 'preset',
           },
           {
-            component: () => import('#/views/admin-ai-asset/model-custom/index.vue'),
+            component: () =>
+              import('#/views/admin-ai-asset/model-custom/index.vue'),
             meta: {
               icon: 'lucide:package-plus',
               title: '自定义模型',
@@ -39,10 +41,22 @@ const routes: RouteRecordRaw[] = [
             name: 'AdminAIAssetModelCustom',
             path: 'custom',
           },
+          {
+            component: () =>
+              import('#/views/admin-ai-asset/model-custom/detail.vue'),
+            meta: {
+              activePath: '/admin-ai-asset/model/custom',
+              hideInMenu: true,
+              title: '自定义模型详情',
+            },
+            name: 'AdminAIAssetModelCustomDetail',
+            path: 'custom/:id',
+          },
         ],
       },
       {
-        component: () => import('#/views/admin-ai-asset/model-market/index.vue'),
+        component: () =>
+          import('#/views/admin-ai-asset/model-market/index.vue'),
         meta: {
           icon: 'lucide:store',
           title: '模型服务市场',
@@ -78,7 +92,8 @@ const routes: RouteRecordRaw[] = [
             path: 'repo',
           },
           {
-            component: () => import('#/views/admin-ai-asset/image-task/index.vue'),
+            component: () =>
+              import('#/views/admin-ai-asset/image-task/index.vue'),
             meta: {
               icon: 'lucide:list-checks',
               title: '镜像任务',

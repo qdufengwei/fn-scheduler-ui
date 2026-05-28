@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
-import { Button, Input, Pagination, Popconfirm, Progress, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Input,
+  Pagination,
+  Popconfirm,
+  Progress,
+  Select,
+  Space,
+  Table,
+  Tag,
+  message,
+} from 'ant-design-vue';
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+
+const router = useRouter();
 
 // 筛选条件
 const tenantId = ref<string | undefined>(undefined);
@@ -61,9 +75,9 @@ const customModels = ref([
 
 const getStatusTag = (status: string) => {
   const statusMap: Record<string, { color: string }> = {
-    '已完成': { color: 'success' },
-    '上传中': { color: 'processing' },
-    '失败': { color: 'error' },
+    已完成: { color: 'success' },
+    上传中: { color: 'processing' },
+    失败: { color: 'error' },
   };
   return statusMap[status] || { color: 'default' };
 };
@@ -103,6 +117,13 @@ function handleReset() {
 
 function handleRefresh() {
   message.success('刷新成功');
+}
+
+function handleViewDetail(record: any) {
+  router.push({
+    name: 'AdminAIAssetModelCustomDetail',
+    params: { id: record.id },
+  });
 }
 
 function handleDelete(record: any) {
@@ -245,7 +266,12 @@ const rowSelection = {
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
           <div class="flex flex-col gap-0.5">
-            <a class="text-blue-600 hover:text-blue-700 font-medium">{{ record.name }}</a>
+            <a
+              class="text-blue-600 hover:text-blue-700 font-medium"
+              @click="handleViewDetail(record)"
+            >
+              {{ record.name }}
+            </a>
             <span class="text-xs text-gray-400">{{ record.id }}</span>
           </div>
         </template>
@@ -258,11 +284,20 @@ const rowSelection = {
           <div class="flex items-center gap-2">
             <Progress
               :percent="record.progress"
-              :size="'small'"
-              :status="record.status === '失败' ? 'exception' : record.progress === 100 ? 'success' : 'active'"
-              style="width: 60px;"
+              :show-info="false"
+              :stroke-color="
+                record.status === '失败'
+                  ? '#ff4d4f'
+                  : record.progress === 100
+                    ? '#52c41a'
+                    : '#1890ff'
+              "
+              size="small"
+              style="width: 80px"
             />
-            <span class="text-xs text-gray-500">{{ record.progress }}%</span>
+            <span class="text-xs text-gray-500 min-w-[32px]">
+              {{ record.progress }}%
+            </span>
           </div>
         </template>
         <template v-else-if="column.key === 'tenant'">
