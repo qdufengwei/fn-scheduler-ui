@@ -123,6 +123,8 @@ function initCharts() {
         name: 'GPU在使用',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#1677ff',
         },
@@ -132,6 +134,8 @@ function initCharts() {
         name: 'GPU请求',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#ffc069',
         },
@@ -214,6 +218,8 @@ function initCharts() {
         name: '集群空闲GPU卡',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#d9d9d9',
         },
@@ -223,6 +229,8 @@ function initCharts() {
         name: '未调度任务GPU卡需求量',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#ffa940',
         },
@@ -291,6 +299,8 @@ function initCharts() {
         name: 'GPU满载节点',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#52c41a',
         },
@@ -300,6 +310,8 @@ function initCharts() {
         name: 'GPU空闲节点',
         type: 'bar',
         barWidth: 10,
+        barGap: '30%',
+        barCategoryGap: '40%',
         itemStyle: {
           color: '#ff4d4f',
         },
