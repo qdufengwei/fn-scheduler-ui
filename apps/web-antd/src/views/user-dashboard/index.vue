@@ -167,10 +167,10 @@ const billingPeriod = ref('day');
             <span class="text-base font-semibold text-slate-800">资源概览</span>
           </template>
           <template #extra>
-            <a
-              href="/user-resource"
+            <RouterLink
+              to="/user-resource"
               class="text-xs text-blue-600 font-medium hover:text-blue-500"
-              >去查看 &gt;</a
+              >去查看 &gt;</RouterLink
             >
           </template>
           <div class="grid grid-cols-3 gap-6 py-2">
@@ -306,10 +306,10 @@ const billingPeriod = ref('day');
                   ]"
                 />
               </div>
-              <a
-                href="/user-bill"
+              <RouterLink
+                to="/user-bill"
                 class="text-xs text-blue-600 font-medium hover:text-blue-500"
-                >去查看 &gt;</a
+                >去查看 &gt;</RouterLink
               >
             </div>
           </template>

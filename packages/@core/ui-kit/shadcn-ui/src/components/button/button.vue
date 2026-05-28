@@ -8,7 +8,7 @@ import { cn } from '@vben-core/shared/utils';
 
 import { Primitive } from 'reka-ui';
 
-import { buttonVariants } from '../../ui';
+import { buttonVariants } from '../../ui/button/button';
 
 interface Props extends VbenButtonProps {}
 
@@ -24,13 +24,17 @@ const props = withDefaults(defineProps<Props>(), {
 const isDisabled = computed(() => {
   return props.disabled || props.loading;
 });
+
+const computedClass = computed(() => {
+  return cn(buttonVariants({ variant: props.variant, size: props.size }), props.class);
+});
 </script>
 
 <template>
   <Primitive
     :as="as"
     :as-child="asChild"
-    :class="cn(buttonVariants({ variant, size }), props.class)"
+    :class="computedClass"
     :disabled="isDisabled"
   >
     <LoaderCircle

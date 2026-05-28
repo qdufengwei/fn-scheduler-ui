@@ -30,12 +30,14 @@ const props = withDefaults(defineProps<Props>(), {
 const slots = useSlots();
 
 const showTooltip = computed(() => !!slots.tooltip || !!props.tooltip);
+
+const buttonClass = computed(() => cn('rounded-full', props.class));
 </script>
 
 <template>
   <VbenButton
     v-if="!showTooltip"
-    :class="cn('rounded-full', props.class)"
+    :class="buttonClass"
     :disabled="disabled"
     :variant="variant"
     size="icon"
@@ -51,7 +53,7 @@ const showTooltip = computed(() => !!slots.tooltip || !!props.tooltip);
   >
     <template #trigger>
       <VbenButton
-        :class="cn('rounded-full', props.class)"
+        :class="buttonClass"
         :disabled="disabled"
         :variant="variant"
         size="icon"
