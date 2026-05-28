@@ -193,12 +193,11 @@ function handleResetFilters() {
         />
       </Transition>
 
-      <ImageDrawer
-        ref="drawerRef"
-        @save-create="handleSaveCreate"
-        @save-import="handleSaveImport"
-      />
-    </div>
+    <ImageDrawer
+      ref="drawerRef"
+      @save-create="handleSaveCreate"
+      @save-import="handleSaveImport"
+    />
   </div>
 </template>
 
