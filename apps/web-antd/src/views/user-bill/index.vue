@@ -88,7 +88,6 @@ const rows = ref([
       </template>
       <div class="mb-4 pb-4 border-b border-gray-100">
         <Space wrap>
-          <Button>导出</Button>
           <DatePicker.RangePicker />
           <Select
             v-model:value="user"
@@ -98,8 +97,9 @@ const rows = ref([
             :options="[{ label: 'test01', value: 'test01' }]"
           />
           <Input placeholder="搜索账单项" style="width: 220px" />
-          <Button>筛选</Button>
+          <Button type="primary">筛选</Button>
           <Button @click="user = undefined">重置</Button>
+          <Button>导出</Button>
         </Space>
       </div>
       <Table
