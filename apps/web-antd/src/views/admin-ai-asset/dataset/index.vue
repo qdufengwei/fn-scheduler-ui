@@ -5,6 +5,8 @@ import { Button, Card, Input, Pagination, Popconfirm, Progress, Select, Space, T
 import { ref, computed } from 'vue';
 import { RotateCw, ArrowLeft, Copy } from '@vben/icons';
 
+import ListPageLayout from '#/components/business/list-page-layout.vue';
+
 // 详情页控制
 const activeDetailId = ref<string | null>(null);
 const activeRecord = ref<any>(null);
@@ -354,28 +356,28 @@ const detailRowSelection = computed(() => ({
 
       <!-- 基本信息区域 -->
       <Card :bordered="false" class="shadow-sm rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-1">
-          <div class="flex py-3 border-b border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+          <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">ID</span>
             <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{ activeRecord.id }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100">
+          <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建时间</span>
             <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.updateTime }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100">
+          <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建者</span>
             <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.user }}</span>
           </div>
-          <div class="flex py-3 border-b border-gray-100">
+          <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">租户</span>
             <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.tenant }}</span>
           </div>
-          <div class="flex py-3 md:col-span-2 border-b border-gray-100">
+          <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">描述</span>
             <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.description }}</span>
           </div>
-          <div class="flex py-3 md:col-span-2 border-b border-gray-100">
+          <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">失败原因</span>
             <span class="flex-1 text-sm font-medium" :class="activeRecord.status === '失败' ? 'text-red-500' : 'text-gray-500'">
               {{ activeRecord.failedReason }}
