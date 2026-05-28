@@ -28,28 +28,36 @@ const columns = [
 ];
 
 const dataSource = ref([
-  { id: 1, tenant: 'sx-telecom', alias: '陕西电信', discount: '-' },
-  { id: 2, tenant: 'test-0415', alias: '-', discount: '-' },
+  { id: 1, tenant: 'sx-telecom', alias: '陕西电信', discount: '10%' },
+  { id: 2, tenant: 'test-0415', alias: '测试租户A', discount: '-' },
   {
     id: 3,
     tenant: 'shiyusuanli-testxq',
-    alias: 'shiyusuanli-testxq',
-    discount: '-',
+    alias: '实验算力测试',
+    discount: '5%',
   },
   {
     id: 4,
     tenant: 'shiyusuanli-demandertest',
-    alias: 'shiyusuanli-demandertest',
+    alias: '需求测试租户',
     discount: '-',
   },
-  { id: 5, tenant: 'moon', alias: '-', discount: '-' },
-  { id: 6, tenant: 'test01', alias: '-', discount: '-' },
+  { id: 5, tenant: 'moon', alias: 'Moon AI', discount: '15%' },
+  { id: 6, tenant: 'test01', alias: '研发部门', discount: '-' },
   {
     id: 7,
     tenant: 'platform-operator',
-    alias: 'platform-operator',
+    alias: '平台运营',
     discount: '-',
   },
+  { id: 8, tenant: 'ai-research', alias: 'AI研究院', discount: '20%' },
+  { id: 9, tenant: 'cloud-dev', alias: '云开发团队', discount: '8%' },
+  { id: 10, tenant: 'bigdata-center', alias: '大数据中心', discount: '12%' },
+  { id: 11, tenant: 'ml-team', alias: '机器学习组', discount: '-' },
+  { id: 12, tenant: 'gpu-lab', alias: 'GPU实验室', discount: '5%' },
+  { id: 13, tenant: 'inference-svc', alias: '推理服务', discount: '10%' },
+  { id: 14, tenant: 'training-pipeline', alias: '训练流水线', discount: '-' },
+  { id: 15, tenant: 'model-hub', alias: '模型中心', discount: '7%' },
 ]);
 
 const filteredData = computed(() => {

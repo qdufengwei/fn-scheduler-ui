@@ -32,23 +32,58 @@ const { renderEcharts: renderChart3, resize: resizeChart3 } =
   useEcharts(chart3Ref);
 
 const timeData = [
-  '19:48',
+  '19:36',
+  '19:37',
+  '19:38',
+  '19:39',
+  '19:40',
+  '19:41',
+  '19:42',
+  '19:43',
+  '19:44',
+  '19:45',
+  '19:46',
   '19:47',
-  '19:47',
-  '19:47',
-  '19:48',
-  '19:48',
   '19:48',
   '19:49',
-  '19:49',
-  '19:49',
   '19:50',
-  '19:50',
-  '19:50',
-  '19:51',
-  '19:51',
   '19:51',
 ];
+
+const themeColor = ref('#1677ff');
+
+const getThemeColor = () => {
+  if (typeof window === 'undefined') return '#1677ff';
+  const rootStyle = getComputedStyle(document.documentElement);
+  const primaryVal = rootStyle.getPropertyValue('--primary').trim();
+  if (primaryVal) {
+    if (/^\d+(\s+|,\s*)\d+%\s+(\s+|,\s*)\d+%/.test(primaryVal)) {
+      return `hsl(${primaryVal.split(/\s+/).join(', ')})`;
+    }
+    if (/^\d+\s+\d+%\s+\d+%/.test(primaryVal)) {
+      return `hsl(${primaryVal})`;
+    }
+    return primaryVal.startsWith('#') || primaryVal.startsWith('rgb') || primaryVal.startsWith('hsl')
+      ? primaryVal
+      : `hsl(${primaryVal})`;
+  }
+  const antPrimary = rootStyle.getPropertyValue('--ant-primary-color').trim();
+  return antPrimary || '#1677ff';
+};
+
+const colorWithOpacity = (color: string, opacity: number) => {
+  if (color.startsWith('hsl')) {
+    return color.replace('hsl', 'hsla').replace(')', `, ${opacity})`);
+  }
+  if (color.startsWith('#')) {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+  return color;
+};
 
 function handleViewModeChange(mode: 'grid' | 'list') {
   viewMode.value = mode;
@@ -63,6 +98,11 @@ function handleViewModeChange(mode: 'grid' | 'list') {
 }
 
 function initCharts() {
+  const primary = themeColor.value;
+  const secondary = colorWithOpacity(primary, 0.4);
+  const lineCol = colorWithOpacity(primary, 0.75);
+  const mutedCol = colorWithOpacity(primary, 0.25);
+
   // Chart 1: 集群GPU资源 (柱状 + 折线混搭)
   renderChart1({
     grid: {
@@ -76,6 +116,20 @@ function initCharts() {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow',
+      },
+      formatter: (params: any) => {
+        let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
+        params.forEach((item: any) => {
+          res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="color: #666;">${item.seriesName}</span>
+            </span>
+            <span style="font-weight: 600; color: #333;">${item.value}卡</span>
+          </div>`;
+        });
+        res += '</div>';
+        return res;
       },
     },
     legend: {
@@ -122,22 +176,20 @@ function initCharts() {
       {
         name: 'GPU在使用',
         type: 'bar',
+        stack: 'gpu',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#1677ff',
+          color: primary,
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: 'GPU请求',
         type: 'bar',
+        stack: 'gpu',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#ffc069',
+          color: secondary,
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
       },
@@ -147,10 +199,10 @@ function initCharts() {
         symbol: 'circle',
         symbolSize: 6,
         itemStyle: {
-          color: '#8c8c8c',
+          color: lineCol,
         },
         lineStyle: {
-          color: '#8c8c8c',
+          color: lineCol,
           width: 2,
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -171,6 +223,20 @@ function initCharts() {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow',
+      },
+      formatter: (params: any) => {
+        let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
+        params.forEach((item: any) => {
+          res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="color: #666;">${item.seriesName}</span>
+            </span>
+            <span style="font-weight: 600; color: #333;">${item.value}卡</span>
+          </div>`;
+        });
+        res += '</div>';
+        return res;
       },
     },
     legend: {
@@ -217,22 +283,20 @@ function initCharts() {
       {
         name: '集群空闲GPU卡',
         type: 'bar',
+        stack: 'jobs',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#d9d9d9',
+          color: mutedCol,
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: '未调度任务GPU卡需求量',
         type: 'bar',
+        stack: 'jobs',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#ffa940',
+          color: primary,
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
       },
@@ -252,6 +316,20 @@ function initCharts() {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow',
+      },
+      formatter: (params: any) => {
+        let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
+        params.forEach((item: any) => {
+          res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="color: #666;">${item.seriesName}</span>
+            </span>
+            <span style="font-weight: 600; color: #333;">${item.value}个</span>
+          </div>`;
+        });
+        res += '</div>';
+        return res;
       },
     },
     legend: {
@@ -298,22 +376,20 @@ function initCharts() {
       {
         name: 'GPU满载节点',
         type: 'bar',
+        stack: 'nodes',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#52c41a',
+          color: primary,
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: 'GPU空闲节点',
         type: 'bar',
+        stack: 'nodes',
         barWidth: 10,
-        barGap: '30%',
-        barCategoryGap: '40%',
         itemStyle: {
-          color: '#ff4d4f',
+          color: secondary,
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
@@ -322,6 +398,7 @@ function initCharts() {
 }
 
 onMounted(() => {
+  themeColor.value = getThemeColor();
   initCharts();
 });
 </script>
