@@ -99,9 +99,33 @@ function handleViewModeChange(mode: 'grid' | 'list') {
 
 function initCharts() {
   const primary = themeColor.value;
-  const secondary = colorWithOpacity(primary, 0.4);
-  const lineCol = colorWithOpacity(primary, 0.75);
-  const mutedCol = colorWithOpacity(primary, 0.25);
+
+  // 高级渐变配置
+  const primaryGrad = {
+    type: 'linear' as const,
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [
+      { offset: 0, color: primary },
+      { offset: 1, color: colorWithOpacity(primary, 0.3) },
+    ],
+  };
+
+  const secondaryGrad = {
+    type: 'linear' as const,
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [
+      { offset: 0, color: '#8b5cf6' }, // 高级紫蓝色
+      { offset: 1, color: 'rgba(139, 92, 246, 0.25)' },
+    ],
+  };
+
+  const lineCol = '#ff7a45'; // 亮珊瑚橙色，高对比度标尺
 
   // Chart 1: 集群GPU资源 (柱状 + 折线混搭)
   renderChart1({
@@ -120,9 +144,13 @@ function initCharts() {
       formatter: (params: any) => {
         let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
         params.forEach((item: any) => {
+          // 如果 color 是一个 gradient 对象，取它的第一个 colorStop 颜色显示在 tooltip indicator 上
+          const colorVal = typeof item.color === 'object' && item.color.colorStops 
+            ? item.color.colorStops[0].color 
+            : item.color;
           res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
             <span style="display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${colorVal};"></span>
               <span style="color: #666;">${item.seriesName}</span>
             </span>
             <span style="font-weight: 600; color: #333;">${item.value}卡</span>
@@ -179,7 +207,7 @@ function initCharts() {
         stack: 'gpu',
         barWidth: 10,
         itemStyle: {
-          color: primary,
+          color: primaryGrad,
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
@@ -189,7 +217,7 @@ function initCharts() {
         stack: 'gpu',
         barWidth: 10,
         itemStyle: {
-          color: secondary,
+          color: secondaryGrad,
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
       },
@@ -197,13 +225,15 @@ function initCharts() {
         name: '集群GPU数量',
         type: 'line',
         symbol: 'circle',
-        symbolSize: 6,
+        symbolSize: 8,
         itemStyle: {
           color: lineCol,
+          borderWidth: 2,
+          borderColor: '#fff',
         },
         lineStyle: {
           color: lineCol,
-          width: 2,
+          width: 3,
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
       },
@@ -227,9 +257,12 @@ function initCharts() {
       formatter: (params: any) => {
         let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
         params.forEach((item: any) => {
+          const colorVal = typeof item.color === 'object' && item.color.colorStops 
+            ? item.color.colorStops[0].color 
+            : item.color;
           res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
             <span style="display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${colorVal};"></span>
               <span style="color: #666;">${item.seriesName}</span>
             </span>
             <span style="font-weight: 600; color: #333;">${item.value}卡</span>
@@ -286,7 +319,17 @@ function initCharts() {
         stack: 'jobs',
         barWidth: 10,
         itemStyle: {
-          color: mutedCol,
+          color: {
+            type: 'linear' as const,
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: '#cbd5e1' }, // 莫兰迪低调灰
+              { offset: 1, color: '#f1f5f9' },
+            ],
+          },
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
@@ -296,7 +339,17 @@ function initCharts() {
         stack: 'jobs',
         barWidth: 10,
         itemStyle: {
-          color: primary,
+          color: {
+            type: 'linear' as const,
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: '#f97316' }, // 警示橙色
+              { offset: 1, color: 'rgba(249, 115, 22, 0.3)' },
+            ],
+          },
         },
         data: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
       },
@@ -320,9 +373,12 @@ function initCharts() {
       formatter: (params: any) => {
         let res = `<div style="padding: 4px 8px;"><div style="font-weight: 600; margin-bottom: 6px;">${params[0].axisValue}</div>`;
         params.forEach((item: any) => {
+          const colorVal = typeof item.color === 'object' && item.color.colorStops 
+            ? item.color.colorStops[0].color 
+            : item.color;
           res += `<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 2px;">
             <span style="display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></span>
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${colorVal};"></span>
               <span style="color: #666;">${item.seriesName}</span>
             </span>
             <span style="font-weight: 600; color: #333;">${item.value}个</span>
@@ -379,7 +435,17 @@ function initCharts() {
         stack: 'nodes',
         barWidth: 10,
         itemStyle: {
-          color: primary,
+          color: {
+            type: 'linear' as const,
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: '#10b981' }, // 优雅绿色
+              { offset: 1, color: 'rgba(16, 185, 129, 0.3)' },
+            ],
+          },
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
@@ -389,7 +455,17 @@ function initCharts() {
         stack: 'nodes',
         barWidth: 10,
         itemStyle: {
-          color: secondary,
+          color: {
+            type: 'linear' as const,
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: '#64748b' }, // 冷石灰色
+              { offset: 1, color: 'rgba(100, 116, 139, 0.25)' },
+            ],
+          },
         },
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
