@@ -678,11 +678,11 @@ function getIconComponent(icon: string) {
 /* 模型简介三行截断 */
 .model-description {
   display: -webkit-box;
+  min-height: 54px;
   overflow: hidden;
   -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   line-height: 1.5;
-  min-height: 54px;
+  -webkit-box-orient: vertical;
 }
 
 /* 卡片悬浮效果 */
@@ -701,22 +701,20 @@ function getIconComponent(icon: string) {
 }
 
 .model-card::before {
-  content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   padding: 1px;
+  content: '';
   background: linear-gradient(
     135deg,
     transparent 40%,
-    rgba(255, 255, 255, 0.3) 50%,
+    rgb(255 255 255 / 30%) 50%,
     transparent 60%
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  border-radius: inherit;
   opacity: 0;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
   transition: opacity 0.3s;
 }
 

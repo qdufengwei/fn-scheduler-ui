@@ -213,22 +213,22 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 
 .pricing-discount-card__title {
   margin-bottom: 14px;
-  color: #1f2329;
   font-size: 16px;
   font-weight: 600;
+  color: #1f2329;
 }
 
 .pricing-discount-card__field {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 8px 10px;
+  align-items: center;
 }
 
 .pricing-discount-card__label {
   width: 100%;
-  color: #4e5969;
   font-size: 13px;
+  color: #4e5969;
 }
 
 .pricing-discount-card__input {
@@ -248,8 +248,8 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #1f2329;
   line-height: 34px;
+  color: #1f2329;
 }
 
 .pricing-discount-card__row span:first-child {
