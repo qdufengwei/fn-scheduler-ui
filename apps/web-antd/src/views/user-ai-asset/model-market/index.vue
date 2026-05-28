@@ -9,6 +9,9 @@ import {
   Select,
   Tag,
   message,
+  Drawer,
+  Tabs,
+  TabPane,
 } from 'ant-design-vue';
 
 const SlidersHorizontal = createIconifyIcon('lucide:sliders-horizontal');
@@ -16,6 +19,10 @@ const ShieldAlert = createIconifyIcon('lucide:shield-alert');
 const Terminal = createIconifyIcon('lucide:terminal');
 const Key = createIconifyIcon('lucide:key');
 const Copy = createIconifyIcon('lucide:copy');
+
+const Globe = createIconifyIcon('lucide:globe');
+const Cpu = createIconifyIcon('lucide:cpu');
+const Zap = createIconifyIcon('lucide:zap');
 
 interface ModelService {
   id: string;
@@ -235,6 +242,145 @@ function copyEndpoint(serviceName: string) {
   navigator.clipboard.writeText(`https://api.fn-compute.net/v1/models/${serviceName}/chat/completions`);
   message.success(`已复制 ${serviceName} 的服务 Endpoint！`);
 }
+
+// 模型详情抽屉相关数据与控制
+const detailVisible = ref(false);
+const selectedService = ref<ModelService | null>(null);
+const activeTabKey = ref('curl');
+
+// 模拟的高级模型元数据定义
+interface ModelMeta {
+  provider: string;
+  contextWindow: string;
+  maxOutput: string;
+  description: string;
+  advantages: string[];
+}
+
+const mockModelMetaMap: Record<string, ModelMeta> = {
+  '文本生成': {
+    provider: 'DeepSeek / Meta / Google',
+    contextWindow: '128K Tokens',
+    maxOutput: '8,192 Tokens',
+    description: '采用最先进的指令微调与强化学习算法。在大规模多任务语言理解（MMLU）、复杂推理、数学计算及代码编写方面展现出极其出色的水平，特别适用于智能助手、专业文本生成、逻辑推导及语义分析等企业级复杂场景。',
+    advantages: ['业界顶级数学与逻辑推理表现', '深度支持中文与英文指令遵循', '超长上下文关联感知能力'],
+  },
+  '代码生成': {
+    provider: 'DeepSeek / Meta / Qwen',
+    contextWindow: '64K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '专为多语言代码生成、补全、解释和重构而优化。理解复杂系统架构设计，支持数十种编程语言，生成符合行业最佳实践的高安全性、高质量规范代码，内置单元测试建议及错误排查提示。',
+    advantages: ['跨文件上下文代码补全', '出色的 SQL 与 Shell 脚本处理', '开箱即用的单元测试生成能力'],
+  },
+  '视觉识别': {
+    provider: 'OpenAI / Google / Meta',
+    contextWindow: '32K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '结合领先的多模态视觉-语言大模型，不仅支持精准的通用物体识别和多语言 OCR 文本提取，更能深度解析复杂图表、电路图、医学影像、工程图纸等多行业视觉资产，具备高精度语义理解。',
+    advantages: ['业界顶级的 OCR 识别精度', '深度支持多图复杂关联推理', '智能图表及数据大屏数据还原'],
+  },
+  '语音处理': {
+    provider: 'OpenAI / Bilibili / Alibaba',
+    contextWindow: '16K Tokens',
+    maxOutput: '2,048 Tokens',
+    description: '多语种高保真语音识别与合成大模型。支持几十种方言与外语混合识别，能够自动进行背景降噪与说话人角色区分，提供自然感叹词、情绪合成等拟真语音服务，实现近乎零延迟的音频吞吐。',
+    advantages: ['抗噪及多说话人声学分离', '毫秒级流式语音识别响应', '超写实拟人化情绪声线合成'],
+  },
+};
+
+const activeMeta = computed<ModelMeta>(() => {
+  if (!selectedService.value) {
+    return {
+      provider: '开源社区',
+      contextWindow: '32K Tokens',
+      maxOutput: '4,096 Tokens',
+      description: '通用智能算力调度平台大模型服务。',
+      advantages: ['高性能推理吞吐', '极速并发响应'],
+    };
+  }
+  return mockModelMetaMap[selectedService.value.category] ?? {
+    provider: '开源社区',
+    contextWindow: '32K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '通用智能算力调度平台大模型服务。',
+    advantages: ['高性能推理吞吐', '极速并发响应'],
+  };
+});
+
+function showDetail(service: ModelService) {
+  selectedService.value = service;
+  detailVisible.value = true;
+  activeTabKey.value = 'curl';
+}
+
+const curlCode = computed(() => {
+  if (!selectedService.value) return '';
+  return `curl https://api.fn-compute.net/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{
+    "model": "${selectedService.value.modelName}",
+    "messages": [
+      {
+        "role": "user",
+        "content": "请用简短的语言向我介绍你自己"
+      }
+    ],
+    "temperature": 0.7
+  }'`;
+});
+
+const pythonCode = computed(() => {
+  if (!selectedService.value) return '';
+  return `from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.fn-compute.net/v1",
+    api_key="YOUR_API_KEY"
+)
+
+response = client.chat.completions.create(
+    model="${selectedService.value.modelName}",
+    messages=[
+        {"role": "user", "content": "请用简短的语言向我介绍你自己"}
+    ],
+    temperature=0.7
+)
+
+print(response.choices[0].message.content)`;
+});
+
+const jsCode = computed(() => {
+  if (!selectedService.value) return '';
+  return `import OpenAI from "openai";
+
+const openai = new OpenAI({
+  baseURL: "https://api.fn-compute.net/v1",
+  apiKey: "YOUR_API_KEY"
+});
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "${selectedService.value.modelName}",
+    messages: [
+      { role: "user", content: "请用简短的语言向我介绍你自己" }
+    ],
+    temperature: 0.7
+  });
+
+  console.log(completion.choices[0].message.content);
+}
+
+main();`;
+});
+
+function handleCopyCode(code: string) {
+  navigator.clipboard.writeText(code).then(() => {
+    message.success('示例代码已复制到剪贴板！');
+  }).catch(() => {
+    message.error('复制失败，请手动选择复制');
+  });
+}
 </script>
 
 <template>
@@ -349,8 +495,8 @@ function copyEndpoint(serviceName: string) {
               class="group relative bg-white rounded-xl border border-gray-150 p-5 hover:border-gray-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all duration-200 flex flex-col justify-between h-[180px]"
             >
               <div>
-                <!-- 头部：极简头像、标题、服务分类 -->
-                <div class="flex items-start justify-between gap-2">
+                <!-- 头部：极简头像、标题、服务分类 (点击可查看详情) -->
+                <div class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200" @click="showDetail(service)">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div 
                       class="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
@@ -432,5 +578,156 @@ function copyEndpoint(serviceName: string) {
       </section>
 
     </div>
+
+    <!-- 极细致莫兰迪风模型详情抽屉 -->
+    <Drawer
+      v-model:open="detailVisible"
+      :title="null"
+      width="580"
+      placement="right"
+      :closable="false"
+      class="fn-model-detail-drawer"
+    >
+      <div v-if="selectedService" class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1">
+        <!-- 头部标题区 -->
+        <div class="flex items-start justify-between pb-4.5 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div 
+              class="h-11 w-11 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
+              :class="avatarColorMap[selectedService.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+            >
+              {{ selectedService.modelName.substring(0, 2).toUpperCase() }}
+            </div>
+            <div>
+              <div class="text-base font-bold text-gray-900 leading-tight">
+                {{ selectedService.serviceName }}
+              </div>
+              <div class="mt-1 text-[11px] font-mono text-gray-400">
+                {{ selectedService.modelName }}
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+              {{ selectedService.category }}
+            </Tag>
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              在线运行
+            </span>
+          </div>
+        </div>
+
+        <!-- 技术参数网格 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">技术指标 / Specifications</div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Globe class="size-3" />
+                Provider
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 truncate" :title="activeMeta.provider">{{ activeMeta.provider }}</div>
+            </div>
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Cpu class="size-3" />
+                Context Window
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.contextWindow }}</div>
+            </div>
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Zap class="size-3" />
+                Max Output
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.maxOutput }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 价格明细 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">计费规则 / Pricing</div>
+          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.inputPrice.toFixed(4) }}</span>
+            </div>
+            <div class="h-6 w-px bg-gray-200"></div>
+            <div class="flex flex-col items-end">
+              <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.outputPrice.toFixed(4) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 详细介绍 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">模型描述 / Model Profile</div>
+          <div class="bg-white text-xs leading-relaxed text-gray-550 text-justify">
+            {{ activeMeta.description }}
+          </div>
+          <div class="flex flex-wrap gap-2 mt-1">
+            <span 
+              v-for="adv in activeMeta.advantages" 
+              :key="adv" 
+              class="inline-block px-2.5 py-1 text-[10px] bg-gray-50 text-gray-500 rounded-full border border-gray-200"
+            >
+              ✓ {{ adv }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 快速集成与示例代码 -->
+        <div class="flex flex-col gap-2 flex-1 min-h-0">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+            <span>快速集成 / Quick Start</span>
+            <span class="text-[10px] font-normal text-gray-400 font-mono">OpenAI SDK 兼容</span>
+          </div>
+          
+          <Tabs v-model:activeKey="activeTabKey" class="fn-integration-tabs flex-1 flex flex-col min-h-0">
+            <TabPane key="curl" tab="cURL">
+              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
+                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ curlCode }}</pre>
+                <div class="mt-2.5 flex justify-end">
+                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(curlCode)">
+                    <template #icon><Copy class="size-3" /></template>
+                    复制代码
+                  </Button>
+                </div>
+              </div>
+            </TabPane>
+            <TabPane key="python" tab="Python">
+              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
+                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ pythonCode }}</pre>
+                <div class="mt-2.5 flex justify-end">
+                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(pythonCode)">
+                    <template #icon><Copy class="size-3" /></template>
+                    复制代码
+                  </Button>
+                </div>
+              </div>
+            </TabPane>
+            <TabPane key="js" tab="Node.js">
+              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
+                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ jsCode }}</pre>
+                <div class="mt-2.5 flex justify-end">
+                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(jsCode)">
+                    <template #icon><Copy class="size-3" /></template>
+                    复制代码
+                  </Button>
+                </div>
+              </div>
+            </TabPane>
+          </Tabs>
+        </div>
+
+        <!-- 关闭抽屉按钮 -->
+        <div class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0">
+          <Button class="rounded-lg text-xs" @click="detailVisible = false">关闭窗口</Button>
+        </div>
+      </div>
+    </Drawer>
   </Page>
 </template>

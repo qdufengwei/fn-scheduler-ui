@@ -10,6 +10,7 @@ import {
   Tag,
   message,
   Popconfirm,
+  Drawer,
 } from 'ant-design-vue';
 
 const SlidersHorizontal = createIconifyIcon('lucide:sliders-horizontal');
@@ -17,6 +18,12 @@ const ShieldAlert = createIconifyIcon('lucide:shield-alert');
 const BarChart3 = createIconifyIcon('lucide:bar-chart-3');
 const Settings = createIconifyIcon('lucide:settings');
 const Power = createIconifyIcon('lucide:power');
+const Globe = createIconifyIcon('lucide:globe');
+const Cpu = createIconifyIcon('lucide:cpu');
+const Zap = createIconifyIcon('lucide:zap');
+const Activity = createIconifyIcon('lucide:activity');
+const Database = createIconifyIcon('lucide:database');
+
 
 interface ModelService {
   id: string;
@@ -270,6 +277,127 @@ function showConfigMessage(serviceName: string) {
 function showMonitorMessage(serviceName: string) {
   message.success(`正在调取服务 ${serviceName} 的调用统计大屏...`);
 }
+
+// 管理员端服务运营详情抽屉相关数据
+const detailVisible = ref(false);
+const selectedService = ref<ModelService | null>(null);
+
+interface ModelMeta {
+  provider: string;
+  contextWindow: string;
+  maxOutput: string;
+  description: string;
+  deploymentNode: string;
+  rateLimit: string;
+  gpuInstance: string;
+  concurrency: number;
+}
+
+const mockModelMetaMap: Record<string, ModelMeta> = {
+  '文本生成': {
+    provider: 'DeepSeek / Meta / Google',
+    contextWindow: '128K Tokens',
+    maxOutput: '8,192 Tokens',
+    description: '此服务依托混合架构，部署于成都智算中心 GPU 节点群。主要用于大规模多任务语言理解（MMLU）、复杂逻辑推理及长文理解。',
+    deploymentNode: '成都智算中心 (GPU 节点群)',
+    rateLimit: '120 req/s',
+    gpuInstance: 'NVIDIA-A100-SXM4-80GB × 8',
+    concurrency: 150,
+  },
+  '代码生成': {
+    provider: 'DeepSeek / Meta / Qwen',
+    contextWindow: '64K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '用于代码生成与补全服务，采用 TensorRT-LLM 优化吞吐，针对高并发补全环境进行了长效调度调优。',
+    deploymentNode: '成都智算中心 (GPU 节点群)',
+    rateLimit: '80 req/s',
+    gpuInstance: 'NVIDIA-A30-24GB × 4',
+    concurrency: 80,
+  },
+  '视觉识别': {
+    provider: 'OpenAI / Google / Meta',
+    contextWindow: '32K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '多模态图像/视觉识别算力服务。结合了 OCR 提取和复杂图表结构化分析，适用于多行业多模态视觉资产解析。',
+    deploymentNode: '深圳视觉实验室',
+    rateLimit: '50 req/s',
+    gpuInstance: 'NVIDIA-RTX-4090 × 8',
+    concurrency: 50,
+  },
+  '语音处理': {
+    provider: 'OpenAI / Bilibili / Alibaba',
+    contextWindow: '16K Tokens',
+    maxOutput: '2,048 Tokens',
+    description: '大模型高保真语音识别与拟真合成服务。支持多说话人角色声学分离及流式音频转写吞吐。',
+    deploymentNode: '深圳视觉实验室',
+    rateLimit: '60 req/s',
+    gpuInstance: 'NVIDIA-A10G-24GB × 2',
+    concurrency: 60,
+  },
+};
+
+const activeMeta = computed<ModelMeta>(() => {
+  if (!selectedService.value) {
+    return {
+      provider: '开源社区',
+      contextWindow: '32K Tokens',
+      maxOutput: '4,096 Tokens',
+      description: '通用模型服务。',
+      deploymentNode: '默认调度节点',
+      rateLimit: '50 req/s',
+      gpuInstance: 'NVIDIA-A10G × 2',
+      concurrency: 50,
+    };
+  }
+  return mockModelMetaMap[selectedService.value.category] ?? {
+    provider: '开源社区',
+    contextWindow: '32K Tokens',
+    maxOutput: '4,096 Tokens',
+    description: '通用模型服务。',
+    deploymentNode: '默认调度节点',
+    rateLimit: '50 req/s',
+    gpuInstance: 'NVIDIA-A10G × 2',
+    concurrency: 50,
+  };
+});
+
+// 各租户调用量分布 Mock 数据
+interface TenantShare {
+  tenantName: string;
+  calls: string;
+  revenue: string;
+  percentage: number;
+}
+
+const mockTenantShares = computed<TenantShare[]>(() => {
+  if (!selectedService.value) return [];
+  const total = selectedService.value.totalCalls;
+  return [
+    {
+      tenantName: '算网运营平台',
+      calls: (total * 0.65).toFixed(0),
+      revenue: `¥${(selectedService.value.inputPrice * total * 0.65).toFixed(2)}`,
+      percentage: 65,
+    },
+    {
+      tenantName: '深圳视觉实验室',
+      calls: (total * 0.23).toFixed(0),
+      revenue: `¥${(selectedService.value.inputPrice * total * 0.23).toFixed(2)}`,
+      percentage: 23,
+    },
+    {
+      tenantName: '成都智算中心',
+      calls: (total * 0.12).toFixed(0),
+      revenue: `¥${(selectedService.value.inputPrice * total * 0.12).toFixed(2)}`,
+      percentage: 12,
+    },
+  ];
+});
+
+function showDetail(service: ModelService) {
+  selectedService.value = service;
+  detailVisible.value = true;
+}
 </script>
 
 <template>
@@ -401,8 +529,8 @@ function showMonitorMessage(serviceName: string) {
               </div>
 
               <div>
-                <!-- 头部：极简头像、标题、服务分类 -->
-                <div class="flex items-start justify-between gap-2">
+                <!-- 头部：极简头像、标题、服务分类 (点击可查看详情) -->
+                <div class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200" @click="showDetail(service)">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div 
                       class="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
@@ -492,5 +620,147 @@ function showMonitorMessage(serviceName: string) {
       </section>
 
     </div>
+
+    <!-- 极细致莫兰迪风模型服务运营详情抽屉 -->
+    <Drawer
+      v-model:open="detailVisible"
+      :title="null"
+      width="580"
+      placement="right"
+      :closable="false"
+      class="fn-model-detail-drawer"
+    >
+      <div v-if="selectedService" class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1">
+        <!-- 头部标题区 -->
+        <div class="flex items-start justify-between pb-4.5 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div 
+              class="h-11 w-11 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
+              :class="avatarColorMap[selectedService.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+            >
+              {{ selectedService.modelName.substring(0, 2).toUpperCase() }}
+            </div>
+            <div>
+              <div class="text-base font-bold text-gray-900 leading-tight">
+                {{ selectedService.serviceName }}
+              </div>
+              <div class="mt-1 text-[11px] font-mono text-gray-400">
+                {{ selectedService.modelName }}
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+              {{ selectedService.category }}
+            </Tag>
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              在线运行
+            </span>
+          </div>
+        </div>
+
+        <!-- 运营指标网格 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">运营调度指标 / Scheduling Specs</div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Globe class="size-3" />
+                限流速率 (Rate Limit)
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.rateLimit }}</div>
+            </div>
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Cpu class="size-3" />
+                并发阈值 (Concurrency)
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.concurrency }} req</div>
+            </div>
+            <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+              <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                <Zap class="size-3" />
+                上下文长度 (Context)
+              </div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.contextWindow }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 部署集群与算力规格 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">部署集群与硬件规格 / Deployment & Hardware</div>
+          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                <Database class="size-3.5" />
+                <span>部署节点/集群</span>
+              </div>
+              <span class="text-xs font-medium text-gray-800">{{ activeMeta.deploymentNode }}</span>
+            </div>
+            <div class="h-px bg-gray-200/60"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                <Activity class="size-3.5" />
+                <span>算力硬件规格</span>
+              </div>
+              <span class="text-xs font-mono font-medium text-gray-800">{{ activeMeta.gpuInstance }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 价格明细 -->
+        <div class="flex flex-col gap-2">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">资费与单价 / Service Pricing</div>
+          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.inputPrice.toFixed(4) }}</span>
+            </div>
+            <div class="h-6 w-px bg-gray-200"></div>
+            <div class="flex flex-col items-end">
+              <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.outputPrice.toFixed(4) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 租户调用比例分担 -->
+        <div class="flex flex-col gap-2 flex-1 min-h-0">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">租户消费与调用分布 / Tenant Allocation Details</div>
+          <div class="border border-gray-100 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0 bg-white">
+            <div class="bg-gray-50/70 border-b border-gray-100 px-4 py-2 flex items-center justify-between text-[11px] text-gray-400 uppercase font-semibold shrink-0">
+              <div class="w-1/3">租户名称</div>
+              <div class="w-1/3 text-right">调用量 (次)</div>
+              <div class="w-1/3 text-right">产生资费</div>
+            </div>
+            <div class="overflow-auto divide-y divide-gray-100 flex-1">
+              <div 
+                v-for="tenantShare in mockTenantShares" 
+                :key="tenantShare.tenantName"
+                class="px-4 py-2.5 flex items-center justify-between text-xs text-gray-700 hover:bg-gray-50/50"
+              >
+                <div class="w-1/3 font-medium text-gray-800 truncate" :title="tenantShare.tenantName">
+                  {{ tenantShare.tenantName }}
+                </div>
+                <div class="w-1/3 text-right font-mono">
+                  {{ Number(tenantShare.calls).toLocaleString() }}
+                  <span class="text-[10px] text-gray-400 ml-1">({{ tenantShare.percentage }}%)</span>
+                </div>
+                <div class="w-1/3 text-right font-mono text-emerald-600 font-semibold">
+                  {{ tenantShare.revenue }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关闭抽屉按钮 -->
+        <div class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0">
+          <Button class="rounded-lg text-xs" @click="detailVisible = false">关闭窗口</Button>
+        </div>
+      </div>
+    </Drawer>
   </Page>
 </template>
