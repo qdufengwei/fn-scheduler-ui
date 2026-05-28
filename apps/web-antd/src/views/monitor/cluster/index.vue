@@ -92,6 +92,7 @@ function initCharts() {
     xAxis: {
       type: 'category',
       data: timeData,
+      boundaryGap: true,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
@@ -182,6 +183,7 @@ function initCharts() {
     xAxis: {
       type: 'category',
       data: timeData,
+      boundaryGap: true,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
@@ -258,6 +260,7 @@ function initCharts() {
     xAxis: {
       type: 'category',
       data: timeData,
+      boundaryGap: true,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
