@@ -264,6 +264,7 @@ const handleReset = () => {
       <Popconfirm
         title="确认删除选中的任务？"
         @confirm="showNotify(`已删除 ${rowSelection.length} 个任务`)"
+        :disabled="rowSelection.length === 0"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>

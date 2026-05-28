@@ -245,6 +245,7 @@ const rowSelection = {
         ok-text="确定"
         cancel-text="取消"
         @confirm="handleBatchDelete"
+        :disabled="selectedRowKeys.length === 0"
       >
         <Button :disabled="selectedRowKeys.length === 0">批量删除</Button>
       </Popconfirm>

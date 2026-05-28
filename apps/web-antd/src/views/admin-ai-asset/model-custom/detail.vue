@@ -232,6 +232,7 @@ function copyModelPath(path: string) {
             ok-text="确定"
             cancel-text="取消"
             @confirm="handleBatchDelete"
+            :disabled="selectedRowKeys.length === 0"
           >
             <Button :disabled="selectedRowKeys.length === 0" class="px-4"
               >批量删除</Button

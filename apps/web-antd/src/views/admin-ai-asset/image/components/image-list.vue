@@ -73,6 +73,7 @@ const columns = [
         ok-text="确认"
         cancel-text="取消"
         @confirm="emit('batchDelete')"
+        :disabled="selectedRowKeys.length === 0"
       >
         <Button danger :disabled="selectedRowKeys.length === 0">
           <template #icon>

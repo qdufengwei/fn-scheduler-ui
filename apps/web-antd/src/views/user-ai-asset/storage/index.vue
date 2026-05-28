@@ -215,6 +215,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
           ok-text="确认"
           cancel-text="取消"
           @confirm="handleBatchDelete"
+          :disabled="selectedRowKeys.length === 0"
         >
           <Button danger :disabled="selectedRowKeys.length === 0">
             <template #icon>

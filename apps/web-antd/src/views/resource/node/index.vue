@@ -433,6 +433,7 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
               <Popconfirm
                 title="下架后该节点将无法被分配，确认下架吗？"
                 @confirm="offShelf(record as NodeRow)"
+                :disabled="!(record as NodeRow).isOnline"
               >
                 <Button
                   type="link"

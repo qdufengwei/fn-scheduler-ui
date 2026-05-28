@@ -442,6 +442,7 @@ const detailRowSelection = computed(() => ({
             ok-text="确定"
             cancel-text="取消"
             @confirm="handleBatchDeleteVersions"
+            :disabled="detailSelectedRowKeys.length === 0"
           >
             <Button :disabled="detailSelectedRowKeys.length === 0" class="px-4"
               >批量删除</Button
@@ -536,6 +537,7 @@ const detailRowSelection = computed(() => ({
           ok-text="确定"
           cancel-text="取消"
           @confirm="handleBatchDelete"
+          :disabled="selectedRowKeys.length === 0"
         >
           <Button :disabled="selectedRowKeys.length === 0">批量删除</Button>
         </Popconfirm>

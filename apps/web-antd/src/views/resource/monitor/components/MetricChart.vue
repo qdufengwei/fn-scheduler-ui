@@ -35,41 +35,6 @@ const props = withDefaults(defineProps<Props>(), {
 const chartRef = ref<EchartsUIType>();
 const { renderEcharts, updateData } = useEcharts(chartRef);
 
-const themeColor = ref('#1677ff');
-
-const getThemeColor = () => {
-  if (typeof window === 'undefined') return '#1677ff';
-  const rootStyle = getComputedStyle(document.documentElement);
-  const primaryVal = rootStyle.getPropertyValue('--primary').trim();
-  if (primaryVal) {
-    if (/^\d+(\s+|,\s*)\d+%\s+(\s+|,\s*)\d+%/.test(primaryVal)) {
-      return `hsl(${primaryVal.split(/\s+/).join(', ')})`;
-    }
-    if (/^\d+\s+\d+%\s+\d+%/.test(primaryVal)) {
-      return `hsl(${primaryVal})`;
-    }
-    return primaryVal.startsWith('#') || primaryVal.startsWith('rgb') || primaryVal.startsWith('hsl')
-      ? primaryVal
-      : `hsl(${primaryVal})`;
-  }
-  const antPrimary = rootStyle.getPropertyValue('--ant-primary-color').trim();
-  return antPrimary || '#1677ff';
-};
-
-const colorWithOpacity = (color: string, opacity: number) => {
-  if (color.startsWith('hsl')) {
-    return color.replace('hsl', 'hsla').replace(')', `, ${opacity})`);
-  }
-  if (color.startsWith('#')) {
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  }
-  return color;
-};
-
 const chartHeight = computed(() =>
   props.size === 'large' ? '280px' : '160px',
 );
@@ -84,7 +49,6 @@ const getChartOption = (): any => {
     return {};
   }
 
-  const primary = themeColor.value;
   const timeData = props.data.data.map((d) => formatTime(d.timestamp));
   const valueData = props.data.data.map((d) => d.value);
 
@@ -98,7 +62,7 @@ const getChartOption = (): any => {
           <div style="padding: 4px 8px;">
             <div style="font-weight: 500; margin-bottom: 4px;">${point.axisValue}</div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${primary};"></span>
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #1677ff;"></span>
               <span>${props.title}: ${point.value}${props.data?.unit || ''}</span>
             </div>
           </div>
@@ -153,7 +117,7 @@ const getChartOption = (): any => {
         symbolSize: 4,
         lineStyle: {
           width: 2,
-          color: primary,
+          color: '#1677ff',
         },
         areaStyle: {
           color: {
@@ -163,8 +127,8 @@ const getChartOption = (): any => {
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: colorWithOpacity(primary, 0.25) },
-              { offset: 1, color: colorWithOpacity(primary, 0.02) },
+              { offset: 0, color: 'rgba(22, 119, 255, 0.25)' },
+              { offset: 1, color: 'rgba(22, 119, 255, 0.02)' },
             ],
           },
         },
@@ -184,7 +148,6 @@ watch(
 );
 
 onMounted(() => {
-  themeColor.value = getThemeColor();
   if (props.data?.data?.length) {
     renderEcharts(getChartOption());
   }

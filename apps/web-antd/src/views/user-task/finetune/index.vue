@@ -127,6 +127,7 @@ const getStatusColor = (status: string) => {
         <Popconfirm
           title="确认删除选中的任务？"
           @confirm="showNotify(`已删除 ${selected.length} 个任务`)"
+          :disabled="selected.length === 0"
         >
           <Button danger :disabled="selected.length === 0">批量删除</Button>
         </Popconfirm>

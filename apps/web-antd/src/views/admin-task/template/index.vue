@@ -57,6 +57,7 @@ const data = ref([
       <Popconfirm
         title="确认删除选中的模板？"
         @confirm="showNotify(`已删除 ${rowSelection.length} 个模板`)"
+        :disabled="rowSelection.length === 0"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>
