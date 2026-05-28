@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, DatePicker, Empty, Row, Select } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Empty,
+  Row,
+  Select,
+} from 'ant-design-vue';
 import { Download, Grid, List } from '@vben/icons';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 import type { EchartsUIType } from '@vben/plugins/echarts';
@@ -16,11 +24,31 @@ const chart1Ref = ref<EchartsUIType>();
 const chart2Ref = ref<EchartsUIType>();
 const chart3Ref = ref<EchartsUIType>();
 
-const { renderEcharts: renderChart1, resize: resizeChart1 } = useEcharts(chart1Ref);
-const { renderEcharts: renderChart2, resize: resizeChart2 } = useEcharts(chart2Ref);
-const { renderEcharts: renderChart3, resize: resizeChart3 } = useEcharts(chart3Ref);
+const { renderEcharts: renderChart1, resize: resizeChart1 } =
+  useEcharts(chart1Ref);
+const { renderEcharts: renderChart2, resize: resizeChart2 } =
+  useEcharts(chart2Ref);
+const { renderEcharts: renderChart3, resize: resizeChart3 } =
+  useEcharts(chart3Ref);
 
-const timeData = ['19:48', '19:47', '19:47', '19:47', '19:48', '19:48', '19:48', '19:49', '19:49', '19:49', '19:50', '19:50', '19:50', '19:51', '19:51', '19:51'];
+const timeData = [
+  '19:48',
+  '19:47',
+  '19:47',
+  '19:47',
+  '19:48',
+  '19:48',
+  '19:48',
+  '19:49',
+  '19:49',
+  '19:49',
+  '19:50',
+  '19:50',
+  '19:50',
+  '19:51',
+  '19:51',
+  '19:51',
+];
 
 function handleViewModeChange(mode: 'grid' | 'list') {
   viewMode.value = mode;
@@ -296,15 +324,22 @@ onMounted(() => {
               allow-clear
               style="width: 220px"
               placeholder="请选择资源规格"
-              :options="[{ label: 'NVIDIA-GPU-HBM2E-80GB', value: 'gpu-80g' }, { label: 'NVIDIA-H100', value: 'h100' }]"
+              :options="[
+                { label: 'NVIDIA-GPU-HBM2E-80GB', value: 'gpu-80g' },
+                { label: 'NVIDIA-H100', value: 'h100' },
+              ]"
             />
-            <Select 
-              v-model:value="autoRefresh" 
-              style="width: 100px" 
+            <Select
+              v-model:value="autoRefresh"
+              style="width: 100px"
               placeholder="自动刷新"
-              :options="[{ label: '40s', value: '40s' }, { label: '60s', value: '60s' }, { label: '关闭', value: 'off' }]" 
+              :options="[
+                { label: '40s', value: '40s' },
+                { label: '60s', value: '60s' },
+                { label: '关闭', value: 'off' },
+              ]"
             />
-            <DatePicker.RangePicker 
+            <DatePicker.RangePicker
               v-model:value="timeRange"
               :placeholder="['开始时间', '结束时间']"
               style="width: 260px"
@@ -319,16 +354,24 @@ onMounted(() => {
           <div class="flex items-center gap-2 text-sm text-gray-500">
             <span>展示方式</span>
             <div class="flex border rounded overflow-hidden">
-              <button 
+              <button
                 class="px-2.5 py-1 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                :class="viewMode === 'grid' ? 'bg-blue-50 text-blue-500' : 'bg-white text-gray-400'"
+                :class="
+                  viewMode === 'grid'
+                    ? 'bg-blue-50 text-blue-500'
+                    : 'bg-white text-gray-400'
+                "
                 @click="handleViewModeChange('grid')"
               >
                 <Grid class="size-4" />
               </button>
-              <button 
+              <button
                 class="px-2.5 py-1 flex items-center justify-center hover:bg-gray-100 transition-colors border-l"
-                :class="viewMode === 'list' ? 'bg-blue-50 text-blue-500' : 'bg-white text-gray-400'"
+                :class="
+                  viewMode === 'list'
+                    ? 'bg-blue-50 text-blue-500'
+                    : 'bg-white text-gray-400'
+                "
                 @click="handleViewModeChange('list')"
               >
                 <List class="size-4" />
@@ -342,20 +385,37 @@ onMounted(() => {
       <Row :gutter="[16, 16]">
         <!-- 卡片 1 -->
         <Col :span="viewMode === 'grid' ? 12 : 24">
-          <Card :bordered="false" class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden">
+          <Card
+            :bordered="false"
+            class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden"
+          >
             <!-- 统一卡片左上角主标题 -->
-            <div class="text-base font-semibold text-gray-800 mb-4 text-left">集群GPU资源</div>
+            <div class="text-base font-semibold text-gray-800 mb-4 text-left">
+              集群GPU资源
+            </div>
 
-            <div :class="viewMode === 'grid' ? 'flex flex-col' : 'flex flex-row items-stretch'">
+            <div
+              :class="
+                viewMode === 'grid'
+                  ? 'flex flex-col'
+                  : 'flex flex-row items-stretch'
+              "
+            >
               <!-- 小卡片模式下的指标区 -->
-              <div v-if="viewMode === 'grid'" class="border-b pb-2 mb-2 text-center">
+              <div
+                v-if="viewMode === 'grid'"
+                class="border-b pb-2 mb-2 text-center"
+              >
                 <div class="my-2">
                   <span class="text-4xl font-bold text-blue-600">0.0%</span>
                 </div>
                 <div class="text-xs text-gray-400">集群GPU资源利用率</div>
               </div>
               <!-- 大卡片模式下的指标区 -->
-              <div v-else class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8">
+              <div
+                v-else
+                class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8"
+              >
                 <div class="my-3">
                   <span class="text-5xl font-bold text-blue-600">0.0%</span>
                 </div>
@@ -364,7 +424,9 @@ onMounted(() => {
 
               <!-- 统一的图表区 -->
               <div class="flex-1 min-w-0">
-                <div class="text-gray-700 text-sm font-semibold mb-2">利用率趋势</div>
+                <div class="text-gray-700 text-sm font-semibold mb-2">
+                  利用率趋势
+                </div>
                 <div class="h-[240px]">
                   <EchartsUI ref="chart1Ref" />
                 </div>
@@ -375,11 +437,22 @@ onMounted(() => {
 
         <!-- 卡片 2 -->
         <Col :span="viewMode === 'grid' ? 12 : 24">
-          <Card :bordered="false" class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden">
+          <Card
+            :bordered="false"
+            class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden"
+          >
             <!-- 统一卡片左上角主标题 -->
-            <div class="text-base font-semibold text-gray-800 mb-4 text-left">集群GPU卡数</div>
+            <div class="text-base font-semibold text-gray-800 mb-4 text-left">
+              集群GPU卡数
+            </div>
 
-            <div :class="viewMode === 'grid' ? 'flex flex-col' : 'flex flex-row items-stretch'">
+            <div
+              :class="
+                viewMode === 'grid'
+                  ? 'flex flex-col'
+                  : 'flex flex-row items-stretch'
+              "
+            >
               <!-- 小卡片模式下的指标区 -->
               <div v-if="viewMode === 'grid'" class="border-b pb-2 mb-2">
                 <div class="flex items-center justify-around my-2">
@@ -389,25 +462,36 @@ onMounted(() => {
                   </div>
                   <div class="text-center flex-1">
                     <div class="text-4xl font-bold text-amber-500">51</div>
-                    <div class="text-xs text-gray-400 mt-1">当前未调度任务数</div>
+                    <div class="text-xs text-gray-400 mt-1">
+                      当前未调度任务数
+                    </div>
                   </div>
                 </div>
               </div>
               <!-- 大卡片模式下的指标区 -->
-              <div v-else class="flex flex-col justify-center items-stretch text-center pr-8 border-r border-gray-100 min-w-[220px] gap-6 py-4 mr-8">
+              <div
+                v-else
+                class="flex flex-col justify-center items-stretch text-center pr-8 border-r border-gray-100 min-w-[220px] gap-6 py-4 mr-8"
+              >
                 <div>
-                  <div class="text-gray-500 text-xs font-medium mb-1">集群GPU卡数</div>
+                  <div class="text-gray-500 text-xs font-medium mb-1">
+                    集群GPU卡数
+                  </div>
                   <div class="text-4xl font-bold text-gray-800">0</div>
                 </div>
                 <div>
-                  <div class="text-gray-500 text-xs font-medium mb-1">当前未调度任务数</div>
+                  <div class="text-gray-500 text-xs font-medium mb-1">
+                    当前未调度任务数
+                  </div>
                   <div class="text-4xl font-bold text-amber-500">51</div>
                 </div>
               </div>
 
               <!-- 统一的图表区 -->
               <div class="flex-1 min-w-0">
-                <div class="text-gray-700 text-sm font-semibold mb-2">作业饱和度</div>
+                <div class="text-gray-700 text-sm font-semibold mb-2">
+                  作业饱和度
+                </div>
                 <div class="h-[240px]">
                   <EchartsUI ref="chart2Ref" />
                 </div>
@@ -418,20 +502,37 @@ onMounted(() => {
 
         <!-- 卡片 3 -->
         <Col :span="viewMode === 'grid' ? 12 : 24">
-          <Card :bordered="false" class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden">
+          <Card
+            :bordered="false"
+            class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden"
+          >
             <!-- 统一卡片左上角主标题 -->
-            <div class="text-base font-semibold text-gray-800 mb-4 text-left">GPU节点</div>
+            <div class="text-base font-semibold text-gray-800 mb-4 text-left">
+              GPU节点
+            </div>
 
-            <div :class="viewMode === 'grid' ? 'flex flex-col' : 'flex flex-row items-stretch'">
+            <div
+              :class="
+                viewMode === 'grid'
+                  ? 'flex flex-col'
+                  : 'flex flex-row items-stretch'
+              "
+            >
               <!-- 小卡片模式下的指标区 -->
-              <div v-if="viewMode === 'grid'" class="border-b pb-2 mb-2 text-center">
+              <div
+                v-if="viewMode === 'grid'"
+                class="border-b pb-2 mb-2 text-center"
+              >
                 <div class="my-2">
                   <span class="text-4xl font-bold text-green-600">0</span>
                 </div>
                 <div class="text-xs text-gray-400">GPU满载节点</div>
               </div>
               <!-- 大卡片模式下的指标区 -->
-              <div v-else class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8">
+              <div
+                v-else
+                class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8"
+              >
                 <div class="my-3">
                   <span class="text-5xl font-bold text-green-600">0</span>
                 </div>
@@ -440,7 +541,9 @@ onMounted(() => {
 
               <!-- 统一的图表区 -->
               <div class="flex-1 min-w-0">
-                <div class="text-gray-700 text-sm font-semibold mb-2">集群资源碎片情况</div>
+                <div class="text-gray-700 text-sm font-semibold mb-2">
+                  集群资源碎片情况
+                </div>
                 <div class="h-[240px]">
                   <EchartsUI ref="chart3Ref" />
                 </div>
@@ -451,20 +554,37 @@ onMounted(() => {
 
         <!-- 卡片 4 -->
         <Col :span="viewMode === 'grid' ? 12 : 24">
-          <Card :bordered="false" class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden">
+          <Card
+            :bordered="false"
+            class="shadow-sm h-full hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 pb-4 overflow-hidden"
+          >
             <!-- 统一卡片左上角主标题 -->
-            <div class="text-base font-semibold text-gray-800 mb-4 text-left">碎片节点</div>
+            <div class="text-base font-semibold text-gray-800 mb-4 text-left">
+              碎片节点
+            </div>
 
-            <div :class="viewMode === 'grid' ? 'flex flex-col' : 'flex flex-row items-stretch'">
+            <div
+              :class="
+                viewMode === 'grid'
+                  ? 'flex flex-col'
+                  : 'flex flex-row items-stretch'
+              "
+            >
               <!-- 小卡片模式下的指标区 -->
-              <div v-if="viewMode === 'grid'" class="border-b pb-2 mb-2 text-center">
+              <div
+                v-if="viewMode === 'grid'"
+                class="border-b pb-2 mb-2 text-center"
+              >
                 <div class="my-2">
                   <span class="text-4xl font-bold text-indigo-600">0</span>
                 </div>
                 <div class="text-xs text-gray-400">GPU碎片节点</div>
               </div>
               <!-- 大卡片模式下的指标区 -->
-              <div v-else class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8">
+              <div
+                v-else
+                class="flex flex-col justify-center items-center text-center pr-8 border-r border-gray-100 min-w-[200px] py-4 mr-8"
+              >
                 <div class="my-3">
                   <span class="text-5xl font-bold text-indigo-600">0</span>
                 </div>
@@ -473,9 +593,14 @@ onMounted(() => {
 
               <!-- 统一的空数据区 -->
               <div class="flex-1 min-w-0">
-                <div class="text-gray-700 text-sm font-semibold mb-2">碎片节点详情</div>
+                <div class="text-gray-700 text-sm font-semibold mb-2">
+                  碎片节点详情
+                </div>
                 <div class="h-[240px] flex items-center justify-center">
-                  <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" description="暂无数据" />
+                  <Empty
+                    :image="Empty.PRESENTED_IMAGE_SIMPLE"
+                    description="暂无数据"
+                  />
                 </div>
               </div>
             </div>

@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { Button, Input, Pagination, Popconfirm, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Input,
+  Pagination,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { RotateCw, Search, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const selectedTenant = ref<string>();
 const searchText = ref('');
@@ -76,22 +86,100 @@ const trainingColumns = [
 ];
 
 const trainingData = ref([
-  { id: 1, name: 'test', taskId: 'job-254ce4873fa7-20260523232921', taskType: 'CPU', status: '运行中', readyStatus: '1/1', runTime: '84h 42m 59s', createTime: '2026-05-23 15:29:21', instances: 1, priority: 'high-priority-job', recyclePolicy: '可回收', gpuCount: 0, resourceSpec: '-', user: 'lzj-1', tenant: 'qiji' },
-  { id: 2, name: 'cpu6', taskId: 'job-0482129d4b7b-20260415210402', taskType: 'CPU', status: '运行中', readyStatus: '1/1', runTime: '998h 58m 40s', createTime: '2026-04-15 13:04:03', instances: 1, priority: 'high-priority-job', recyclePolicy: '可回收', gpuCount: 0, resourceSpec: '-', user: 'user415', tenant: 'zjw415' },
-  { id: 3, name: '123', taskId: 'job-473d0f3c98dd-20260415205154', taskType: 'Simple', status: '停止', readyStatus: '0/1', runTime: '300h 43m 37s', createTime: '2026-04-15 12:51:54', instances: 1, priority: 'high-priority-job', recyclePolicy: '可回收', gpuCount: 1, resourceSpec: 'NVIDIA-GPU-HBM2E-80GB', user: 'test-0415', tenant: 'test-0415' },
-  { id: 4, name: 'test2', taskId: 'job-cfd9413b035d-20260415203555', taskType: 'MPI', status: '排队中', readyStatus: '0/2', runTime: '0h 0m 0s', createTime: '2026-04-15 12:35:55', instances: 2, priority: 'high-priority-job', recyclePolicy: '可回收', gpuCount: 0, resourceSpec: '-', user: 'test-0415', tenant: 'test-0415' },
-  { id: 5, name: 'test', taskId: 'job-da5d258fcdd0-20260415203536', taskType: 'MPI', status: '排队中', readyStatus: '0/2', runTime: '0h 0m 0s', createTime: '2026-04-15 12:35:36', instances: 2, priority: 'high-priority-job', recyclePolicy: '可回收', gpuCount: 0, resourceSpec: '-', user: 'test-0415', tenant: 'test-0415' },
+  {
+    id: 1,
+    name: 'test',
+    taskId: 'job-254ce4873fa7-20260523232921',
+    taskType: 'CPU',
+    status: '运行中',
+    readyStatus: '1/1',
+    runTime: '84h 42m 59s',
+    createTime: '2026-05-23 15:29:21',
+    instances: 1,
+    priority: 'high-priority-job',
+    recyclePolicy: '可回收',
+    gpuCount: 0,
+    resourceSpec: '-',
+    user: 'lzj-1',
+    tenant: 'qiji',
+  },
+  {
+    id: 2,
+    name: 'cpu6',
+    taskId: 'job-0482129d4b7b-20260415210402',
+    taskType: 'CPU',
+    status: '运行中',
+    readyStatus: '1/1',
+    runTime: '998h 58m 40s',
+    createTime: '2026-04-15 13:04:03',
+    instances: 1,
+    priority: 'high-priority-job',
+    recyclePolicy: '可回收',
+    gpuCount: 0,
+    resourceSpec: '-',
+    user: 'user415',
+    tenant: 'zjw415',
+  },
+  {
+    id: 3,
+    name: '123',
+    taskId: 'job-473d0f3c98dd-20260415205154',
+    taskType: 'Simple',
+    status: '停止',
+    readyStatus: '0/1',
+    runTime: '300h 43m 37s',
+    createTime: '2026-04-15 12:51:54',
+    instances: 1,
+    priority: 'high-priority-job',
+    recyclePolicy: '可回收',
+    gpuCount: 1,
+    resourceSpec: 'NVIDIA-GPU-HBM2E-80GB',
+    user: 'test-0415',
+    tenant: 'test-0415',
+  },
+  {
+    id: 4,
+    name: 'test2',
+    taskId: 'job-cfd9413b035d-20260415203555',
+    taskType: 'MPI',
+    status: '排队中',
+    readyStatus: '0/2',
+    runTime: '0h 0m 0s',
+    createTime: '2026-04-15 12:35:55',
+    instances: 2,
+    priority: 'high-priority-job',
+    recyclePolicy: '可回收',
+    gpuCount: 0,
+    resourceSpec: '-',
+    user: 'test-0415',
+    tenant: 'test-0415',
+  },
+  {
+    id: 5,
+    name: 'test',
+    taskId: 'job-da5d258fcdd0-20260415203536',
+    taskType: 'MPI',
+    status: '排队中',
+    readyStatus: '0/2',
+    runTime: '0h 0m 0s',
+    createTime: '2026-04-15 12:35:36',
+    instances: 2,
+    priority: 'high-priority-job',
+    recyclePolicy: '可回收',
+    gpuCount: 0,
+    resourceSpec: '-',
+    user: 'test-0415',
+    tenant: 'test-0415',
+  },
 ]);
 
 const statusColor: Record<string, string> = {
-  '运行中': 'processing',
-  '停止': 'default',
-  '排队中': 'warning',
-  '成功': 'success',
-  '失败': 'error',
+  运行中: 'processing',
+  停止: 'default',
+  排队中: 'warning',
+  成功: 'success',
+  失败: 'error',
 };
-
-const notify = (text: string) => message.success(text);
 
 // 重置筛选
 const handleReset = () => {
@@ -112,7 +200,10 @@ const handleReset = () => {
         allow-clear
         style="width: 180px"
         placeholder="请选择租户"
-        :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
+        :options="[
+          { label: 'test01', value: 'test01' },
+          { label: 'test-0415', value: 'test-0415' },
+        ]"
       >
         <template #suffixIcon><Search class="size-4 text-gray-400" /></template>
       </Select>
@@ -152,7 +243,12 @@ const handleReset = () => {
         :options="resourceSpecOptions"
         :max-tag-count="1"
       />
-      <Input v-model:value="searchText" placeholder="支持模糊搜索任务名称/ID" style="width: 260px" allow-clear>
+      <Input
+        v-model:value="searchText"
+        placeholder="支持模糊搜索任务名称/ID"
+        style="width: 260px"
+        allow-clear
+      >
         <template #prefix><Search class="size-4 text-gray-400" /></template>
       </Input>
     </template>
@@ -167,14 +263,14 @@ const handleReset = () => {
     <template #toolbar>
       <Popconfirm
         title="确认删除选中的任务？"
-        @confirm="notify(`已删除 ${rowSelection.length} 个任务`)"
+        @confirm="showNotify(`已删除 ${rowSelection.length} 个任务`)"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>
           批量删除
         </Button>
       </Popconfirm>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showNotify('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
       </Button>
     </template>
@@ -193,7 +289,9 @@ const handleReset = () => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div>
-            <a class="font-medium text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+            <a class="font-medium text-blue-600 hover:text-blue-700">{{
+              record.name
+            }}</a>
             <div class="text-xs text-gray-400">{{ record.taskId }}</div>
           </div>
         </template>
@@ -201,7 +299,9 @@ const handleReset = () => {
           <Tag class="rounded-full">{{ record.taskType }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'status'">
-          <Tag :color="statusColor[record.status]" class="rounded-full">{{ record.status }}</Tag>
+          <Tag :color="statusColor[record.status]" class="rounded-full">{{
+            record.status
+          }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'tenant'">
           <div>
@@ -210,7 +310,12 @@ const handleReset = () => {
           </div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <Popconfirm title="确认删除该任务？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除任务 ${record.name}`)">
+          <Popconfirm
+            title="确认删除该任务？"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="showNotify(`删除任务 ${record.name}`)"
+          >
             <a class="text-red-500">删除</a>
           </Popconfirm>
         </template>

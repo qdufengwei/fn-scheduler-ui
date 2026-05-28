@@ -12,7 +12,7 @@ export function useImageFilter(imageList: { value: ImageRecord[] }) {
       imageScope.value === 'public' ? r.isPublic : !r.isPublic,
     );
     if (project.value) {
-      data = data.filter((r) => r.name.startsWith(project.value + '/'));
+      data = data.filter((r) => r.name.startsWith(`${project.value}/`));
     }
     if (keyword.value) {
       const lowerKeyword = keyword.value.toLowerCase();

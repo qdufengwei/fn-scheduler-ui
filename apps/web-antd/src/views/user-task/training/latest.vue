@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { Button, Input, Pagination, Popconfirm, Segmented, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Input,
+  Pagination,
+  Popconfirm,
+  Segmented,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Plus, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showInfo } from '#/utils/notify';
 
 const router = useRouter();
 const ownership = ref('all');
@@ -14,17 +24,60 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 
 const rows = ref([
-  { id: 'TR-001', name: 'llm-pretrain-v3', model: 'Qwen2-72B', status: '运行中', progress: 67, duration: '12h 30m', created: '2026-05-26 08:00', instances: 4, gpu: 32, spec: 'A800' },
-  { id: 'TR-002', name: 'cv-foundation', model: 'ViT-Large', status: '排队中', progress: 0, duration: '-', created: '2026-05-27 09:30', instances: 2, gpu: 16, spec: 'A100' },
-  { id: 'TR-003', name: 'speech-asr', model: 'Whisper-Large', status: '成功', progress: 100, duration: '8h 15m', created: '2026-05-24 10:00', instances: 2, gpu: 8, spec: 'A10' },
-  { id: 'TR-004', name: 'nlp-ner', model: 'BERT-Large', status: '失败', progress: 23, duration: '1h 45m', created: '2026-05-23 14:20', instances: 1, gpu: 4, spec: 'A800' },
+  {
+    id: 'TR-001',
+    name: 'llm-pretrain-v3',
+    model: 'Qwen2-72B',
+    status: '运行中',
+    progress: 67,
+    duration: '12h 30m',
+    created: '2026-05-26 08:00',
+    instances: 4,
+    gpu: 32,
+    spec: 'A800',
+  },
+  {
+    id: 'TR-002',
+    name: 'cv-foundation',
+    model: 'ViT-Large',
+    status: '排队中',
+    progress: 0,
+    duration: '-',
+    created: '2026-05-27 09:30',
+    instances: 2,
+    gpu: 16,
+    spec: 'A100',
+  },
+  {
+    id: 'TR-003',
+    name: 'speech-asr',
+    model: 'Whisper-Large',
+    status: '成功',
+    progress: 100,
+    duration: '8h 15m',
+    created: '2026-05-24 10:00',
+    instances: 2,
+    gpu: 8,
+    spec: 'A10',
+  },
+  {
+    id: 'TR-004',
+    name: 'nlp-ner',
+    model: 'BERT-Large',
+    status: '失败',
+    progress: 23,
+    duration: '1h 45m',
+    created: '2026-05-23 14:20',
+    instances: 1,
+    gpu: 4,
+    spec: 'A800',
+  },
 ]);
-
-const notify = (text: string) => message.info(text);
 
 const filteredRows = () => {
   return rows.value.filter((r) => {
-    if (keyword.value && !`${r.name}${r.id}`.includes(keyword.value)) return false;
+    if (keyword.value && !`${r.name}${r.id}`.includes(keyword.value))
+      return false;
     return true;
   });
 };
@@ -63,7 +116,13 @@ const getStatusColor = (status: string) => {
     <template #filterActions>
       <Space>
         <Button type="primary">筛选</Button>
-        <Button @click="(keyword = ''); ownership = 'all'">重置</Button>
+        <Button
+          @click="
+            keyword = '';
+            ownership = 'all';
+          "
+          >重置</Button
+        >
       </Space>
     </template>
 
@@ -72,13 +131,13 @@ const getStatusColor = (status: string) => {
         <template #icon><Plus class="size-4" /></template>
         创建任务
       </Button>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showInfo('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
         刷新
       </Button>
       <Popconfirm
         title="确认删除选中的任务？"
-        @confirm="notify(`已删除 ${rowSelection.length} 个任务`)"
+        @confirm="showInfo(`已删除 ${rowSelection.length} 个任务`)"
       >
         <Button danger :disabled="rowSelection.length === 0">批量删除</Button>
       </Popconfirm>
@@ -116,16 +175,20 @@ const getStatusColor = (status: string) => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="notify(`查看任务 ${record.id}`)">详情</a>
+            <a @click="showInfo(`查看任务 ${record.id}`)">详情</a>
             <a
-              :class="{ 'pointer-events-none text-gray-300': record.status !== '运行中' }"
-              @click="record.status === '运行中' && notify(`停止任务 ${record.id}`)"
+              :class="{
+                'pointer-events-none text-gray-300': record.status !== '运行中',
+              }"
+              @click="
+                record.status === '运行中' && showInfo(`停止任务 ${record.id}`)
+              "
             >
               停止
             </a>
             <Popconfirm
               title="确认删除该任务？"
-              @confirm="notify(`删除任务 ${record.id}`)"
+              @confirm="showInfo(`删除任务 ${record.id}`)"
             >
               <a class="text-red-500">删除</a>
             </Popconfirm>

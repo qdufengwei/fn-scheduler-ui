@@ -20,29 +20,37 @@ withDefaults(
       </div>
 
       <!-- 顶部筛选卡片 -->
-      <div 
-        v-if="$slots.filters || $slots.filterActions" 
+      <div
+        v-if="$slots.filters || $slots.filterActions"
         class="fn-list-filter-card flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80 bg-white dark:bg-zinc-950 shadow-sm transition-all"
       >
         <div class="fn-list-filter-fields flex-1 min-w-0">
           <slot name="filters" />
         </div>
-        <div class="fn-list-filter-actions flex items-center justify-end flex-shrink-0 gap-2.5">
+        <div
+          class="fn-list-filter-actions flex items-center justify-end flex-shrink-0 gap-2.5"
+        >
           <slot name="filterActions" />
         </div>
       </div>
 
       <!-- 列表表面容器 -->
-      <div class="fn-list-surface flex flex-col rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-sm">
+      <div
+        class="fn-list-surface flex flex-col rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-sm"
+      >
         <!-- 列表顶部工具栏 -->
-        <div 
-          v-if="$slots.toolbar || $slots.viewSwitch" 
+        <div
+          v-if="$slots.toolbar || $slots.viewSwitch"
           class="fn-list-toolbar flex items-center justify-between gap-4 border-b border-solid border-neutral-100 dark:border-neutral-800/80 px-4 py-3 bg-neutral-50/50 dark:bg-zinc-900/30"
         >
-          <div class="fn-list-toolbar-main flex items-center flex-wrap gap-2.5 flex-1 min-w-0">
+          <div
+            class="fn-list-toolbar-main flex items-center flex-wrap gap-2.5 flex-1 min-w-0"
+          >
             <slot name="toolbar" />
           </div>
-          <div class="fn-list-toolbar-view flex items-center gap-2.5 flex-shrink-0">
+          <div
+            class="fn-list-toolbar-view flex items-center gap-2.5 flex-shrink-0"
+          >
             <slot name="viewSwitch" />
           </div>
         </div>
@@ -101,11 +109,27 @@ withDefaults(
 }
 
 /* Border radius normalization for Ant Table corners */
-:global(.fn-list-content > .ant-table-wrapper .ant-table-container table > thead > tr:first-child > *:first-child) {
+:global(
+  .fn-list-content
+    > .ant-table-wrapper
+    .ant-table-container
+    table
+    > thead
+    > tr:first-child
+    > *:first-child
+) {
   border-start-start-radius: 0;
 }
 
-:global(.fn-list-content > .ant-table-wrapper .ant-table-container table > thead > tr:first-child > *:last-child) {
+:global(
+  .fn-list-content
+    > .ant-table-wrapper
+    .ant-table-container
+    table
+    > thead
+    > tr:first-child
+    > *:last-child
+) {
   border-start-end-radius: 0;
 }
 

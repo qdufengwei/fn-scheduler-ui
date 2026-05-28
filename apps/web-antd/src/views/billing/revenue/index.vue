@@ -1,7 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, DatePicker, Pagination, Radio, RadioGroup, Row, Select, Space, Table } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Pagination,
+  Radio,
+  RadioGroup,
+  Row,
+  Select,
+  Space,
+  Table,
+} from 'ant-design-vue';
 import { BookOpenText, Download, Inbox, Settings } from '@vben/icons';
 
 const billingCycle = ref('day');
@@ -10,9 +22,9 @@ const pageSize = ref(10);
 const currentPage = ref(1);
 
 const billingStats = ref({
-  totalAmount: 0.00,
-  totalUsageTime: 20.00,
-  paid: 0.00,
+  totalAmount: 0.0,
+  totalUsageTime: 20.0,
+  paid: 0.0,
 });
 
 const columns = [
@@ -23,9 +35,27 @@ const columns = [
 ];
 
 const dataSource = ref([
-  { id: 1, tenant: 'shiyusuanli-demandertest', alias: 'shiyusuanli-demandertest', usage: '按需（小时）: 0.06 hours', cost: '¥0.00' },
-  { id: 2, tenant: 'test-0415', alias: '-', usage: '按需（小时）: 2453.29 hours', cost: '¥0.00' },
-  { id: 3, tenant: 'test01', alias: '-', usage: '包年: 5.00 GB/ years\n按需（小时）: 3026.25 hours', cost: '¥0.00' },
+  {
+    id: 1,
+    tenant: 'shiyusuanli-demandertest',
+    alias: 'shiyusuanli-demandertest',
+    usage: '按需（小时）: 0.06 hours',
+    cost: '¥0.00',
+  },
+  {
+    id: 2,
+    tenant: 'test-0415',
+    alias: '-',
+    usage: '按需（小时）: 2453.29 hours',
+    cost: '¥0.00',
+  },
+  {
+    id: 3,
+    tenant: 'test01',
+    alias: '-',
+    usage: '包年: 5.00 GB/ years\n按需（小时）: 3026.25 hours',
+    cost: '¥0.00',
+  },
 ]);
 </script>
 
@@ -49,24 +79,36 @@ const dataSource = ref([
         </div>
         <Row :gutter="24">
           <Col :span="8">
-            <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-100 hover:shadow-md transition-shadow cursor-pointer">
+            <div
+              class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-100 hover:shadow-md transition-shadow cursor-pointer"
+            >
               <Download class="size-8 mx-auto mb-3 text-blue-500" />
               <div class="text-xs text-gray-500 mb-2">总金额</div>
-              <div class="text-3xl font-bold text-blue-600">¥{{ billingStats.totalAmount.toFixed(2) }}</div>
+              <div class="text-3xl font-bold text-blue-600">
+                ¥{{ billingStats.totalAmount.toFixed(2) }}
+              </div>
             </div>
           </Col>
           <Col :span="8">
-            <div class="text-center p-6 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-100 hover:shadow-md transition-shadow cursor-pointer">
+            <div
+              class="text-center p-6 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-100 hover:shadow-md transition-shadow cursor-pointer"
+            >
               <Inbox class="size-8 mx-auto mb-3 text-green-500" />
               <div class="text-xs text-gray-500 mb-2">总使用时长</div>
-              <div class="text-3xl font-bold text-green-600">{{ billingStats.totalUsageTime.toFixed(2) }} 时</div>
+              <div class="text-3xl font-bold text-green-600">
+                {{ billingStats.totalUsageTime.toFixed(2) }} 时
+              </div>
             </div>
           </Col>
           <Col :span="8">
-            <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-lg border border-purple-100 hover:shadow-md transition-shadow cursor-pointer">
+            <div
+              class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-lg border border-purple-100 hover:shadow-md transition-shadow cursor-pointer"
+            >
               <Settings class="size-8 mx-auto mb-3 text-purple-500" />
               <div class="text-xs text-gray-500 mb-2">已支付</div>
-              <div class="text-3xl font-bold text-purple-600">¥{{ billingStats.paid.toFixed(2) }}</div>
+              <div class="text-3xl font-bold text-purple-600">
+                ¥{{ billingStats.paid.toFixed(2) }}
+              </div>
             </div>
           </Col>
         </Row>
@@ -94,7 +136,10 @@ const dataSource = ref([
               allow-clear
               style="width: 180px"
               placeholder="请选择租户"
-              :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
+              :options="[
+                { label: 'test01', value: 'test01' },
+                { label: 'test-0415', value: 'test-0415' },
+              ]"
             />
             <Button type="primary" ghost>
               <template #icon><Download class="size-4" /></template>
@@ -112,7 +157,9 @@ const dataSource = ref([
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'tenant'">
               <div>
-                <span class="font-medium text-gray-800">{{ record.tenant }}</span>
+                <span class="font-medium text-gray-800">{{
+                  record.tenant
+                }}</span>
                 <span class="text-gray-400 ml-1">{{ record.alias }}</span>
               </div>
             </template>
@@ -123,9 +170,7 @@ const dataSource = ref([
               <span class="font-semibold text-gray-800">{{ record.cost }}</span>
             </template>
             <template v-if="column.dataIndex === 'action'">
-              <Button type="link" size="small">
-                查看详情
-              </Button>
+              <Button type="link" size="small"> 查看详情 </Button>
             </template>
           </template>
         </Table>

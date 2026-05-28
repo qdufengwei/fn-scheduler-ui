@@ -14,7 +14,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  message,
 } from 'ant-design-vue';
 import {
   BookOpenText,
@@ -26,6 +25,7 @@ import {
 } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const router = useRouter();
 const searchText = ref('');
@@ -52,7 +52,8 @@ const presetModels = ref<Model[]>([
     id: 1,
     name: 'Qwen2.5-72B-Instruct',
     provider: '阿里云',
-    description: '通义千问2.5系列最强模型，支持128K上下文，具备强大的推理、数学、代码能力',
+    description:
+      '通义千问2.5系列最强模型，支持128K上下文，具备强大的推理、数学、代码能力',
     updated: '2026-05-20',
     category: '大语言模型',
     tags: ['128K上下文', '多语言', '代码生成'],
@@ -63,7 +64,8 @@ const presetModels = ref<Model[]>([
     id: 2,
     name: 'DeepSeek-V3-671B',
     provider: 'DeepSeek',
-    description: 'DeepSeek第三代大模型，MoE架构，推理能力出众，数学和代码表现优异',
+    description:
+      'DeepSeek第三代大模型，MoE架构，推理能力出众，数学和代码表现优异',
     updated: '2026-05-18',
     category: '大语言模型',
     tags: ['MoE架构', '推理增强', '代码生成'],
@@ -74,7 +76,8 @@ const presetModels = ref<Model[]>([
     id: 3,
     name: 'ChatGLM4-9B',
     provider: '智谱AI',
-    description: 'GLM系列最新模型，支持多模态理解，工具调用能力强，中文理解出色',
+    description:
+      'GLM系列最新模型，支持多模态理解，工具调用能力强，中文理解出色',
     updated: '2026-05-15',
     category: '大语言模型',
     tags: ['多模态', '工具调用', '中文优化'],
@@ -119,7 +122,8 @@ const presetModels = ref<Model[]>([
     id: 7,
     name: 'GPT-4o',
     provider: 'OpenAI',
-    description: 'OpenAI最新旗舰模型，支持多模态输入输出，响应速度快，推理能力强',
+    description:
+      'OpenAI最新旗舰模型，支持多模态输入输出，响应速度快，推理能力强',
     updated: '2026-05-25',
     category: '大语言模型',
     tags: ['多模态', '快速响应', '复杂推理'],
@@ -152,7 +156,8 @@ const presetModels = ref<Model[]>([
     id: 10,
     name: 'Gemini-1.5-Pro',
     provider: 'Google',
-    description: 'Google最新多模态大模型，支持100万token上下文，多模态理解能力强',
+    description:
+      'Google最新多模态大模型，支持100万token上下文，多模态理解能力强',
     updated: '2026-05-18',
     category: '多模态模型',
     tags: ['百万上下文', '多模态', '视频理解'],
@@ -273,12 +278,12 @@ function handleReset() {
 
 function handleDeploy(model: Model) {
   router.push('/user-task/inference/create');
-  message.success(`开始部署 ${model.name}`);
+  showNotify(`开始部署 ${model.name}`);
 }
 
 function handleFinetune(model: Model) {
   router.push('/user-task/finetune/create');
-  message.success(`开始微调 ${model.name}`);
+  showNotify(`开始微调 ${model.name}`);
 }
 
 function getIconComponent(icon: string) {
@@ -339,122 +344,128 @@ function getIconComponent(icon: string) {
     </template>
 
     <div class="flex-1 overflow-auto">
-        <Row :gutter="[20, 20]" v-if="displayedModels.length > 0">
-          <Col
-            v-for="model in displayedModels"
-            :key="model.id"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="8"
+      <Row :gutter="[20, 20]" v-if="displayedModels.length > 0">
+        <Col
+          v-for="model in displayedModels"
+          :key="model.id"
+          :xs="24"
+          :sm="12"
+          :md="8"
+          :lg="8"
+        >
+          <Card
+            :bordered="false"
+            class="h-full shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden"
+            :body-style="{ padding: 0 }"
           >
-            <Card
-              :bordered="false"
-              class="h-full shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden"
-              :body-style="{ padding: 0 }"
+            <!-- 卡片头部 - 渐变背景 -->
+            <div
+              class="relative h-44 flex flex-col items-center justify-center bg-gradient-to-br"
+              :class="model.color"
             >
-              <!-- 卡片头部 - 渐变背景 -->
+              <!-- 模型图标 -->
               <div
-                class="relative h-44 flex flex-col items-center justify-center bg-gradient-to-br"
-                :class="model.color"
+                class="absolute inset-0 flex items-center justify-center opacity-20"
               >
-                <!-- 模型图标 -->
-                <div class="absolute inset-0 flex items-center justify-center opacity-20">
-                  <component
-                    :is="getIconComponent(model.icon)"
-                    class="size-24 text-white"
-                  />
+                <component
+                  :is="getIconComponent(model.icon)"
+                  class="size-24 text-white"
+                />
+              </div>
+              <div class="relative z-10 text-white text-center">
+                <div class="text-3xl font-bold tracking-tight mb-1">
+                  {{ model.name.split('-')[0] }}
                 </div>
-                <div class="relative z-10 text-white text-center">
-                  <div class="text-3xl font-bold tracking-tight mb-1">
-                    {{ model.name.split('-')[0] }}
-                  </div>
-                  <div class="text-sm opacity-80 font-medium">{{ model.provider }}</div>
+                <div class="text-sm opacity-80 font-medium">
+                  {{ model.provider }}
                 </div>
-                <!-- 分类标签 -->
-                <Tag
-                  class="absolute top-3 left-3 !rounded-full !bg-white/20 !border-white/30 !text-white !px-2"
+              </div>
+              <!-- 分类标签 -->
+              <Tag
+                class="absolute top-3 left-3 !rounded-full !bg-white/20 !border-white/30 !text-white !px-2"
+              >
+                {{ model.category }}
+              </Tag>
+            </div>
+
+            <!-- 卡片内容 -->
+            <div class="p-4">
+              <!-- 模型名称 -->
+              <Tooltip :title="model.name">
+                <h3
+                  class="font-semibold text-gray-900 truncate mb-2 group-hover:text-blue-600 transition-colors"
                 >
-                  {{ model.category }}
+                  {{ model.name }}
+                </h3>
+              </Tooltip>
+
+              <!-- 简介 -->
+              <p class="text-sm text-gray-500 line-clamp-2 mb-3 h-10 leading-5">
+                {{ model.description }}
+              </p>
+
+              <!-- 特性标签 -->
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                <Tag
+                  v-for="tag in model.tags.slice(0, 3)"
+                  :key="tag"
+                  class="!rounded-full !text-xs !px-2 !py-0.5 !border-gray-200 !text-gray-600"
+                >
+                  {{ tag }}
                 </Tag>
               </div>
 
-              <!-- 卡片内容 -->
-              <div class="p-4">
-                <!-- 模型名称 -->
-                <Tooltip :title="model.name">
-                  <h3 class="font-semibold text-gray-900 truncate mb-2 group-hover:text-blue-600 transition-colors">
-                    {{ model.name }}
-                  </h3>
-                </Tooltip>
-
-                <!-- 简介 -->
-                <p class="text-sm text-gray-500 line-clamp-2 mb-3 h-10 leading-5">
-                  {{ model.description }}
-                </p>
-
-                <!-- 特性标签 -->
-                <div class="flex flex-wrap gap-1.5 mb-3">
-                  <Tag
-                    v-for="tag in model.tags.slice(0, 3)"
-                    :key="tag"
-                    class="!rounded-full !text-xs !px-2 !py-0.5 !border-gray-200 !text-gray-600"
-                  >
-                    {{ tag }}
-                  </Tag>
-                </div>
-
-                <!-- 更新时间 -->
-                <div class="flex items-center text-xs text-gray-400 mb-4">
-                  <Settings class="size-3 mr-1.5" />
-                  <span>更新于 {{ model.updated }}</span>
-                </div>
-
-                <!-- 操作按钮 -->
-                <div class="flex gap-3 pt-3 border-t border-gray-100">
-                  <Button
-                    type="primary"
-                    size="small"
-                    class="!flex-1 !rounded-lg !h-8"
-                    @click.stop="handleDeploy(model)"
-                  >
-                    部署
-                  </Button>
-                  <Button
-                    size="small"
-                    class="!flex-1 !rounded-lg !h-8"
-                    @click.stop="handleFinetune(model)"
-                  >
-                    微调
-                  </Button>
-                </div>
+              <!-- 更新时间 -->
+              <div class="flex items-center text-xs text-gray-400 mb-4">
+                <Settings class="size-3 mr-1.5" />
+                <span>更新于 {{ model.updated }}</span>
               </div>
-            </Card>
-          </Col>
-        </Row>
 
-        <!-- 空状态 -->
-        <div v-else class="flex flex-col items-center justify-center py-20">
-          <Empty description="未找到匹配的预置模型">
-            <Button type="primary" @click="handleReset">清空筛选</Button>
-          </Empty>
-        </div>
+              <!-- 操作按钮 -->
+              <div class="flex gap-3 pt-3 border-t border-gray-100">
+                <Button
+                  type="primary"
+                  size="small"
+                  class="!flex-1 !rounded-lg !h-8"
+                  @click.stop="handleDeploy(model)"
+                >
+                  部署
+                </Button>
+                <Button
+                  size="small"
+                  class="!flex-1 !rounded-lg !h-8"
+                  @click.stop="handleFinetune(model)"
+                >
+                  微调
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
 
-        <!-- 分页 -->
-        <div
-          v-if="filteredModels.length > pageSize"
-          class="fn-list-pagination flex items-center justify-center"
-        >
-          <Pagination
-            v-model:current="currentPage"
-            v-model:pageSize="pageSize"
-            :total="filteredModels.length"
-            :show-size-changer="true"
-            :show-quick-jumper="true"
-            :page-size-options="['12', '24', '48', '96']"
-          />
-        </div>
+      <!-- 空状态 -->
+      <div v-else class="flex flex-col items-center justify-center py-20">
+        <Empty description="未找到匹配的预置模型">
+          <Button type="primary" @click="handleReset">清空筛选</Button>
+        </Empty>
       </div>
+
+      <!-- 分页 -->
+      <div
+        v-if="filteredModels.length > pageSize"
+        class="fn-list-pagination flex items-center justify-center"
+      >
+        <Pagination
+          v-model:current="currentPage"
+          v-model:pageSize="pageSize"
+          :total="filteredModels.length"
+          :show-size-changer="true"
+          :show-quick-jumper="true"
+          :page-size-options="['12', '24', '48', '96']"
+        />
+      </div>
+    </div>
   </ListPageLayout>
 </template>
 

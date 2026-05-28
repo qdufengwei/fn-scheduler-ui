@@ -12,12 +12,13 @@ import {
   Form,
   FormItem,
   Select,
-  message,
   Dropdown,
   Menu,
 } from 'ant-design-vue';
 import { Plus, Search, UserRoundPen, Ellipsis } from '@vben/icons';
 import type { MenuProps } from 'ant-design-vue';
+
+import { showNotify, showWarning } from '#/utils/notify';
 
 type Key = string | number;
 
@@ -42,35 +43,131 @@ const tenantDataSource = ref([
   { id: 1, tenant: 'sx-telecom', alias: '陕西电信' },
   { id: 2, tenant: 'test-0415', alias: '-' },
   { id: 3, tenant: 'shiyusuanli-testxq', alias: 'shiyusuanli-testxq' },
-  { id: 4, tenant: 'shiyusuanli-demandertest', alias: 'shiyusuanli-demandertest' },
+  {
+    id: 4,
+    tenant: 'shiyusuanli-demandertest',
+    alias: 'shiyusuanli-demandertest',
+  },
   { id: 5, tenant: 'moon', alias: '-' },
   { id: 6, tenant: 'test01', alias: '-' },
   { id: 7, tenant: 'platform-operator', alias: 'platform-operator' },
 ]);
 
 const userDataSource = ref([
-  { id: 1, username: 'sx-telecom', role: '租户管理员', status: '正常', tenant: 'sx-telecom', alias: '陕西电信', email: 'sx-telecom@123.com', createTime: '2026-05-26 07:51:19' },
-  { id: 2, username: 'a01', role: '算法用户', status: '正常', tenant: 'test01', alias: '-', email: '123456@qq.com', createTime: '2026-04-27 01:28:25' },
-  { id: 3, username: 'test-0415', role: '租户管理员', status: '正常', tenant: 'test-0415', alias: '-', email: 'test-0415@123.com', createTime: '2026-04-15 09:43:03' },
-  { id: 4, username: 'shiyusuanli-testxq', role: '租户管理员', status: '正常', tenant: 'shiyusuanli-testxq', alias: 'shiyusuanli-testxq', email: '12@qc.com', createTime: '2026-03-26 11:55:35' },
-  { id: 5, username: 'shiyusuanli-demandertest', role: '租户管理员', status: '正常', tenant: 'shiyusuanli-demandertest', alias: 'shiyusuanli-demandertest', email: 'lz18738377974@163.com', createTime: '2026-03-25 12:37:20' },
-  { id: 6, username: 'hellna', role: '租户管理员', status: '正常', tenant: 'test01', alias: '-', email: 'mememeee@qq.com', createTime: '2026-03-25 12:05:12' },
-  { id: 7, username: 'test03', role: '算法用户', status: '正常', tenant: 'test01', alias: '-', email: 'test03@infrawaves.com', createTime: '2026-03-10 03:33:44' },
-  { id: 8, username: 'test02', role: '算法用户', status: '正常', tenant: 'test01', alias: '-', email: 'test02@infrawaves.com', createTime: '2026-03-10 03:32:24' },
-  { id: 9, username: 'liuhe', role: '算法用户', status: '正常', tenant: 'moon', alias: '-', email: '456224@iuieiw.com', createTime: '2026-03-04 07:35:29' },
-  { id: 10, username: 'yanmin', role: '算法用户', status: '正常', tenant: 'moon', alias: '-', email: 'yanmin@infrawaves.com', createTime: '2026-03-04 07:33:34' },
+  {
+    id: 1,
+    username: 'sx-telecom',
+    role: '租户管理员',
+    status: '正常',
+    tenant: 'sx-telecom',
+    alias: '陕西电信',
+    email: 'sx-telecom@123.com',
+    createTime: '2026-05-26 07:51:19',
+  },
+  {
+    id: 2,
+    username: 'a01',
+    role: '算法用户',
+    status: '正常',
+    tenant: 'test01',
+    alias: '-',
+    email: '123456@qq.com',
+    createTime: '2026-04-27 01:28:25',
+  },
+  {
+    id: 3,
+    username: 'test-0415',
+    role: '租户管理员',
+    status: '正常',
+    tenant: 'test-0415',
+    alias: '-',
+    email: 'test-0415@123.com',
+    createTime: '2026-04-15 09:43:03',
+  },
+  {
+    id: 4,
+    username: 'shiyusuanli-testxq',
+    role: '租户管理员',
+    status: '正常',
+    tenant: 'shiyusuanli-testxq',
+    alias: 'shiyusuanli-testxq',
+    email: '12@qc.com',
+    createTime: '2026-03-26 11:55:35',
+  },
+  {
+    id: 5,
+    username: 'shiyusuanli-demandertest',
+    role: '租户管理员',
+    status: '正常',
+    tenant: 'shiyusuanli-demandertest',
+    alias: 'shiyusuanli-demandertest',
+    email: 'lz18738377974@163.com',
+    createTime: '2026-03-25 12:37:20',
+  },
+  {
+    id: 6,
+    username: 'hellna',
+    role: '租户管理员',
+    status: '正常',
+    tenant: 'test01',
+    alias: '-',
+    email: 'mememeee@qq.com',
+    createTime: '2026-03-25 12:05:12',
+  },
+  {
+    id: 7,
+    username: 'test03',
+    role: '算法用户',
+    status: '正常',
+    tenant: 'test01',
+    alias: '-',
+    email: 'test03@infrawaves.com',
+    createTime: '2026-03-10 03:33:44',
+  },
+  {
+    id: 8,
+    username: 'test02',
+    role: '算法用户',
+    status: '正常',
+    tenant: 'test01',
+    alias: '-',
+    email: 'test02@infrawaves.com',
+    createTime: '2026-03-10 03:32:24',
+  },
+  {
+    id: 9,
+    username: 'liuhe',
+    role: '算法用户',
+    status: '正常',
+    tenant: 'moon',
+    alias: '-',
+    email: '456224@iuieiw.com',
+    createTime: '2026-03-04 07:35:29',
+  },
+  {
+    id: 10,
+    username: 'yanmin',
+    role: '算法用户',
+    status: '正常',
+    tenant: 'moon',
+    alias: '-',
+    email: 'yanmin@infrawaves.com',
+    createTime: '2026-03-04 07:33:34',
+  },
 ]);
 
 // 租户选项
 const tenantOptions = computed(() => [
   { value: undefined, label: '请选择租户' },
-  ...tenantDataSource.value.map(t => ({ value: t.tenant, label: t.tenant })),
+  ...tenantDataSource.value.map((t) => ({ value: t.tenant, label: t.tenant })),
 ]);
 
 const filteredUserData = computed(() => {
-  return userDataSource.value.filter(user => {
-    const matchTenant = !selectedTenant.value || user.tenant === selectedTenant.value;
-    const matchSearch = !userSearchText.value ||
+  return userDataSource.value.filter((user) => {
+    const matchTenant =
+      !selectedTenant.value || user.tenant === selectedTenant.value;
+    const matchSearch =
+      !userSearchText.value ||
       user.username.includes(userSearchText.value) ||
       user.email.includes(userSearchText.value);
     return matchTenant && matchSearch;
@@ -89,23 +186,21 @@ const userForm = ref({
   confirmPassword: '',
 });
 
-const notify = (text: string) => message.success(text);
-
 function handleAddUser() {
   createUserDrawerApi.open();
 }
 
 function handleSaveUser() {
-  notify('添加用户成功（原型）');
+  showNotify('添加用户成功（原型）');
   createUserDrawerApi.close();
 }
 
 function handleBatchDelete() {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择要删除的用户');
+    showWarning('请先选择要删除的用户');
     return;
   }
-  notify(`批量删除 ${selectedRowKeys.value.length} 个用户（原型）`);
+  showNotify(`批量删除 ${selectedRowKeys.value.length} 个用户（原型）`);
   selectedRowKeys.value = [];
 }
 
@@ -125,9 +220,9 @@ function getMoreMenu(): MenuProps['items'] {
 
 function handleMoreMenuClick(key: string, username: string) {
   if (key === 'disable') {
-    notify(`禁用用户 ${username}（原型）`);
+    showNotify(`禁用用户 ${username}（原型）`);
   } else if (key === 'delete') {
-    notify(`删除用户 ${username}（原型）`);
+    showNotify(`删除用户 ${username}（原型）`);
   }
 }
 
@@ -153,7 +248,12 @@ function handleRowSelectionChange(keys: Key[]) {
             allow-clear
             placeholder="请选择租户"
           />
-          <Input v-model:value="userSearchText" placeholder="请输入用户" style="width: 200px" allow-clear>
+          <Input
+            v-model:value="userSearchText"
+            placeholder="请输入用户"
+            style="width: 200px"
+            allow-clear
+          >
             <template #prefix><Search class="size-4 text-gray-400" /></template>
           </Input>
         </Space>
@@ -162,7 +262,10 @@ function handleRowSelectionChange(keys: Key[]) {
             <template #icon><Plus class="size-4" /></template>
             添加用户
           </Button>
-          <Button :disabled="selectedRowKeys.length === 0" @click="handleBatchDelete">
+          <Button
+            :disabled="selectedRowKeys.length === 0"
+            @click="handleBatchDelete"
+          >
             批量删除
           </Button>
         </Space>
@@ -193,10 +296,18 @@ function handleRowSelectionChange(keys: Key[]) {
           </template>
           <template v-if="column.dataIndex === 'action'">
             <Space>
-              <Button type="link" size="small" @click="notify(`编辑用户 ${record.username}`)">
+              <Button
+                type="link"
+                size="small"
+                @click="showNotify(`编辑用户 ${record.username}`)"
+              >
                 编辑
               </Button>
-              <Button type="link" size="small" @click="notify(`修改密码 ${record.username}`)">
+              <Button
+                type="link"
+                size="small"
+                @click="showNotify(`修改密码 ${record.username}`)"
+              >
                 修改密码
               </Button>
               <Dropdown>
@@ -204,7 +315,13 @@ function handleRowSelectionChange(keys: Key[]) {
                   <Ellipsis class="size-4" />
                 </Button>
                 <template #overlay>
-                  <Menu :items="getMoreMenu()" @click="(info: any) => handleMoreMenuClick(String(info.key), record.username)" />
+                  <Menu
+                    :items="getMoreMenu()"
+                    @click="
+                      (info: any) =>
+                        handleMoreMenuClick(String(info.key), record.username)
+                    "
+                  />
                 </template>
               </Dropdown>
             </Space>
@@ -231,10 +348,19 @@ function handleRowSelectionChange(keys: Key[]) {
         <div class="mb-4">
           <div class="text-base font-medium mb-3">基础信息</div>
           <FormItem label="角色" required>
-            <Select v-model:value="userForm.role" :options="[{ value: '租户管理员', label: '租户管理员' }, { value: '算法用户', label: '算法用户' }]" />
+            <Select
+              v-model:value="userForm.role"
+              :options="[
+                { value: '租户管理员', label: '租户管理员' },
+                { value: '算法用户', label: '算法用户' },
+              ]"
+            />
           </FormItem>
           <FormItem label="用户名" required>
-            <Input v-model:value="userForm.username" placeholder="请输入用户名" />
+            <Input
+              v-model:value="userForm.username"
+              placeholder="请输入用户名"
+            />
           </FormItem>
           <FormItem label="别名" required>
             <Input v-model:value="userForm.alias" placeholder="请输入别名" />
@@ -246,7 +372,19 @@ function handleRowSelectionChange(keys: Key[]) {
             <Input v-model:value="userForm.phone" placeholder="请输入手机号" />
           </FormItem>
           <FormItem label="时区">
-            <Select v-model:value="userForm.timezone" :options="[{ value: '(UTC+00:00) 协调世界时 (UTC)', label: '(UTC+00:00) 协调世界时 (UTC)' }, { value: '(UTC+08:00) 北京时间', label: '(UTC+08:00) 北京时间' }]" />
+            <Select
+              v-model:value="userForm.timezone"
+              :options="[
+                {
+                  value: '(UTC+00:00) 协调世界时 (UTC)',
+                  label: '(UTC+00:00) 协调世界时 (UTC)',
+                },
+                {
+                  value: '(UTC+08:00) 北京时间',
+                  label: '(UTC+08:00) 北京时间',
+                },
+              ]"
+            />
           </FormItem>
           <FormItem label="备注">
             <Input v-model:value="userForm.remark" placeholder="请输入备注" />
@@ -255,10 +393,16 @@ function handleRowSelectionChange(keys: Key[]) {
         <div class="border-t pt-4">
           <div class="text-base font-medium mb-3">账号配置</div>
           <FormItem label="新密码" required>
-            <Input.Password v-model:value="userForm.password" placeholder="请输入新密码" />
+            <Input.Password
+              v-model:value="userForm.password"
+              placeholder="请输入新密码"
+            />
           </FormItem>
           <FormItem label="确认密码" required>
-            <Input.Password v-model:value="userForm.confirmPassword" placeholder="请输入确认密码" />
+            <Input.Password
+              v-model:value="userForm.confirmPassword"
+              placeholder="请输入确认密码"
+            />
           </FormItem>
         </div>
       </Form>

@@ -2,9 +2,23 @@
 import { useVbenDrawer } from '@vben/common-ui';
 import { computed, onMounted, ref } from 'vue';
 import {
-  Button, Card, Dropdown, Form, FormItem, Input, InputNumber, Menu, Popconfirm, Select, Space, Table, Tag, message,  } from 'ant-design-vue';
+  Button,
+  Card,
+  Dropdown,
+  Form,
+  FormItem,
+  Input,
+  InputNumber,
+  Menu,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 
 import { getNodeList } from '#/api/node';
+import { showNotify, showWarning, showError } from '#/utils/notify';
 
 interface NodeRow {
   allocatedGpu: number;
@@ -61,11 +75,19 @@ const allocationTagColor = (value: string) => {
 
 const filteredRows = computed(() => {
   return rows.value.filter((r) => {
-    const byName = !filters.value.name || r.name.toLowerCase().includes(filters.value.name.toLowerCase()) || r.ipAddress.includes(filters.value.name);
-    const byType = filters.value.allocationType.length === 0 || filters.value.allocationType.includes(r.allocationType);
+    const byName =
+      !filters.value.name ||
+      r.name.toLowerCase().includes(filters.value.name.toLowerCase()) ||
+      r.ipAddress.includes(filters.value.name);
+    const byType =
+      filters.value.allocationType.length === 0 ||
+      filters.value.allocationType.includes(r.allocationType);
     const byStatus = !filters.value.status || r.status === filters.value.status;
-    const byIp = !filters.value.ipAddress || r.ipAddress.includes(filters.value.ipAddress);
-    const byOnline = !filters.value.isOnline || (filters.value.isOnline === '是' ? r.isOnline : !r.isOnline);
+    const byIp =
+      !filters.value.ipAddress || r.ipAddress.includes(filters.value.ipAddress);
+    const byOnline =
+      !filters.value.isOnline ||
+      (filters.value.isOnline === '是' ? r.isOnline : !r.isOnline);
     return byName && byType && byStatus && byIp && byOnline;
   });
 });
@@ -82,7 +104,7 @@ const resetFilters = () => {
 
 const batchOnline = () => {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择节点');
+    showWarning('请先选择节点');
     return;
   }
   rows.value.forEach((r) => {
@@ -91,12 +113,12 @@ const batchOnline = () => {
       r.onlineTime = new Date().toLocaleString('zh-CN');
     }
   });
-  message.success(`已批量上架 ${selectedRowKeys.value.length} 个节点`);
+  showNotify(`已批量上架 ${selectedRowKeys.value.length} 个节点`);
 };
 
 const batchOffline = () => {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择节点');
+    showWarning('请先选择节点');
     return;
   }
   rows.value.forEach((r) => {
@@ -105,7 +127,7 @@ const batchOffline = () => {
       r.onlineTime = '-';
     }
   });
-  message.success(`已批量下架 ${selectedRowKeys.value.length} 个节点`);
+  showNotify(`已批量下架 ${selectedRowKeys.value.length} 个节点`);
 };
 
 const distributionForm = ref({
@@ -134,22 +156,22 @@ const canDistribute = (r: NodeRow) =>
 
 const onShelf = (r: NodeRow) => {
   if (r.status !== '就绪') {
-    message.warning('节点状态非就绪，无法上架');
+    showWarning('节点状态非就绪，无法上架');
     return;
   }
   r.isOnline = true;
   r.onlineTime = new Date().toLocaleString('zh-CN');
-  message.success(`节点 ${r.name} 上架成功`);
+  showNotify(`节点 ${r.name} 上架成功`);
 };
 
 const offShelf = (r: NodeRow) => {
   if (r.status === '维护中') {
-    message.warning('维护中节点无法直接下架');
+    showWarning('维护中节点无法直接下架');
     return;
   }
   r.isOnline = false;
   r.onlineTime = '-';
-  message.success(`节点 ${r.name} 已下架`);
+  showNotify(`节点 ${r.name} 已下架`);
 };
 
 const openDistribution = (r: NodeRow) => {
@@ -167,7 +189,12 @@ const openDistribution = (r: NodeRow) => {
 };
 
 const handleDistributionClick = () => {
-  const node = filteredRows.value.length > 0 ? filteredRows.value[0] : (rows.value.length > 0 ? rows.value[0] : null);
+  const node =
+    filteredRows.value.length > 0
+      ? filteredRows.value[0]
+      : rows.value.length > 0
+        ? rows.value[0]
+        : null;
   if (node) {
     openDistribution(node);
   }
@@ -177,8 +204,11 @@ const submitDistribution = () => {
   const node = rows.value.find((n) => n.id === distributionForm.value.nodeId);
   if (!node) return;
   node.allocationType = distributionForm.value.mode;
-  node.allocatedGpu = Math.min(node.totalGpu, Math.max(1, node.allocatedGpu + 1));
-  message.success(`已完成节点 ${node.name} 的资源分配（原型）`);
+  node.allocatedGpu = Math.min(
+    node.totalGpu,
+    Math.max(1, node.allocatedGpu + 1),
+  );
+  showNotify(`已完成节点 ${node.name} 的资源分配（原型）`);
   distributionDrawerApi.close();
 };
 
@@ -189,7 +219,12 @@ const openMaintenance = (r: NodeRow) => {
 };
 
 const handleMaintenanceClick = () => {
-  const node = filteredRows.value.length > 0 ? filteredRows.value[0] : (rows.value.length > 0 ? rows.value[0] : null);
+  const node =
+    filteredRows.value.length > 0
+      ? filteredRows.value[0]
+      : rows.value.length > 0
+        ? rows.value[0]
+        : null;
   if (node) {
     openMaintenance(node);
   }
@@ -197,8 +232,9 @@ const handleMaintenanceClick = () => {
 
 const confirmMaintenance = () => {
   if (!currentNode.value) return;
-  currentNode.value.status = maintenanceAction.value === '排空' ? '维护中' : '就绪';
-  message.success(`节点 ${currentNode.value.name} 已${maintenanceAction.value}`);
+  currentNode.value.status =
+    maintenanceAction.value === '排空' ? '维护中' : '就绪';
+  showNotify(`节点 ${currentNode.value.name} 已${maintenanceAction.value}`);
   maintenanceDrawerApi.close();
 };
 
@@ -210,8 +246,9 @@ const openMig = (r: NodeRow, action: '关闭MIG' | '配置MIG') => {
 
 const confirmMig = () => {
   if (!currentNode.value) return;
-  currentNode.value.allocationType = migAction.value === '配置MIG' ? 'MIG分配' : '整机分配';
-  message.success(`节点 ${currentNode.value.name} 已${migAction.value}`);
+  currentNode.value.allocationType =
+    migAction.value === '配置MIG' ? 'MIG分配' : '整机分配';
+  showNotify(`节点 ${currentNode.value.name} 已${migAction.value}`);
   migDrawerApi.close();
 };
 
@@ -220,13 +257,15 @@ const releaseResource = (r: NodeRow) => {
   r.allocationType = '未出售';
   r.isOnline = false;
   r.onlineTime = '-';
-  message.success(`节点 ${r.name} 资源已释放`);
+  showNotify(`节点 ${r.name} 资源已释放`);
 };
 
 const onMoreAction = (record: NodeRow, action: string) => {
-  if (action === 'distribute' && canDistribute(record)) openDistribution(record);
+  if (action === 'distribute' && canDistribute(record))
+    openDistribution(record);
   if (action === 'maintain') openMaintenance(record);
-  if (action === 'migConfig' && canConfigMig(record)) openMig(record, '配置MIG');
+  if (action === 'migConfig' && canConfigMig(record))
+    openMig(record, '配置MIG');
   if (action === 'migClose' && canCloseMig(record)) openMig(record, '关闭MIG');
   if (action === 'release') releaseResource(record);
 };
@@ -237,7 +276,12 @@ const columns = [
   { title: 'GPU型号', dataIndex: 'gpuModel', key: 'gpuModel', width: 190 },
   { title: '已分配GPU', key: 'allocatedGpu', width: 110 },
   { title: '总GPU', dataIndex: 'totalGpu', key: 'totalGpu', width: 90 },
-  { title: '分配类型', dataIndex: 'allocationType', key: 'allocationType', width: 120 },
+  {
+    title: '分配类型',
+    dataIndex: 'allocationType',
+    key: 'allocationType',
+    width: 120,
+  },
   { title: '状态', dataIndex: 'status', key: 'status', width: 90 },
   { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 160 },
   { title: 'IP地址', dataIndex: 'ipAddress', key: 'ipAddress', width: 120 },
@@ -254,7 +298,7 @@ async function fetchData() {
     const payload = res?.data ?? res ?? {};
     rows.value = (payload.list ?? []) as NodeRow[];
   } catch {
-    message.error('节点数据加载失败，请稍后重试');
+    showError('节点数据加载失败，请稍后重试');
     rows.value = [];
   } finally {
     loading.value = false;
@@ -289,7 +333,12 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
   <div class="p-4">
     <Card class="mb-4">
       <Space wrap>
-        <Input v-model:value="filters.name" style="width: 220px" placeholder="名称/IP模糊搜索" allow-clear />
+        <Input
+          v-model:value="filters.name"
+          style="width: 220px"
+          placeholder="名称/IP模糊搜索"
+          allow-clear
+        />
         <Select
           v-model:value="filters.allocationType"
           mode="multiple"
@@ -302,9 +351,16 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
           style="width: 130px"
           allow-clear
           placeholder="状态"
-          :options="['就绪', '未就绪', '维护中'].map((x) => ({ label: x, value: x }))"
+          :options="
+            ['就绪', '未就绪', '维护中'].map((x) => ({ label: x, value: x }))
+          "
         />
-        <Input v-model:value="filters.ipAddress" style="width: 170px" placeholder="IP地址" allow-clear />
+        <Input
+          v-model:value="filters.ipAddress"
+          style="width: 170px"
+          placeholder="IP地址"
+          allow-clear
+        />
         <Select
           v-model:value="filters.isOnline"
           style="width: 120px"
@@ -320,7 +376,9 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
     <Card>
       <div class="mb-3 flex items-center justify-between">
         <Space wrap>
-          <Button type="primary" @click="handleDistributionClick">资源分配</Button>
+          <Button type="primary" @click="handleDistributionClick"
+            >资源分配</Button
+          >
           <Button @click="batchOnline">批量上架</Button>
           <Button @click="batchOffline">批量下架</Button>
           <Button @click="handleMaintenanceClick">维护</Button>
@@ -331,34 +389,82 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
         :columns="columns"
         :data-source="filteredRows"
         :loading="loading"
-        :row-selection="{ selectedRowKeys, onChange: (keys: any[]) => (selectedRowKeys = keys as number[]) }"
+        :row-selection="{
+          selectedRowKeys,
+          onChange: (keys: any[]) => (selectedRowKeys = keys as number[]),
+        }"
         :pagination="{ pageSize: 10, showSizeChanger: true }"
         :scroll="{ x: 2200 }"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'allocatedGpu'">{{ (record as NodeRow).allocatedGpu }} 卡</template>
+          <template v-if="column.key === 'allocatedGpu'"
+            >{{ (record as NodeRow).allocatedGpu }} 卡</template
+          >
           <template v-else-if="column.key === 'allocationType'">
-            <Tag :color="allocationTagColor((record as NodeRow).allocationType)">{{ (record as NodeRow).allocationType }}</Tag>
+            <Tag
+              :color="allocationTagColor((record as NodeRow).allocationType)"
+              >{{ (record as NodeRow).allocationType }}</Tag
+            >
           </template>
           <template v-else-if="column.key === 'status'">
-            <Tag :color="statusColor[(record as NodeRow).status]">{{ (record as NodeRow).status }}</Tag>
+            <Tag :color="statusColor[(record as NodeRow).status]">{{
+              (record as NodeRow).status
+            }}</Tag>
           </template>
-          <template v-else-if="column.key === 'isOnline'">{{ (record as NodeRow).isOnline ? '是' : '否' }}</template>
-          <template v-else-if="column.key === 'price'">¥{{ Number((record as NodeRow).price || 0).toFixed(2) }} / 时</template>
+          <template v-else-if="column.key === 'isOnline'">{{
+            (record as NodeRow).isOnline ? '是' : '否'
+          }}</template>
+          <template v-else-if="column.key === 'price'"
+            >¥{{ Number((record as NodeRow).price || 0).toFixed(2) }} /
+            时</template
+          >
           <template v-else-if="column.key === 'action'">
             <Space :size="0">
-              <Button type="link" size="small" :disabled="(record as NodeRow).isOnline || (record as NodeRow).status !== '就绪'" @click="onShelf(record as NodeRow)">上架</Button>
-              <Popconfirm title="下架后该节点将无法被分配，确认下架吗？" @confirm="offShelf(record as NodeRow)">
-                <Button type="link" size="small" :disabled="!(record as NodeRow).isOnline">下架</Button>
+              <Button
+                type="link"
+                size="small"
+                :disabled="
+                  (record as NodeRow).isOnline ||
+                  (record as NodeRow).status !== '就绪'
+                "
+                @click="onShelf(record as NodeRow)"
+                >上架</Button
+              >
+              <Popconfirm
+                title="下架后该节点将无法被分配，确认下架吗？"
+                @confirm="offShelf(record as NodeRow)"
+              >
+                <Button
+                  type="link"
+                  size="small"
+                  :disabled="!(record as NodeRow).isOnline"
+                  >下架</Button
+                >
               </Popconfirm>
               <Dropdown trigger="click">
                 <Button type="link" size="small">...</Button>
                 <template #overlay>
-                  <Menu @click="({ key }) => onMoreAction(record as NodeRow, String(key))">
-                    <Menu.Item key="distribute" :disabled="!canDistribute(record as NodeRow)">资源分配</Menu.Item>
+                  <Menu
+                    @click="
+                      ({ key }) => onMoreAction(record as NodeRow, String(key))
+                    "
+                  >
+                    <Menu.Item
+                      key="distribute"
+                      :disabled="!canDistribute(record as NodeRow)"
+                      >资源分配</Menu.Item
+                    >
                     <Menu.Item key="maintain">维护</Menu.Item>
-                    <Menu.Item key="migConfig" :disabled="!canConfigMig(record as NodeRow)">MIG配置</Menu.Item>
-                    <Menu.Item key="migClose" :disabled="!canCloseMig(record as NodeRow)">关闭MIG</Menu.Item>
+                    <Menu.Item
+                      key="migConfig"
+                      :disabled="!canConfigMig(record as NodeRow)"
+                      >MIG配置</Menu.Item
+                    >
+                    <Menu.Item
+                      key="migClose"
+                      :disabled="!canCloseMig(record as NodeRow)"
+                      >关闭MIG</Menu.Item
+                    >
                     <Menu.Item key="release">资源释放</Menu.Item>
                   </Menu>
                 </template>
@@ -372,23 +478,53 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
     <DistributionDrawer>
       <Form layout="vertical" :model="distributionForm">
         <FormItem label="租户" required>
-          <Select v-model:value="distributionForm.tenant" placeholder="请选择租户">
+          <Select
+            v-model:value="distributionForm.tenant"
+            placeholder="请选择租户"
+          >
             <Select.Option value="tenant-a">租户A</Select.Option>
-            <Select.Option value="tenant-b" disabled>租户B（未分配管理员）</Select.Option>
+            <Select.Option value="tenant-b" disabled
+              >租户B（未分配管理员）</Select.Option
+            >
             <Select.Option value="tenant-c">租户C</Select.Option>
           </Select>
         </FormItem>
         <FormItem label="分配模式" required>
-          <Select v-model:value="distributionForm.mode" :options="['整机分配', '弹性分配', 'MIG实例分配', 'vGPU实例分配'].map((x) => ({ label: x, value: x }))" />
+          <Select
+            v-model:value="distributionForm.mode"
+            :options="
+              ['整机分配', '弹性分配', 'MIG实例分配', 'vGPU实例分配'].map(
+                (x) => ({ label: x, value: x }),
+              )
+            "
+          />
         </FormItem>
         <FormItem label="资源规格" required>
           <Input v-model:value="distributionForm.spec" />
         </FormItem>
-        <FormItem label="CPU(核)"><InputNumber v-model:value="distributionForm.cpu" :min="0" style="width: 100%" /></FormItem>
-        <FormItem label="内存(GiB)"><InputNumber v-model:value="distributionForm.memory" :min="0" style="width: 100%" /></FormItem>
-        <FormItem label="包括共享存储(GB)"><InputNumber v-model:value="distributionForm.sharedStorage" :min="0" style="width: 100%" /></FormItem>
+        <FormItem label="CPU(核)"
+          ><InputNumber
+            v-model:value="distributionForm.cpu"
+            :min="0"
+            style="width: 100%"
+        /></FormItem>
+        <FormItem label="内存(GiB)"
+          ><InputNumber
+            v-model:value="distributionForm.memory"
+            :min="0"
+            style="width: 100%"
+        /></FormItem>
+        <FormItem label="包括共享存储(GB)"
+          ><InputNumber
+            v-model:value="distributionForm.sharedStorage"
+            :min="0"
+            style="width: 100%"
+        /></FormItem>
         <FormItem label="节点" required>
-          <Select v-model:value="distributionForm.nodeId" :options="rows.map((x) => ({ label: x.name, value: x.id }))" />
+          <Select
+            v-model:value="distributionForm.nodeId"
+            :options="rows.map((x) => ({ label: x.name, value: x.id }))"
+          />
         </FormItem>
       </Form>
       <template #footer>
@@ -403,7 +539,13 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
       <Form layout="vertical">
         <FormItem label="节点">{{ currentNode?.name }}</FormItem>
         <FormItem label="操作">
-          <Select v-model:value="maintenanceAction" :options="[{ label: '排空', value: '排空' }, { label: '恢复', value: '恢复' }]" />
+          <Select
+            v-model:value="maintenanceAction"
+            :options="[
+              { label: '排空', value: '排空' },
+              { label: '恢复', value: '恢复' },
+            ]"
+          />
         </FormItem>
       </Form>
       <template #footer>

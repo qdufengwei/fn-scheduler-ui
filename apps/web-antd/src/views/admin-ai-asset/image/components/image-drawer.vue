@@ -163,17 +163,27 @@ function close() {
 
 function handleSave() {
   if (isImportMode.value) {
-    if (!importForm.value.targetName || !importForm.value.targetVersion || !importForm.value.sourceAddress) {
+    if (
+      !importForm.value.targetName ||
+      !importForm.value.targetVersion ||
+      !importForm.value.sourceAddress
+    ) {
       message.warning('请填写所有必填的导入字段');
       return;
     }
     emit('saveImport', { ...importForm.value });
   } else {
-    if (!createForm.value.name || (!createForm.value.isLatest && !createForm.value.version)) {
+    if (
+      !createForm.value.name ||
+      (!createForm.value.isLatest && !createForm.value.version)
+    ) {
       message.warning('请填写镜像名称及版本号');
       return;
     }
-    if (createForm.value.buildType === 'Dockerfile' && !createForm.value.dockerfile) {
+    if (
+      createForm.value.buildType === 'Dockerfile' &&
+      !createForm.value.dockerfile
+    ) {
       message.warning('请填写 Dockerfile 内容');
       return;
     }
@@ -199,7 +209,9 @@ defineExpose({
         >
           <ArrowLeft class="size-5 text-gray-600 dark:text-zinc-400" />
         </Button>
-        <span class="text-base font-bold text-gray-800 dark:text-zinc-200">创建镜像</span>
+        <span class="text-base font-bold text-gray-800 dark:text-zinc-200"
+          >创建镜像</span
+        >
       </div>
     </template>
 
@@ -213,26 +225,51 @@ defineExpose({
 
       <!-- 创建模式 -->
       <Form v-if="!isImportMode" layout="vertical" :model="createForm">
-        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">基础信息</h3>
+        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">
+          基础信息
+        </h3>
 
         <FormItem label="镜像目录" required>
-          <Select v-model:value="createForm.directory" style="width: 240px" :options="PROJECT_OPTIONS" placeholder="请选择" />
+          <Select
+            v-model:value="createForm.directory"
+            style="width: 240px"
+            :options="PROJECT_OPTIONS"
+            placeholder="请选择"
+          />
         </FormItem>
 
         <FormItem label="镜像名称及版本" required>
           <div class="flex items-center gap-2 max-w-[560px]">
-            <Input v-model:value="createForm.name" placeholder="请填写镜像名称，例如: python" style="flex: 2" />
+            <Input
+              v-model:value="createForm.name"
+              placeholder="请填写镜像名称，例如: python"
+              style="flex: 2"
+            />
             <span class="text-gray-400">:</span>
-            <Input v-model:value="createForm.version" placeholder="请填写镜像版本号" style="flex: 1" :disabled="createForm.isLatest" />
+            <Input
+              v-model:value="createForm.version"
+              placeholder="请填写镜像版本号"
+              style="flex: 1"
+              :disabled="createForm.isLatest"
+            />
           </div>
           <div class="mt-2">
-            <Checkbox v-model:checked="createForm.isLatest" @change="handleLatestChange">作为latest版本</Checkbox>
+            <Checkbox
+              v-model:checked="createForm.isLatest"
+              @change="handleLatestChange"
+              >作为latest版本</Checkbox
+            >
           </div>
         </FormItem>
 
         <FormItem label="标签">
           <div class="flex flex-wrap gap-2 items-center">
-            <Tag v-for="(tag, index) in createForm.tags" :key="tag" closable @close="removeTag(index)">
+            <Tag
+              v-for="(tag, index) in createForm.tags"
+              :key="tag"
+              closable
+              @close="removeTag(index)"
+            >
               {{ tag }}
             </Tag>
             <Input
@@ -245,18 +282,31 @@ defineExpose({
               @blur="handleTagInputConfirm"
               @keyup.enter="handleTagInputConfirm"
             />
-            <Button v-else size="small" type="dashed" class="flex items-center gap-1" @click="showTagInput">
+            <Button
+              v-else
+              size="small"
+              type="dashed"
+              class="flex items-center gap-1"
+              @click="showTagInput"
+            >
               <Plus class="size-3" /> 添加标签
             </Button>
           </div>
         </FormItem>
 
-        <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"></div>
+        <div
+          class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"
+        ></div>
 
-        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">构建方式</h3>
+        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">
+          构建方式
+        </h3>
 
         <FormItem label="构建方式" required>
-          <Radio.Group v-model:value="createForm.buildType" button-style="solid">
+          <Radio.Group
+            v-model:value="createForm.buildType"
+            button-style="solid"
+          >
             <Radio.Button value="Dockerfile">基于Dockerfile</Radio.Button>
             <Radio.Button value="DevBox">开发机</Radio.Button>
             <Radio.Button value="Task">任务</Radio.Button>
@@ -276,9 +326,17 @@ defineExpose({
           </FormItem>
         </div>
 
-        <div v-else-if="createForm.buildType === 'DevBox'" class="mt-4 space-y-4">
+        <div
+          v-else-if="createForm.buildType === 'DevBox'"
+          class="mt-4 space-y-4"
+        >
           <FormItem label="开发机名称" required>
-            <Select v-model:value="createForm.devboxName" :options="devboxOptions" placeholder="请选择" style="width: 480px" />
+            <Select
+              v-model:value="createForm.devboxName"
+              :options="devboxOptions"
+              placeholder="请选择"
+              style="width: 480px"
+            />
           </FormItem>
           <FormItem label="暂停容器">
             <div class="flex items-center gap-3">
@@ -290,13 +348,28 @@ defineExpose({
 
         <div v-else-if="createForm.buildType === 'Task'" class="mt-4 space-y-4">
           <FormItem label="任务名称" required>
-            <Select v-model:value="createForm.taskName" :options="taskNameOptions" placeholder="请选择任务" style="width: 480px" />
+            <Select
+              v-model:value="createForm.taskName"
+              :options="taskNameOptions"
+              placeholder="请选择任务"
+              style="width: 480px"
+            />
           </FormItem>
           <FormItem label="实例信息" required>
-            <Select v-model:value="createForm.instanceInfo" :options="instanceOptions" placeholder="请选择实例" style="width: 480px" />
+            <Select
+              v-model:value="createForm.instanceInfo"
+              :options="instanceOptions"
+              placeholder="请选择实例"
+              style="width: 480px"
+            />
           </FormItem>
           <FormItem label="选择容器" required>
-            <Select v-model:value="createForm.containerSelect" :options="containerOptions" placeholder="请选择容器" style="width: 480px" />
+            <Select
+              v-model:value="createForm.containerSelect"
+              :options="containerOptions"
+              placeholder="请选择容器"
+              style="width: 480px"
+            />
           </FormItem>
           <FormItem label="暂停容器运行">
             <div class="flex items-center gap-3">
@@ -309,43 +382,88 @@ defineExpose({
 
       <!-- 导入模式 -->
       <Form v-else layout="vertical" :model="importForm">
-        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">基础信息</h3>
+        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">
+          基础信息
+        </h3>
 
         <FormItem label="目标镜像协议" required>
-          <Input v-model:value="importForm.targetProtocol" disabled style="width: 240px" />
+          <Input
+            v-model:value="importForm.targetProtocol"
+            disabled
+            style="width: 240px"
+          />
         </FormItem>
 
         <FormItem label="目标镜像项目" required>
-          <Select v-model:value="importForm.targetProject" style="width: 240px" :options="PROJECT_OPTIONS" placeholder="请选择" />
+          <Select
+            v-model:value="importForm.targetProject"
+            style="width: 240px"
+            :options="PROJECT_OPTIONS"
+            placeholder="请选择"
+          />
         </FormItem>
 
         <FormItem label="目标镜像地址" required>
           <div class="flex items-center gap-2 max-w-[560px]">
-            <Input v-model:value="importForm.targetName" placeholder="请输入仓库地址" style="flex: 2" />
+            <Input
+              v-model:value="importForm.targetName"
+              placeholder="请输入仓库地址"
+              style="flex: 2"
+            />
             <span class="text-gray-400">:</span>
-            <Input v-model:value="importForm.targetVersion" placeholder="请输入版本号" style="flex: 1" />
+            <Input
+              v-model:value="importForm.targetVersion"
+              placeholder="请输入版本号"
+              style="flex: 1"
+            />
           </div>
         </FormItem>
 
         <FormItem label="源镜像协议" required>
-          <Input v-model:value="importForm.sourceProtocol" disabled style="width: 240px" />
+          <Input
+            v-model:value="importForm.sourceProtocol"
+            disabled
+            style="width: 240px"
+          />
         </FormItem>
 
         <FormItem label="源镜像地址" required>
-          <Input v-model:value="importForm.sourceAddress" placeholder="请输入源镜像地址" style="width: 480px" />
+          <Input
+            v-model:value="importForm.sourceAddress"
+            placeholder="请输入源镜像地址"
+            style="width: 480px"
+          />
         </FormItem>
 
-        <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"></div>
+        <div
+          class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"
+        ></div>
 
-        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">地址拼接</h3>
-        <div class="space-y-4 max-w-[640px] bg-neutral-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80">
+        <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">
+          地址拼接
+        </h3>
+        <div
+          class="space-y-4 max-w-[640px] bg-neutral-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80"
+        >
           <div class="flex items-start gap-4">
-            <span class="w-[100px] text-gray-500 dark:text-zinc-400 text-sm font-medium">目标镜像地址</span>
-            <span class="font-mono text-gray-800 dark:text-zinc-200 text-sm break-all">{{ targetImageConcat }}</span>
+            <span
+              class="w-[100px] text-gray-500 dark:text-zinc-400 text-sm font-medium"
+              >目标镜像地址</span
+            >
+            <span
+              class="font-mono text-gray-800 dark:text-zinc-200 text-sm break-all"
+              >{{ targetImageConcat }}</span
+            >
           </div>
           <div class="flex items-start gap-4">
-            <span class="w-[100px] text-gray-500 dark:text-zinc-400 text-sm font-medium">源镜像地址</span>
-            <span class="font-mono text-gray-800 dark:text-zinc-200 text-sm break-all">{{ sourceImageConcat }}</span>
+            <span
+              class="w-[100px] text-gray-500 dark:text-zinc-400 text-sm font-medium"
+              >源镜像地址</span
+            >
+            <span
+              class="font-mono text-gray-800 dark:text-zinc-200 text-sm break-all"
+              >{{ sourceImageConcat }}</span
+            >
           </div>
         </div>
       </Form>

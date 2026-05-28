@@ -31,8 +31,14 @@ function generateHistoryData(
     const baseValue = minValue + (maxValue - minValue) * 0.5;
     const variation = (maxValue - minValue) * 0.3;
     const noise = (Math.random() - 0.5) * variation;
-    const trend = Math.sin((current.getTime() - startTime.getTime()) / 3600000) * variation * 0.5;
-    const value = Math.max(minValue, Math.min(maxValue, baseValue + noise + trend));
+    const trend =
+      Math.sin((current.getTime() - startTime.getTime()) / 3600000) *
+      variation *
+      0.5;
+    const value = Math.max(
+      minValue,
+      Math.min(maxValue, baseValue + noise + trend),
+    );
 
     data.push({
       timestamp: current.toISOString(),
@@ -84,7 +90,9 @@ export default defineEventHandler((event) => {
 
   // 解析时间范围，默认最近1小时
   const end = endTime ? new Date(endTime as string) : new Date();
-  const start = startTime ? new Date(startTime as string) : new Date(end.getTime() - 3600000);
+  const start = startTime
+    ? new Date(startTime as string)
+    : new Date(end.getTime() - 3600000);
 
   // 如果指定了单个指标
   if (nodeId && metricKey) {
@@ -102,7 +110,13 @@ export default defineEventHandler((event) => {
       nodeName: nodeNames[Number(nodeId)] || 'unknown',
       metricKey: metricKey as string,
       unit: config.unit,
-      data: generateHistoryData(start, end, config.interval, config.minValue, config.maxValue),
+      data: generateHistoryData(
+        start,
+        end,
+        config.interval,
+        config.minValue,
+        config.maxValue,
+      ),
     };
 
     return {
@@ -120,7 +134,13 @@ export default defineEventHandler((event) => {
         nodeName: nodeNames[Number(nodeId)] || 'unknown',
         metricKey: key,
         unit: config.unit,
-        data: generateHistoryData(start, end, config.interval, config.minValue, config.maxValue),
+        data: generateHistoryData(
+          start,
+          end,
+          config.interval,
+          config.minValue,
+          config.maxValue,
+        ),
       }),
     );
 

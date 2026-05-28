@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { Button, Pagination, Popconfirm, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Pagination,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { RotateCw, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const rowSelection = ref<number[]>([]);
 const pageSize = ref(10);
@@ -26,10 +34,21 @@ const columns = [
 ];
 
 const data = ref([
-  { id: 1, name: 'simple', taskType: 'Simple', image: 'harbor.local.clusters/library/ngc:25.06-py3-ssh', gpuCount: 8, resourceSpec: 'NVIDIA-H100-HBM2E-80GB', instances: 1, priority: '6', recyclePolicy: '不可回收', createTime: '2026-03-03 10:46:10', user: 'test01', tenant: 'test01' },
+  {
+    id: 1,
+    name: 'simple',
+    taskType: 'Simple',
+    image: 'harbor.local.clusters/library/ngc:25.06-py3-ssh',
+    gpuCount: 8,
+    resourceSpec: 'NVIDIA-H100-HBM2E-80GB',
+    instances: 1,
+    priority: '6',
+    recyclePolicy: '不可回收',
+    createTime: '2026-03-03 10:46:10',
+    user: 'test01',
+    tenant: 'test01',
+  },
 ]);
-
-const notify = (text: string) => message.success(text);
 </script>
 
 <template>
@@ -37,14 +56,14 @@ const notify = (text: string) => message.success(text);
     <template #toolbar>
       <Popconfirm
         title="确认删除选中的模板？"
-        @confirm="notify(`已删除 ${rowSelection.length} 个模板`)"
+        @confirm="showNotify(`已删除 ${rowSelection.length} 个模板`)"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>
           批量删除
         </Button>
       </Popconfirm>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showNotify('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
       </Button>
     </template>
@@ -62,7 +81,9 @@ const notify = (text: string) => message.success(text);
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
-          <a class="font-medium text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+          <a class="font-medium text-blue-600 hover:text-blue-700">{{
+            record.name
+          }}</a>
         </template>
         <template v-if="column.dataIndex === 'taskType'">
           <Tag class="rounded-full">{{ record.taskType }}</Tag>
@@ -75,8 +96,13 @@ const notify = (text: string) => message.success(text);
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space>
-            <a @click="notify(`修改模板 ${record.name}`)">修改模板</a>
-            <Popconfirm title="确认删除该模板？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除模板 ${record.name}`)">
+            <a @click="showNotify(`修改模板 ${record.name}`)">修改模板</a>
+            <Popconfirm
+              title="确认删除该模板？"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="showNotify(`删除模板 ${record.name}`)"
+            >
               <a class="text-red-500">删除</a>
             </Popconfirm>
           </Space>

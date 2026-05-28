@@ -6,9 +6,18 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { Page } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
-import { Button, Card, DatePicker, Select, Space, Tag, Tooltip, message } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  DatePicker,
+  Select,
+  Space,
+  Tag,
+  Tooltip,
+} from 'ant-design-vue';
 import dayjs from 'dayjs';
 
+import { showNotify } from '#/utils/notify';
 import MetricChart from '../../resource/monitor/components/MetricChart.vue';
 
 interface MetricItem {
@@ -29,22 +38,91 @@ interface TaskItem {
 const RangePicker = DatePicker.RangePicker;
 
 const tasks: TaskItem[] = [
-  { id: 'train-qwen-0527', name: 'qwen2-7b-train-0527', runTime: '88h 7m 59s', status: '运行中', type: '训练任务' },
-  { id: 'infer-chatglm-prod', name: 'chatglm3-infer-prod', runTime: '36h 12m 04s', status: '运行中', type: '推理服务' },
-  { id: 'devbox-cuda', name: 'cuda-devbox-test', runTime: '5h 42m 31s', status: '已停止', type: '开发机' },
-  { id: 'finetune-baichuan', name: 'baichuan-finetune-admin', runTime: '11h 26m 45s', status: '排队中', type: '模型微调' },
+  {
+    id: 'train-qwen-0527',
+    name: 'qwen2-7b-train-0527',
+    runTime: '88h 7m 59s',
+    status: '运行中',
+    type: '训练任务',
+  },
+  {
+    id: 'infer-chatglm-prod',
+    name: 'chatglm3-infer-prod',
+    runTime: '36h 12m 04s',
+    status: '运行中',
+    type: '推理服务',
+  },
+  {
+    id: 'devbox-cuda',
+    name: 'cuda-devbox-test',
+    runTime: '5h 42m 31s',
+    status: '已停止',
+    type: '开发机',
+  },
+  {
+    id: 'finetune-baichuan',
+    name: 'baichuan-finetune-admin',
+    runTime: '11h 26m 45s',
+    status: '排队中',
+    type: '模型微调',
+  },
 ];
 
 const metrics: MetricItem[] = [
-  { key: 'cpu', title: 'CPU使用量', unit: '%', points: [12, 18, 21, 19, 26, 31, 28] },
-  { key: 'memory', title: '内存使用量', unit: 'GB', points: [18, 18.4, 19.1, 20.2, 20.7, 21.3, 21.1] },
-  { key: 'gpu', title: 'GPU利用率', unit: '%', points: [55, 63, 68, 72, 70, 76, 74] },
-  { key: 'gpuMemory', title: 'GPU显存使用量', unit: 'GB', points: [28, 30, 31, 32, 31.5, 33, 34] },
-  { key: 'networkIn', title: '网络入流量', unit: 'MB/s', points: [85, 92, 96, 88, 102, 110, 108] },
-  { key: 'networkOut', title: '网络出流量', unit: 'MB/s', points: [41, 44, 39, 47, 52, 50, 55] },
-  { key: 'diskRead', title: '磁盘读取', unit: 'MB/s', points: [120, 132, 128, 145, 151, 149, 156] },
-  { key: 'diskWrite', title: '磁盘写入', unit: 'MB/s', points: [64, 70, 73, 69, 78, 82, 80] },
-  { key: 'gpuTemp', title: 'GPU温度', unit: '℃', points: [58, 60, 61, 63, 62, 64, 65] },
+  {
+    key: 'cpu',
+    title: 'CPU使用量',
+    unit: '%',
+    points: [12, 18, 21, 19, 26, 31, 28],
+  },
+  {
+    key: 'memory',
+    title: '内存使用量',
+    unit: 'GB',
+    points: [18, 18.4, 19.1, 20.2, 20.7, 21.3, 21.1],
+  },
+  {
+    key: 'gpu',
+    title: 'GPU利用率',
+    unit: '%',
+    points: [55, 63, 68, 72, 70, 76, 74],
+  },
+  {
+    key: 'gpuMemory',
+    title: 'GPU显存使用量',
+    unit: 'GB',
+    points: [28, 30, 31, 32, 31.5, 33, 34],
+  },
+  {
+    key: 'networkIn',
+    title: '网络入流量',
+    unit: 'MB/s',
+    points: [85, 92, 96, 88, 102, 110, 108],
+  },
+  {
+    key: 'networkOut',
+    title: '网络出流量',
+    unit: 'MB/s',
+    points: [41, 44, 39, 47, 52, 50, 55],
+  },
+  {
+    key: 'diskRead',
+    title: '磁盘读取',
+    unit: 'MB/s',
+    points: [120, 132, 128, 145, 151, 149, 156],
+  },
+  {
+    key: 'diskWrite',
+    title: '磁盘写入',
+    unit: 'MB/s',
+    points: [64, 70, 73, 69, 78, 82, 80],
+  },
+  {
+    key: 'gpuTemp',
+    title: 'GPU温度',
+    unit: '℃',
+    points: [58, 60, 61, 63, 62, 64, 65],
+  },
 ];
 
 const taskType = ref(tasks[0]?.type);
@@ -88,8 +166,14 @@ const taskNameOptions = computed(() =>
     })),
 );
 
-const currentTask = computed<TaskItem>(() => tasks.find((task) => task.id === taskId.value) ?? tasks[0]!);
-const metricGridClass = computed(() => (viewMode.value === 'small' ? 'task-monitor__metrics--small' : 'task-monitor__metrics--large'));
+const currentTask = computed<TaskItem>(
+  () => tasks.find((task) => task.id === taskId.value) ?? tasks[0]!,
+);
+const metricGridClass = computed(() =>
+  viewMode.value === 'small'
+    ? 'task-monitor__metrics--small'
+    : 'task-monitor__metrics--large',
+);
 
 function toMetricChartData(metric: MetricItem) {
   return {
@@ -114,7 +198,9 @@ function resetAutoRefresh() {
 }
 
 function onDownloadReport() {
-  message.success(`正在按${aggregationOptions.find((item) => item.value === aggregation.value)?.label}生成报表`);
+  showNotify(
+    `正在按${aggregationOptions.find((item) => item.value === aggregation.value)?.label}生成报表`,
+  );
 }
 
 watch(taskType, () => {
@@ -136,7 +222,15 @@ onBeforeUnmount(() => {
           <div class="task-monitor__summary">
             <div class="task-monitor__title-row">
               <span class="task-monitor__name">{{ currentTask.name }}</span>
-              <Tag :color="currentTask.status === '运行中' ? 'success' : currentTask.status === '排队中' ? 'warning' : 'default'">
+              <Tag
+                :color="
+                  currentTask.status === '运行中'
+                    ? 'success'
+                    : currentTask.status === '排队中'
+                      ? 'warning'
+                      : 'default'
+                "
+              >
                 {{ currentTask.status }}
               </Tag>
               <Tag>{{ currentTask.type }}</Tag>
@@ -148,8 +242,16 @@ onBeforeUnmount(() => {
           </div>
           <div class="task-monitor__task-switch">
             <span class="task-monitor__label">切换任务</span>
-            <Select v-model:value="taskType" class="task-monitor__select" :options="taskTypeOptions" />
-            <Select v-model:value="taskId" class="task-monitor__name-select" :options="taskNameOptions" />
+            <Select
+              v-model:value="taskType"
+              class="task-monitor__select"
+              :options="taskTypeOptions"
+            />
+            <Select
+              v-model:value="taskId"
+              class="task-monitor__name-select"
+              :options="taskNameOptions"
+            />
           </div>
         </section>
       </Card>
@@ -159,31 +261,54 @@ onBeforeUnmount(() => {
           <div class="task-monitor__filter-left">
             <Space>
               <span class="task-monitor__label">筛选条件</span>
-              <Select v-model:value="aggregation" class="task-monitor__short-select" :options="aggregationOptions" />
+              <Select
+                v-model:value="aggregation"
+                class="task-monitor__short-select"
+                :options="aggregationOptions"
+              />
             </Space>
             <Space>
               <span class="task-monitor__label">自动刷新</span>
-              <Select v-model:value="autoRefresh" class="task-monitor__short-select" :options="refreshOptions" />
+              <Select
+                v-model:value="autoRefresh"
+                class="task-monitor__short-select"
+                :options="refreshOptions"
+              />
             </Space>
             <Space>
               <span class="task-monitor__label">时间范围</span>
-              <RangePicker v-model:value="timeRange" class="task-monitor__range" />
+              <RangePicker
+                v-model:value="timeRange"
+                class="task-monitor__range"
+              />
             </Space>
             <Button type="primary" @click="onDownloadReport">
-              <template #icon><IconifyIcon icon="lucide:download" class="size-4" /></template>
+              <template #icon
+                ><IconifyIcon icon="lucide:download" class="size-4"
+              /></template>
               报表下载
             </Button>
           </div>
           <Space align="center" class="task-monitor__view-switch">
             <span class="task-monitor__label">展示方式</span>
             <Tooltip title="小卡片">
-              <Button :type="viewMode === 'small' ? 'primary' : 'default'" @click="viewMode = 'small'">
-                <template #icon><IconifyIcon icon="lucide:layout-grid" class="size-4" /></template>
+              <Button
+                :type="viewMode === 'small' ? 'primary' : 'default'"
+                @click="viewMode = 'small'"
+              >
+                <template #icon
+                  ><IconifyIcon icon="lucide:layout-grid" class="size-4"
+                /></template>
               </Button>
             </Tooltip>
             <Tooltip title="大卡片">
-              <Button :type="viewMode === 'large' ? 'primary' : 'default'" @click="viewMode = 'large'">
-                <template #icon><IconifyIcon icon="lucide:list" class="size-4" /></template>
+              <Button
+                :type="viewMode === 'large' ? 'primary' : 'default'"
+                @click="viewMode = 'large'"
+              >
+                <template #icon
+                  ><IconifyIcon icon="lucide:list" class="size-4"
+                /></template>
               </Button>
             </Tooltip>
           </Space>
@@ -191,7 +316,14 @@ onBeforeUnmount(() => {
       </Card>
 
       <section class="task-monitor__metrics" :class="metricGridClass">
-        <MetricChart v-for="metric in metrics" :key="metric.key" :data="toMetricChartData(metric)" :metric-key="metric.key" :size="viewMode" :title="metric.title" />
+        <MetricChart
+          v-for="metric in metrics"
+          :key="metric.key"
+          :data="toMetricChartData(metric)"
+          :metric-key="metric.key"
+          :size="viewMode"
+          :title="metric.title"
+        />
       </section>
     </div>
   </Page>
@@ -206,7 +338,11 @@ onBeforeUnmount(() => {
   min-height: 100%;
   padding: 12px;
   background:
-    radial-gradient(circle at 92% -10%, rgb(214 225 255 / 72%), transparent 24%),
+    radial-gradient(
+      circle at 92% -10%,
+      rgb(214 225 255 / 72%),
+      transparent 24%
+    ),
     linear-gradient(180deg, #f5f9ff 0%, #eef4fb 100%);
 }
 

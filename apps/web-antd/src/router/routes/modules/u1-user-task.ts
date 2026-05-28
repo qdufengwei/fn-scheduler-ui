@@ -60,7 +60,8 @@ const routes: RouteRecordRaw[] = [
             path: 'create',
           },
           {
-            component: () => import('#/views/user-task/training/create-template.vue'),
+            component: () =>
+              import('#/views/user-task/training/create-template.vue'),
             meta: {
               title: '创建任务模板',
               hideInMenu: true,

@@ -2,10 +2,22 @@
 import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
 import {
-  Button, Form, FormItem, Input, Pagination, Popconfirm, Progress, Select, Table, Tag, message,  } from 'ant-design-vue';
+  Button,
+  Form,
+  FormItem,
+  Input,
+  Pagination,
+  Popconfirm,
+  Progress,
+  Select,
+  Table,
+  Tag,
+  message,
+} from 'ant-design-vue';
 import { ChevronLeft, Plus, Trash2 } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -92,16 +104,16 @@ const statusConfig: Record<string, { color: string }> = {
   可用: { color: 'processing' },
 };
 
-const notify = (text: string) => message.success(text);
-
 function handleDelete(record: any) {
   dataSource.value = dataSource.value.filter((item) => item.id !== record.id);
-  notify(`删除存储卷 ${record.name} 成功`);
+  showNotify(`删除存储卷 ${record.name} 成功`);
 }
 
 function handleBatchDelete() {
-  dataSource.value = dataSource.value.filter((item) => !selectedRowKeys.value.includes(item.id));
-  notify(`批量删除 ${selectedRowKeys.value.length} 个存储卷成功`);
+  dataSource.value = dataSource.value.filter(
+    (item) => !selectedRowKeys.value.includes(item.id),
+  );
+  showNotify(`批量删除 ${selectedRowKeys.value.length} 个存储卷成功`);
   selectedRowKeys.value = [];
 }
 
@@ -124,23 +136,32 @@ function handleUpdate() {
     message.warning('请输入容量大小');
     return;
   }
-  const record = dataSource.value.find((item) => item.id === updateForm.value.id);
+  const record = dataSource.value.find(
+    (item) => item.id === updateForm.value.id,
+  );
   if (record) {
     record.capacity = Number(updateForm.value.capacity);
-    notify(`更新存储卷 ${updateForm.value.name} 成功`);
+    showNotify(`更新存储卷 ${updateForm.value.name} 成功`);
   }
   updateDrawerApi.close();
 }
 
 function handleAdd() {
-  if (!addForm.value.region || !addForm.value.type || !addForm.value.name || !addForm.value.capacity) {
+  if (
+    !addForm.value.region ||
+    !addForm.value.type ||
+    !addForm.value.name ||
+    !addForm.value.capacity
+  ) {
     message.warning('请填写所有必填字段');
     return;
   }
-  const newId = dataSource.value.length ? Math.max(...dataSource.value.map((item) => item.id)) + 1 : 1;
+  const newId = dataSource.value.length
+    ? Math.max(...dataSource.value.map((item) => item.id)) + 1
+    : 1;
   const now = new Date();
   const formatTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-  
+
   dataSource.value.push({
     id: newId,
     name: addForm.value.name,
@@ -150,10 +171,10 @@ function handleAdd() {
     status: '可用',
     created: formatTime,
   });
-  
-  notify(`创建存储卷 ${addForm.value.name} 成功`);
+
+  showNotify(`创建存储卷 ${addForm.value.name} 成功`);
   createDrawerApi.close();
-  
+
   // reset form
   addForm.value = {
     region: undefined,
@@ -202,7 +223,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
             批量删除
           </Button>
         </Popconfirm>
-        <Button @click="notify('刷新成功')">刷新</Button>
+        <Button @click="showNotify('刷新成功')">刷新</Button>
       </template>
 
       <Table
@@ -217,7 +238,9 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'name'">
-            <span class="text-gray-800 dark:text-zinc-300 font-medium">{{ record.name }}</span>
+            <span class="text-gray-800 dark:text-zinc-300 font-medium">{{
+              record.name
+            }}</span>
           </template>
           <template v-if="column.dataIndex === 'type'">
             <Tag class="rounded-full">{{ record.type }}</Tag>
@@ -226,25 +249,34 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
             <div class="flex items-center gap-2">
               <Progress
                 :percent="Math.round((record.used / record.capacity) * 100)"
-                :stroke-color="record.used / record.capacity > 0.8 ? '#ff4d4f' : '#1890ff'"
+                :stroke-color="
+                  record.used / record.capacity > 0.8 ? '#ff4d4f' : '#1890ff'
+                "
                 size="small"
                 style="width: 80px"
                 :show-info="false"
               />
-              <span class="text-sm text-gray-500">{{ record.used }}/{{ record.capacity }}GB</span>
+              <span class="text-sm text-gray-500"
+                >{{ record.used }}/{{ record.capacity }}GB</span
+              >
             </div>
           </template>
           <template v-if="column.dataIndex === 'capacity'">
             <span>{{ record.capacity }} GB</span>
           </template>
           <template v-if="column.dataIndex === 'status'">
-            <Tag :color="statusConfig[record.status]?.color" class="rounded-full">
+            <Tag
+              :color="statusConfig[record.status]?.color"
+              class="rounded-full"
+            >
               {{ record.status }}
             </Tag>
           </template>
           <template v-if="column.dataIndex === 'action'">
             <div class="flex items-center gap-1">
-              <Button type="link" size="small" @click="openUpdateModal(record)">更新</Button>
+              <Button type="link" size="small" @click="openUpdateModal(record)"
+                >更新</Button
+              >
               <Popconfirm
                 title="确认删除该存储卷？"
                 ok-text="确认"
@@ -274,20 +306,22 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
     <CreateDrawer>
       <template #title>
         <div class="flex items-center gap-3 select-none">
-          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="createDrawerApi.close()">
+          <Button
+            type="text"
+            class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer"
+            @click="createDrawerApi.close()"
+          >
             <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
           </Button>
-          <span class="text-base font-bold text-gray-800 dark:text-zinc-200">添加PVC</span>
+          <span class="text-base font-bold text-gray-800 dark:text-zinc-200"
+            >添加PVC</span
+          >
         </div>
       </template>
 
       <!-- 表单主体 -->
       <div class="py-2">
-        <Form
-          layout="vertical"
-          :model="addForm"
-          class="space-y-4"
-        >
+        <Form layout="vertical" :model="addForm" class="space-y-4">
           <FormItem label="区域" required>
             <Select
               v-model:value="addForm.region"
@@ -297,7 +331,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
               class="w-full"
             />
           </FormItem>
-          
+
           <FormItem label="存储类型" required>
             <Select
               v-model:value="addForm.type"
@@ -307,7 +341,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
               class="w-full"
             />
           </FormItem>
-          
+
           <FormItem label="磁盘名称" required>
             <Input
               v-model:value="addForm.name"
@@ -315,7 +349,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
               size="large"
             />
           </FormItem>
-          
+
           <FormItem label="PVC存储大小" required>
             <Input
               v-model:value="addForm.capacity"
@@ -328,7 +362,10 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
                   v-model:value="addForm.unit"
                   style="width: 80px"
                   :bordered="false"
-                  :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
+                  :options="[
+                    { label: 'GB', value: 'GB' },
+                    { label: 'TB', value: 'TB' },
+                  ]"
                 />
               </template>
             </Input>
@@ -348,26 +385,24 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
     <UpdateDrawer>
       <template #title>
         <div class="flex items-center gap-3 select-none">
-          <Button type="text" class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer" @click="updateDrawerApi.close()">
+          <Button
+            type="text"
+            class="flex items-center justify-center p-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg cursor-pointer"
+            @click="updateDrawerApi.close()"
+          >
             <ChevronLeft class="size-5 text-gray-600 dark:text-zinc-400" />
           </Button>
-          <span class="text-base font-bold text-gray-800 dark:text-zinc-200">更新PVC</span>
+          <span class="text-base font-bold text-gray-800 dark:text-zinc-200"
+            >更新PVC</span
+          >
         </div>
       </template>
 
       <!-- 表单主体 -->
       <div class="py-2">
-        <Form
-          layout="vertical"
-          :model="updateForm"
-          class="space-y-4"
-        >
+        <Form layout="vertical" :model="updateForm" class="space-y-4">
           <FormItem label="名称" required>
-            <Input
-              v-model:value="updateForm.name"
-              disabled
-              size="large"
-            />
+            <Input v-model:value="updateForm.name" disabled size="large" />
           </FormItem>
           <FormItem label="容量" required>
             <Input
@@ -381,7 +416,10 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
                   v-model:value="updateForm.unit"
                   style="width: 80px"
                   :bordered="false"
-                  :options="[{ label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }]"
+                  :options="[
+                    { label: 'GB', value: 'GB' },
+                    { label: 'TB', value: 'TB' },
+                  ]"
                 />
               </template>
             </Input>
@@ -399,5 +437,4 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

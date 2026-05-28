@@ -112,6 +112,7 @@ This is a **frontend prototype project**. It does not call backend APIs. All pag
 ## UI Guidelines
 
 Follow Vben Admin Antd UI design standards:
+
 - Use existing project component libraries and icon systems (`@vben/icons`, `@vben/common-ui`)
 - Reference existing page layouts and styles in the project
 - Maintain consistency with Vben Admin framework component styles and interaction patterns
@@ -121,17 +122,20 @@ Follow Vben Admin Antd UI design standards:
 When viewing pages from the reference system (e.g., https://aicloud.infrawaves.com/), check each item in this list:
 
 ### 1. Page Structure Type
+
 - Is it a table-centric page (contains table, filters, toolbar, etc.)
 - Are there additional elements (stats cards, explanatory text, other blocks)
 - **Special rule: If not a table-centric page or page logic is complex → record page path and description, handle separately**
 
 ### 2. Page Menu Structure
+
 - Menu levels (second/third level menus)
 - Tabs levels and names
 - **See main tabs group → split into second-level pages**
 - **See sub tabs group → split into third-level pages**
 
 ### 3. Filter Conditions
+
 - Filter area position and layout
 - Filter item types (dropdown/input)
 - Filter item placeholder text
@@ -140,6 +144,7 @@ When viewing pages from the reference system (e.g., https://aicloud.infrawaves.c
 - **See filter conditions → add filter components to corresponding page**
 
 ### 4. List Fields (Table Headers)
+
 - All column names
 - Column order
 - Which columns have filter icons
@@ -150,6 +155,7 @@ When viewing pages from the reference system (e.g., https://aicloud.infrawaves.c
 - **See filter icon → add corresponding filter condition**
 
 ### 5. Action Button Logic (observe only, do not interact)
+
 - Toolbar button click behavior (modal/navigation/toast)
 - Toolbar button click content (modal title, form fields, buttons, etc.)
 - Action column button click behavior
@@ -158,11 +164,13 @@ When viewing pages from the reference system (e.g., https://aicloud.infrawaves.c
 - **See action buttons → record button name and interaction method (for implementing corresponding functionality)**
 
 ### 6. Pagination
+
 - Pagination component configuration
 - Per-page options
 - **See pagination config → configure corresponding page pagination component**
 
 ### 7. Additional Elements
+
 - Stats cards
 - Explanatory text
 - Other non-table blocks

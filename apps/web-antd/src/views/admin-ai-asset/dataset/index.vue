@@ -1,7 +1,19 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
-import { Button, Card, Input, Pagination, Popconfirm, Progress, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Input,
+  Pagination,
+  Popconfirm,
+  Progress,
+  Select,
+  Space,
+  Table,
+  Tag,
+  message,
+} from 'ant-design-vue';
 import { ref, computed } from 'vue';
 import { RotateCw, ArrowLeft, Copy } from '@vben/icons';
 
@@ -101,9 +113,9 @@ const datasetVersions = ref([
 
 const getStatusTag = (status: string) => {
   const statusMap: Record<string, { color: string }> = {
-    '已完成': { color: 'success' },
-    '上传中': { color: 'processing' },
-    '失败': { color: 'error' },
+    已完成: { color: 'success' },
+    上传中: { color: 'processing' },
+    失败: { color: 'error' },
   };
   return statusMap[status] || { color: 'default' };
 };
@@ -185,7 +197,7 @@ function openDetail(record: any) {
       size: record.size || '19.90 KB',
       updateTime: record.updateTime || '2026-03-03 10:41:38',
       description: record.description !== '-' ? record.description : '-',
-    }
+    },
   ];
 }
 
@@ -203,8 +215,12 @@ function copyPath(text: string) {
 
 // 详情页版本操作
 function handleDeleteVersion(record: any) {
-  datasetVersions.value = datasetVersions.value.filter((v) => v.id !== record.id);
-  detailSelectedRowKeys.value = detailSelectedRowKeys.value.filter((k) => k !== record.id);
+  datasetVersions.value = datasetVersions.value.filter(
+    (v) => v.id !== record.id,
+  );
+  detailSelectedRowKeys.value = detailSelectedRowKeys.value.filter(
+    (k) => k !== record.id,
+  );
   message.success(`已删除版本 ${record.version}`);
 }
 
@@ -213,7 +229,9 @@ function handleBatchDeleteVersions() {
     message.warning('请选择要删除的版本');
     return;
   }
-  datasetVersions.value = datasetVersions.value.filter((v) => !detailSelectedRowKeys.value.includes(v.id));
+  datasetVersions.value = datasetVersions.value.filter(
+    (v) => !detailSelectedRowKeys.value.includes(v.id),
+  );
   message.success(`已批量删除 ${detailSelectedRowKeys.value.length} 个版本`);
   detailSelectedRowKeys.value = [];
 }
@@ -332,14 +350,27 @@ const detailRowSelection = computed(() => ({
     <!-- 详情页面视图 -->
     <div v-if="activeDetailId && activeRecord" class="p-4 space-y-4">
       <!-- 页面头部面包屑 -->
-      <Card :bordered="false" :body-style="{ padding: '16px 24px' }" class="shadow-sm rounded-lg">
+      <Card
+        :bordered="false"
+        :body-style="{ padding: '16px 24px' }"
+        class="shadow-sm rounded-lg"
+      >
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center gap-3">
-            <Button type="text" class="flex items-center justify-center p-0 h-8 w-8 text-gray-500 hover:bg-gray-100 rounded-full" @click="handleBack">
+            <Button
+              type="text"
+              class="flex items-center justify-center p-0 h-8 w-8 text-gray-500 hover:bg-gray-100 rounded-full"
+              @click="handleBack"
+            >
               <template #icon><ArrowLeft class="size-4.5" /></template>
             </Button>
-            <span class="text-xl font-bold text-gray-800">{{ activeRecord.name }}</span>
-            <Tag :color="getStatusTag(activeRecord.status).color" class="rounded-full px-3">
+            <span class="text-xl font-bold text-gray-800">{{
+              activeRecord.name
+            }}</span>
+            <Tag
+              :color="getStatusTag(activeRecord.status).color"
+              class="rounded-full px-3"
+            >
               {{ activeRecord.status }}
             </Tag>
           </div>
@@ -359,27 +390,44 @@ const detailRowSelection = computed(() => ({
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">ID</span>
-            <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{ activeRecord.id }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{
+              activeRecord.id
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建时间</span>
-            <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.updateTime }}</span>
+            <span class="flex-1 text-gray-800 text-sm">{{
+              activeRecord.updateTime
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建者</span>
-            <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.user }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-medium">{{
+              activeRecord.user
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">租户</span>
-            <span class="flex-1 text-gray-800 text-sm font-medium">{{ activeRecord.tenant }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-medium">{{
+              activeRecord.tenant
+            }}</span>
           </div>
           <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">描述</span>
-            <span class="flex-1 text-gray-800 text-sm">{{ activeRecord.description }}</span>
+            <span class="flex-1 text-gray-800 text-sm">{{
+              activeRecord.description
+            }}</span>
           </div>
           <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">失败原因</span>
-            <span class="flex-1 text-sm font-medium" :class="activeRecord.status === '失败' ? 'text-red-500' : 'text-gray-500'">
+            <span
+              class="flex-1 text-sm font-medium"
+              :class="
+                activeRecord.status === '失败'
+                  ? 'text-red-500'
+                  : 'text-gray-500'
+              "
+            >
               {{ activeRecord.failedReason }}
             </span>
           </div>
@@ -395,7 +443,9 @@ const detailRowSelection = computed(() => ({
             cancel-text="取消"
             @confirm="handleBatchDeleteVersions"
           >
-            <Button :disabled="detailSelectedRowKeys.length === 0" class="px-4">批量删除</Button>
+            <Button :disabled="detailSelectedRowKeys.length === 0" class="px-4"
+              >批量删除</Button
+            >
           </Popconfirm>
         </template>
 
@@ -409,9 +459,16 @@ const detailRowSelection = computed(() => ({
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'path'">
-              <div class="flex items-center gap-1.5 text-gray-600 font-mono text-xs">
+              <div
+                class="flex items-center gap-1.5 text-gray-600 font-mono text-xs"
+              >
                 <span>{{ record.path }}</span>
-                <Button type="text" size="small" class="flex items-center justify-center p-0 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded" @click="copyPath(record.path)">
+                <Button
+                  type="text"
+                  size="small"
+                  class="flex items-center justify-center p-0 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded"
+                  @click="copyPath(record.path)"
+                >
                   <template #icon><Copy class="size-3.5" /></template>
                 </Button>
               </div>
@@ -423,7 +480,9 @@ const detailRowSelection = computed(() => ({
                 cancel-text="取消"
                 @confirm="handleDeleteVersion(record)"
               >
-                <a class="text-red-500 hover:text-red-600 font-medium text-sm">删除</a>
+                <a class="text-red-500 hover:text-red-600 font-medium text-sm"
+                  >删除</a
+                >
               </Popconfirm>
             </template>
           </template>
@@ -498,14 +557,22 @@ const detailRowSelection = computed(() => ({
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
             <div class="flex flex-col gap-0.5">
-              <a class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer" @click="openDetail(record)">
+              <a
+                class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
+                @click="openDetail(record)"
+              >
                 {{ record.name }}
               </a>
-              <span class="text-xs text-gray-400 font-mono">{{ record.id }}</span>
+              <span class="text-xs text-gray-400 font-mono">{{
+                record.id
+              }}</span>
             </div>
           </template>
           <template v-else-if="column.key === 'status'">
-            <Tag :color="getStatusTag(record.status).color" class="rounded-full">
+            <Tag
+              :color="getStatusTag(record.status).color"
+              class="rounded-full"
+            >
               {{ record.status }}
             </Tag>
           </template>
@@ -514,11 +581,19 @@ const detailRowSelection = computed(() => ({
               <Progress
                 :percent="record.progress"
                 :show-info="false"
-                :stroke-color="record.status === '失败' ? '#ff4d4f' : record.progress === 100 ? '#52c41a' : '#1890ff'"
+                :stroke-color="
+                  record.status === '失败'
+                    ? '#ff4d4f'
+                    : record.progress === 100
+                      ? '#52c41a'
+                      : '#1890ff'
+                "
                 size="small"
                 style="width: 80px"
               />
-              <span class="text-xs text-gray-500 min-w-[32px]">{{ record.progress }}%</span>
+              <span class="text-xs text-gray-500 min-w-[32px]"
+                >{{ record.progress }}%</span
+              >
             </div>
           </template>
           <template v-else-if="column.key === 'action'">

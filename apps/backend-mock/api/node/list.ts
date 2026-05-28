@@ -5,7 +5,15 @@ import { MOCK_NODES } from '../../utils/node-mock-data';
 
 export default defineEventHandler((event) => {
   const query = getQuery(event);
-  const { name, allocationType, status, ipAddress, isOnline, page = 1, pageSize = 10 } = query;
+  const {
+    name,
+    allocationType,
+    status,
+    ipAddress,
+    isOnline,
+    page = 1,
+    pageSize = 10,
+  } = query;
 
   let filteredNodes = [...MOCK_NODES];
 
@@ -21,7 +29,9 @@ export default defineEventHandler((event) => {
   // 按分配类型筛选
   if (allocationType) {
     const types = (allocationType as string).split(',');
-    filteredNodes = filteredNodes.filter((node) => types.includes(node.allocationType));
+    filteredNodes = filteredNodes.filter((node) =>
+      types.includes(node.allocationType),
+    );
   }
 
   // 按状态筛选

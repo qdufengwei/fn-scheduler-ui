@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import { Button, Pagination, Popconfirm, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Pagination,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { RotateCw, Search } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const selectedTenant = ref<string>();
 const searchText = ref('');
@@ -24,18 +33,28 @@ const devboxColumns = [
 ];
 
 const devboxData = ref([
-  { id: 1, name: '测试1', taskId: 'job-30261777db2f-20260428013313', status: '排队中', type: 'Jupyter', resourceSpec: '-', gpu: 0, cpu: 4, user: 'a01', tenant: 'test01', createTime: '2026-04-28 01:33:13' },
+  {
+    id: 1,
+    name: '测试1',
+    taskId: 'job-30261777db2f-20260428013313',
+    status: '排队中',
+    type: 'Jupyter',
+    resourceSpec: '-',
+    gpu: 0,
+    cpu: 4,
+    user: 'a01',
+    tenant: 'test01',
+    createTime: '2026-04-28 01:33:13',
+  },
 ]);
 
 const statusColor: Record<string, string> = {
-  '运行中': 'processing',
-  '停止': 'default',
-  '排队中': 'warning',
-  '成功': 'success',
-  '失败': 'error',
+  运行中: 'processing',
+  停止: 'default',
+  排队中: 'warning',
+  成功: 'success',
+  失败: 'error',
 };
-
-const notify = (text: string) => message.success(text);
 </script>
 
 <template>
@@ -46,7 +65,10 @@ const notify = (text: string) => message.success(text);
         allow-clear
         style="width: 180px"
         placeholder="请选择租户"
-        :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
+        :options="[
+          { label: 'test01', value: 'test01' },
+          { label: 'test-0415', value: 'test-0415' },
+        ]"
       >
         <template #suffixIcon><Search class="size-4 text-gray-400" /></template>
       </Select>
@@ -55,12 +77,18 @@ const notify = (text: string) => message.success(text);
     <template #filterActions>
       <Space>
         <Button type="primary">筛选</Button>
-        <Button @click="(searchText = ''); (selectedTenant = undefined)">重置</Button>
+        <Button
+          @click="
+            searchText = '';
+            selectedTenant = undefined;
+          "
+          >重置</Button
+        >
       </Space>
     </template>
 
     <template #toolbar>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showNotify('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
       </Button>
     </template>
@@ -75,12 +103,16 @@ const notify = (text: string) => message.success(text);
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div>
-            <a class="font-medium text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+            <a class="font-medium text-blue-600 hover:text-blue-700">{{
+              record.name
+            }}</a>
             <div class="text-xs text-gray-400">{{ record.taskId }}</div>
           </div>
         </template>
         <template v-if="column.dataIndex === 'status'">
-          <Tag :color="statusColor[record.status]" class="rounded-full">{{ record.status }}</Tag>
+          <Tag :color="statusColor[record.status]" class="rounded-full">{{
+            record.status
+          }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'type'">
           <Tag class="rounded-full">{{ record.type }}</Tag>
@@ -92,7 +124,12 @@ const notify = (text: string) => message.success(text);
           </div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <Popconfirm title="确认删除该开发机？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除开发机 ${record.name}`)">
+          <Popconfirm
+            title="确认删除该开发机？"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="showNotify(`删除开发机 ${record.name}`)"
+          >
             <a class="text-red-500">删除</a>
           </Popconfirm>
         </template>

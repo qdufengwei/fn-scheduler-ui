@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
-import { Button, Empty, Pagination, Popconfirm, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Empty,
+  Pagination,
+  Popconfirm,
+  Table,
+  Tag,
+  message,
+} from 'ant-design-vue';
 import { ref, computed } from 'vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
@@ -35,9 +43,9 @@ const imageTasks = ref([
 
 const getStatusTag = (status: string) => {
   const statusMap: Record<string, { color: string }> = {
-    '进行中': { color: 'processing' },
-    '已完成': { color: 'success' },
-    '失败': { color: 'error' },
+    进行中: { color: 'processing' },
+    已完成: { color: 'success' },
+    失败: { color: 'error' },
   };
   return statusMap[status] || { color: 'default' };
 };
@@ -147,7 +155,9 @@ const rowSelection = {
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
-          <a class="text-blue-600 hover:text-blue-700 font-medium">{{ record.name }}</a>
+          <a class="text-blue-600 hover:text-blue-700 font-medium">{{
+            record.name
+          }}</a>
         </template>
         <template v-else-if="column.key === 'status'">
           <Tag :color="getStatusTag(record.status).color" class="rounded-full">
@@ -171,16 +181,30 @@ const rowSelection = {
       <Empty description="暂无数据">
         <template #image>
           <div class="text-gray-300">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              />
             </svg>
           </div>
         </template>
       </Empty>
-      <span class="text-gray-400 text-sm">当前没有记录，增加以后在此处查看数据。</span>
+      <span class="text-gray-400 text-sm"
+        >当前没有记录，增加以后在此处查看数据。</span
+      >
     </div>
 
-    <div v-if="imageTasks.length > 0" class="fn-list-pagination flex items-center justify-end">
+    <div
+      v-if="imageTasks.length > 0"
+      class="fn-list-pagination flex items-center justify-end"
+    >
       <Pagination
         v-model:current="currentPage"
         v-model:page-size="pageSize"

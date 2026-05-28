@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { Button, Input, Pagination, Popconfirm, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Input,
+  Pagination,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { RotateCw, Search, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const selectedTenant = ref<string>();
 const searchText = ref('');
@@ -36,10 +46,18 @@ const columns = [
 ];
 
 const data = ref([
-  { id: 1, name: 'test', taskId: 'job-7f51afd64457-20260415094427', deleteTime: '2026-04-15 11:24:11', taskType: 'Simple', gpuCount: 1, resourceSpec: 'NVIDIA-GPU-HBM2E-80GB', user: 'test-0415', tenant: 'test-0415' },
+  {
+    id: 1,
+    name: 'test',
+    taskId: 'job-7f51afd64457-20260415094427',
+    deleteTime: '2026-04-15 11:24:11',
+    taskType: 'Simple',
+    gpuCount: 1,
+    resourceSpec: 'NVIDIA-GPU-HBM2E-80GB',
+    user: 'test-0415',
+    tenant: 'test-0415',
+  },
 ]);
-
-const notify = (text: string) => message.success(text);
 
 // 重置筛选
 const handleReset = () => {
@@ -57,7 +75,10 @@ const handleReset = () => {
         allow-clear
         style="width: 180px"
         placeholder="请选择租户"
-        :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
+        :options="[
+          { label: 'test01', value: 'test01' },
+          { label: 'test-0415', value: 'test-0415' },
+        ]"
       >
         <template #suffixIcon><Search class="size-4 text-gray-400" /></template>
       </Select>
@@ -70,7 +91,12 @@ const handleReset = () => {
         :options="taskTypeOptions"
         :max-tag-count="1"
       />
-      <Input v-model:value="searchText" placeholder="支持模糊搜索任务名称/ID" style="width: 260px" allow-clear>
+      <Input
+        v-model:value="searchText"
+        placeholder="支持模糊搜索任务名称/ID"
+        style="width: 260px"
+        allow-clear
+      >
         <template #prefix><Search class="size-4 text-gray-400" /></template>
       </Input>
     </template>
@@ -85,14 +111,14 @@ const handleReset = () => {
     <template #toolbar>
       <Popconfirm
         title="确认彻底删除选中的任务？"
-        @confirm="notify(`已彻底删除 ${rowSelection.length} 个任务`)"
+        @confirm="showNotify(`已彻底删除 ${rowSelection.length} 个任务`)"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>
           批量删除
         </Button>
       </Popconfirm>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showNotify('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
       </Button>
     </template>
@@ -126,8 +152,13 @@ const handleReset = () => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space>
-            <a @click="notify(`还原任务 ${record.name}`)">还原</a>
-            <Popconfirm title="确认彻底删除该任务？" ok-text="确认" cancel-text="取消" @confirm="notify(`彻底删除任务 ${record.name}`)">
+            <a @click="showNotify(`还原任务 ${record.name}`)">还原</a>
+            <Popconfirm
+              title="确认彻底删除该任务？"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="showNotify(`彻底删除任务 ${record.name}`)"
+            >
               <a class="text-red-500">删除</a>
             </Popconfirm>
           </Space>

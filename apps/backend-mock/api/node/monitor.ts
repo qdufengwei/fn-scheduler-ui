@@ -1,6 +1,9 @@
 import { defineEventHandler, getQuery } from 'h3';
 
-import { generateMockMonitorData, MOCK_NODES } from '../../utils/node-mock-data';
+import {
+  generateMockMonitorData,
+  MOCK_NODES,
+} from '../../utils/node-mock-data';
 
 export default defineEventHandler((event) => {
   const query = getQuery(event);

@@ -14,11 +14,11 @@ import {
   Space,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
 import { CircleAlert, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const searchText = ref('');
 const pageSize = ref(10);
@@ -96,8 +96,6 @@ const computedName = computed(() => {
   return `GPU-${form.value.compute}%-${form.value.memory}GiB`;
 });
 
-const notify = (text: string) => message.success(text);
-
 function handleAddVgpu() {
   showWarning.value = true;
 }
@@ -108,12 +106,12 @@ function handleWarningConfirm() {
 }
 
 function handleSave() {
-  notify('添加vGPU规格成功（原型）');
+  showNotify('添加vGPU规格成功（原型）');
   createDrawerApi.close();
 }
 
 function handleRefresh() {
-  notify('刷新成功');
+  showNotify('刷新成功');
 }
 
 const [CreateDrawer, createDrawerApi] = useVbenDrawer({
@@ -126,164 +124,155 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 
 <template>
   <ListPageLayout>
-      <template #filters>
-        <Input
-          v-model:value="searchText"
-          placeholder="搜索vGPU规格名称"
-          allow-clear
-          style="width: 220px"
-        >
-          <template #prefix>🔎</template>
-        </Input>
-      </template>
-
-      <template #toolbar>
-        <Button type="primary" @click="handleAddVgpu"> 添加vGPU规格 </Button>
-        <Button @click="handleRefresh">
-          <template #icon><RotateCw class="size-4" /></template>
-          刷新
-        </Button>
-      </template>
-
-      <Table
-        row-key="id"
-        :data-source="dataSource"
-        :pagination="false"
-        :columns="columns"
-        :scroll="{ x: 1300 }"
+    <template #filters>
+      <Input
+        v-model:value="searchText"
+        placeholder="搜索vGPU规格名称"
+        allow-clear
+        style="width: 220px"
       >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'name'">
-            <span class="font-medium text-blue-600">{{ record.name }}</span>
-          </template>
-          <template v-else-if="column.key === 'status'">
-            <Tag
-              :color="record.status === '启用' ? 'success' : 'default'"
-              class="rounded-full"
-            >
-              {{ record.status }}
-            </Tag>
-          </template>
-          <template v-else-if="column.key === 'price'">
-            <span class="text-orange-600 font-medium">{{ record.price }}</span>
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <Space>
-              <Button
-                type="link"
-                size="small"
-                @click="notify(`编辑 ${record.name}`)"
-              >
-                编辑
-              </Button>
-            </Space>
-          </template>
-        </template>
-      </Table>
+        <template #prefix>🔎</template>
+      </Input>
+    </template>
 
-      <div class="fn-list-pagination flex items-center justify-end">
-        <Pagination
-          v-model:current="currentPage"
-          v-model:pageSize="pageSize"
-          :total="2"
-          :show-size-changer="true"
-          :show-quick-jumper="true"
-          :page-size-options="['10', '20', '50', '100']"
-        />
-      </div>
-    </ListPageLayout>
+    <template #toolbar>
+      <Button type="primary" @click="handleAddVgpu"> 添加vGPU规格 </Button>
+      <Button @click="handleRefresh">
+        <template #icon><RotateCw class="size-4" /></template>
+        刷新
+      </Button>
+    </template>
 
-    <!-- 风险提示弹窗 -->
-    <Modal
-      v-model:open="showWarning"
-      title="提示"
-      :centered="true"
-      :width="400"
+    <Table
+      row-key="id"
+      :data-source="dataSource"
+      :pagination="false"
+      :columns="columns"
+      :scroll="{ x: 1300 }"
     >
-      <div class="flex flex-col items-center justify-center py-6">
-        <CircleAlert class="size-12 text-orange-500 mb-4" />
-        <div class="text-center text-gray-600 leading-relaxed">
-          vGPU存在隔离性和安全性风险，可能导致资源边界模糊及数据安全风险，请谨慎使用。
-        </div>
-      </div>
-      <template #footer>
-        <Space>
-          <Button @click="showWarning = false">取消</Button>
-          <Button type="primary" @click="handleWarningConfirm">确认</Button>
-        </Space>
-      </template>
-    </Modal>
-
-    <!-- 添加vGPU规格抽屉 -->
-    <CreateDrawer>
-      <Form layout="vertical" :model="form">
-        <FormItem required>
-          <template #label>资源规格</template>
-          <Select
-            v-model:value="form.resourceSpec"
-            :options="[
-              {
-                label: 'NVIDIA-GPU-HBM2E-80GB',
-                value: 'NVIDIA-GPU-HBM2E-80GB',
-              },
-              {
-                label: 'NVIDIA-H100-HBM2E-80GB',
-                value: 'NVIDIA-H100-HBM2E-80GB',
-              },
-            ]"
-          />
-        </FormItem>
-        <FormItem required>
-          <template #label>GPU节点</template>
-          <Select
-            v-model:value="form.gpuNode"
-            placeholder="请选择GPU节点"
-            :options="[
-              { label: 'node201', value: 'node201' },
-              { label: 'node202', value: 'node202' },
-            ]"
-          />
-        </FormItem>
-        <FormItem required>
-          <template #label>每个vGPU的算力</template>
-          <div class="flex items-center gap-4">
-            <Slider
-              v-model:value="form.compute"
-              :min="1"
-              :max="100"
-              class="flex-1"
-            />
-            <span class="text-blue-600 font-semibold w-12"
-              >{{ form.compute }}%</span
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'name'">
+          <span class="font-medium text-blue-600">{{ record.name }}</span>
+        </template>
+        <template v-else-if="column.key === 'status'">
+          <Tag
+            :color="record.status === '启用' ? 'success' : 'default'"
+            class="rounded-full"
+          >
+            {{ record.status }}
+          </Tag>
+        </template>
+        <template v-else-if="column.key === 'price'">
+          <span class="text-orange-600 font-medium">{{ record.price }}</span>
+        </template>
+        <template v-else-if="column.key === 'action'">
+          <Space>
+            <Button
+              type="link"
+              size="small"
+              @click="showNotify(`编辑 ${record.name}`)"
             >
-          </div>
-        </FormItem>
-        <FormItem required>
-          <template #label>每个vGPU的显存</template>
-          <div class="flex items-center gap-2">
-            <InputNumber
-              v-model:value="form.memory"
-              :min="1"
-              :max="80"
-              style="width: 150px"
-            />
-            <span class="text-gray-500">GiB</span>
-          </div>
-        </FormItem>
-        <FormItem required>
-          <template #label>规格名称</template>
-          <Input
-            :value="computedName"
-            disabled
-            placeholder="例如：A10-25%-8G"
-          />
-        </FormItem>
-      </Form>
-      <template #footer>
-        <Space>
-          <Button @click="createDrawerApi.close()">取消</Button>
-          <Button type="primary" @click="handleSave">确认</Button>
-        </Space>
+              编辑
+            </Button>
+          </Space>
+        </template>
       </template>
-    </CreateDrawer>
+    </Table>
+
+    <div class="fn-list-pagination flex items-center justify-end">
+      <Pagination
+        v-model:current="currentPage"
+        v-model:pageSize="pageSize"
+        :total="2"
+        :show-size-changer="true"
+        :show-quick-jumper="true"
+        :page-size-options="['10', '20', '50', '100']"
+      />
+    </div>
+  </ListPageLayout>
+
+  <!-- 风险提示弹窗 -->
+  <Modal v-model:open="showWarning" title="提示" :centered="true" :width="400">
+    <div class="flex flex-col items-center justify-center py-6">
+      <CircleAlert class="size-12 text-orange-500 mb-4" />
+      <div class="text-center text-gray-600 leading-relaxed">
+        vGPU存在隔离性和安全性风险，可能导致资源边界模糊及数据安全风险，请谨慎使用。
+      </div>
+    </div>
+    <template #footer>
+      <Space>
+        <Button @click="showWarning = false">取消</Button>
+        <Button type="primary" @click="handleWarningConfirm">确认</Button>
+      </Space>
+    </template>
+  </Modal>
+
+  <!-- 添加vGPU规格抽屉 -->
+  <CreateDrawer>
+    <Form layout="vertical" :model="form">
+      <FormItem required>
+        <template #label>资源规格</template>
+        <Select
+          v-model:value="form.resourceSpec"
+          :options="[
+            {
+              label: 'NVIDIA-GPU-HBM2E-80GB',
+              value: 'NVIDIA-GPU-HBM2E-80GB',
+            },
+            {
+              label: 'NVIDIA-H100-HBM2E-80GB',
+              value: 'NVIDIA-H100-HBM2E-80GB',
+            },
+          ]"
+        />
+      </FormItem>
+      <FormItem required>
+        <template #label>GPU节点</template>
+        <Select
+          v-model:value="form.gpuNode"
+          placeholder="请选择GPU节点"
+          :options="[
+            { label: 'node201', value: 'node201' },
+            { label: 'node202', value: 'node202' },
+          ]"
+        />
+      </FormItem>
+      <FormItem required>
+        <template #label>每个vGPU的算力</template>
+        <div class="flex items-center gap-4">
+          <Slider
+            v-model:value="form.compute"
+            :min="1"
+            :max="100"
+            class="flex-1"
+          />
+          <span class="text-blue-600 font-semibold w-12"
+            >{{ form.compute }}%</span
+          >
+        </div>
+      </FormItem>
+      <FormItem required>
+        <template #label>每个vGPU的显存</template>
+        <div class="flex items-center gap-2">
+          <InputNumber
+            v-model:value="form.memory"
+            :min="1"
+            :max="80"
+            style="width: 150px"
+          />
+          <span class="text-gray-500">GiB</span>
+        </div>
+      </FormItem>
+      <FormItem required>
+        <template #label>规格名称</template>
+        <Input :value="computedName" disabled placeholder="例如：A10-25%-8G" />
+      </FormItem>
+    </Form>
+    <template #footer>
+      <Space>
+        <Button @click="createDrawerApi.close()">取消</Button>
+        <Button type="primary" @click="handleSave">确认</Button>
+      </Space>
+    </template>
+  </CreateDrawer>
 </template>

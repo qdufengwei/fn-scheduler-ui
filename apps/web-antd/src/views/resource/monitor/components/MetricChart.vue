@@ -35,7 +35,9 @@ const props = withDefaults(defineProps<Props>(), {
 const chartRef = ref<EchartsUIType>();
 const { renderEcharts, updateData } = useEcharts(chartRef);
 
-const chartHeight = computed(() => (props.size === 'large' ? '280px' : '160px'));
+const chartHeight = computed(() =>
+  props.size === 'large' ? '280px' : '160px',
+);
 
 const formatTime = (isoString: string) => {
   const date = new Date(isoString);
@@ -82,7 +84,7 @@ const getChartOption = (): any => {
       axisLabel: {
         fontSize: 10,
         color: '#999',
-        interval: props.size === 'large' ? 'auto' as const : 4,
+        interval: props.size === 'large' ? ('auto' as const) : 4,
       },
     },
     yAxis: {
@@ -153,7 +155,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="metric-chart" :class="{ 'metric-chart--large': size === 'large' }">
+  <div
+    class="metric-chart"
+    :class="{ 'metric-chart--large': size === 'large' }"
+  >
     <div v-if="loading" class="metric-chart__loading">
       <span>加载中...</span>
     </div>

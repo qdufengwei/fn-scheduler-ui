@@ -144,22 +144,28 @@ function copyModelPath(path: string) {
     <!-- 主体内容卡片流 -->
     <div class="space-y-4 w-full pb-8">
       <!-- 页面头部导航卡片 -->
-      <Card :bordered="false" :body-style="{ padding: '16px 24px' }" class="shadow-sm rounded-lg">
+      <Card
+        :bordered="false"
+        :body-style="{ padding: '16px 24px' }"
+        class="shadow-sm rounded-lg"
+      >
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center gap-3">
-            <Button 
-              type="text" 
-              class="flex items-center justify-center p-0 h-8 w-8 text-gray-500 hover:bg-gray-100 rounded-full" 
+            <Button
+              type="text"
+              class="flex items-center justify-center p-0 h-8 w-8 text-gray-500 hover:bg-gray-100 rounded-full"
               @click="handleBack"
             >
               <template #icon><ArrowLeft class="size-4.5" /></template>
             </Button>
-            <span class="text-xl font-bold text-gray-800">{{ modelDetail.name }}</span>
+            <span class="text-xl font-bold text-gray-800">{{
+              modelDetail.name
+            }}</span>
             <Tag :color="statusColor" class="rounded-full px-3">
               {{ modelDetail.status }}
             </Tag>
           </div>
-          
+
           <Popconfirm
             title="确定要删除该自定义模型吗？"
             ok-text="确定"
@@ -176,29 +182,41 @@ function copyModelPath(path: string) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">ID</span>
-            <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{ modelDetail.id }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-mono select-all">{{
+              modelDetail.id
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建时间</span>
-            <span class="flex-1 text-gray-800 text-sm">{{ modelDetail.createdAt }}</span>
+            <span class="flex-1 text-gray-800 text-sm">{{
+              modelDetail.createdAt
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">创建者</span>
-            <span class="flex-1 text-gray-800 text-sm font-medium">{{ modelDetail.creator }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-medium">{{
+              modelDetail.creator
+            }}</span>
           </div>
           <div class="flex py-2">
             <span class="w-32 text-gray-400 text-sm">租户</span>
-            <span class="flex-1 text-gray-800 text-sm font-medium">{{ modelDetail.tenant }}</span>
+            <span class="flex-1 text-gray-800 text-sm font-medium">{{
+              modelDetail.tenant
+            }}</span>
           </div>
           <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">描述</span>
-            <span class="flex-1 text-gray-800 text-sm">{{ modelDetail.description }}</span>
+            <span class="flex-1 text-gray-800 text-sm">{{
+              modelDetail.description
+            }}</span>
           </div>
           <div class="flex py-2 md:col-span-2">
             <span class="w-32 text-gray-400 text-sm">失败原因</span>
-            <span 
-              class="flex-1 text-sm font-medium" 
-              :class="modelDetail.status === '失败' ? 'text-red-500' : 'text-gray-500'"
+            <span
+              class="flex-1 text-sm font-medium"
+              :class="
+                modelDetail.status === '失败' ? 'text-red-500' : 'text-gray-500'
+              "
             >
               {{ modelDetail.failedReason }}
             </span>
@@ -215,7 +233,9 @@ function copyModelPath(path: string) {
             cancel-text="取消"
             @confirm="handleBatchDelete"
           >
-            <Button :disabled="selectedRowKeys.length === 0" class="px-4">批量删除</Button>
+            <Button :disabled="selectedRowKeys.length === 0" class="px-4"
+              >批量删除</Button
+            >
           </Popconfirm>
         </template>
 
@@ -229,12 +249,14 @@ function copyModelPath(path: string) {
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'modelPath'">
-              <div class="flex items-center gap-1.5 text-gray-600 font-mono text-xs">
+              <div
+                class="flex items-center gap-1.5 text-gray-600 font-mono text-xs"
+              >
                 <span>{{ record.modelPath }}</span>
-                <Button 
-                  type="text" 
-                  size="small" 
-                  class="flex items-center justify-center p-0 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded" 
+                <Button
+                  type="text"
+                  size="small"
+                  class="flex items-center justify-center p-0 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded"
                   @click="copyModelPath(record.modelPath)"
                 >
                   <template #icon><Copy class="size-3.5" /></template>
@@ -249,7 +271,9 @@ function copyModelPath(path: string) {
                 cancel-text="取消"
                 @confirm="handleDeleteVersion(record)"
               >
-                <a class="text-red-500 hover:text-red-600 font-medium text-sm">删除</a>
+                <a class="text-red-500 hover:text-red-600 font-medium text-sm"
+                  >删除</a
+                >
               </Popconfirm>
             </template>
           </template>

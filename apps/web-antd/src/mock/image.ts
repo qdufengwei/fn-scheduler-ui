@@ -1,4 +1,7 @@
-import type { ImageDetailRecord, ImageRecord } from '#/views/admin-ai-asset/image/types';
+import type {
+  ImageDetailRecord,
+  ImageRecord,
+} from '#/views/admin-ai-asset/image/types';
 
 export const mockImageRows: ImageRecord[] = [
   {

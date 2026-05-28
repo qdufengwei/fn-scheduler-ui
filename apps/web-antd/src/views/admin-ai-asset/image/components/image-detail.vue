@@ -34,7 +34,7 @@ const emit = defineEmits<{
   (e: 'copy', text: string): void;
   (e: 'update:detailPage', page: number): void;
   (e: 'update:detailPageSize', size: number): void;
-}>()
+}>();
 
 const detailColumns = [
   { title: '', dataIndex: 'expand', width: 50 },
@@ -90,40 +90,48 @@ const detailColumns = [
             <div
               class="flex items-center justify-between py-1 pr-12 border-b border-dashed border-neutral-100 dark:border-neutral-800"
             >
-              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24">镜像数量</span>
+              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24"
+                >镜像数量</span
+              >
               <span
                 class="text-sm font-semibold text-gray-800 dark:text-zinc-200"
-                >{{ image.count }}</span>
+                >{{ image.count }}</span
+              >
             </div>
           </Col>
           <Col :span="12">
             <div
               class="flex items-center justify-between py-1 pr-12 border-b border-dashed border-neutral-100 dark:border-neutral-800"
             >
-              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24">创建时间</span>
+              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24"
+                >创建时间</span
+              >
               <span
                 class="text-sm font-semibold text-gray-800 dark:text-zinc-200"
-                >{{ image.created }}</span>
+                >{{ image.created }}</span
+              >
             </div>
           </Col>
           <Col :span="12">
-            <div
-              class="flex items-center justify-between py-1 pr-12"
-            >
-              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24">拉取次数</span>
+            <div class="flex items-center justify-between py-1 pr-12">
+              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24"
+                >拉取次数</span
+              >
               <span
                 class="text-sm font-semibold text-gray-800 dark:text-zinc-200"
-                >{{ image.pulls }}</span>
+                >{{ image.pulls }}</span
+              >
             </div>
           </Col>
           <Col :span="12">
-            <div
-              class="flex items-center justify-between py-1 pr-12"
-            >
-              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24">仓库名称</span>
+            <div class="flex items-center justify-between py-1 pr-12">
+              <span class="text-sm text-gray-400 dark:text-zinc-500 w-24"
+                >仓库名称</span
+              >
               <span
                 class="text-sm font-semibold text-gray-800 dark:text-zinc-200"
-                >{{ image.name.split('/')[0] }}</span>
+                >{{ image.name.split('/')[0] }}</span
+              >
             </div>
           </Col>
         </Row>
@@ -147,7 +155,8 @@ const detailColumns = [
           <template v-if="column.key === 'name'">
             <span
               class="text-sm text-gray-800 dark:text-zinc-300 font-mono select-all break-all"
-              >{{ record.name }}</span>
+              >{{ record.name }}</span
+            >
           </template>
           <template v-if="column.key === 'tags'">
             <div class="flex flex-wrap gap-1.5">
@@ -161,14 +170,16 @@ const detailColumns = [
               <span
                 v-if="!record.tags || record.tags.length === 0"
                 class="text-gray-400"
-                >-</span>
+                >-</span
+              >
             </div>
           </template>
           <template v-if="column.key === 'address'">
             <div v-if="record.address" class="flex items-center gap-1.5">
               <span
                 class="text-sm text-gray-600 dark:text-zinc-400 font-mono break-all"
-                >{{ record.address }}</span>
+                >{{ record.address }}</span
+              >
               <Button
                 type="link"
                 size="small"
@@ -181,7 +192,9 @@ const detailColumns = [
             <span v-else class="text-gray-400">-</span>
           </template>
           <template v-if="column.key === 'created'">
-            <span class="text-sm text-gray-600 dark:text-zinc-400">{{ record.created }}</span>
+            <span class="text-sm text-gray-600 dark:text-zinc-400">{{
+              record.created
+            }}</span>
           </template>
           <template v-if="column.key === 'action'">
             <Popconfirm

@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { Button, Input, Pagination, Popconfirm, Select, Space, Table, Tag, message } from 'ant-design-vue';
+import {
+  Button,
+  Input,
+  Pagination,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { ref } from 'vue';
 import { RotateCw, Search, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const selectedTenant = ref<string>();
 const searchText = ref('');
@@ -68,14 +78,12 @@ const finetuneColumns = [
 const finetuneData = ref<any[]>([]);
 
 const statusColor: Record<string, string> = {
-  '运行中': 'processing',
-  '停止': 'default',
-  '排队中': 'warning',
-  '成功': 'success',
-  '失败': 'error',
+  运行中: 'processing',
+  停止: 'default',
+  排队中: 'warning',
+  成功: 'success',
+  失败: 'error',
 };
-
-const notify = (text: string) => message.success(text);
 
 // 重置筛选
 const handleReset = () => {
@@ -95,7 +103,10 @@ const handleReset = () => {
         allow-clear
         style="width: 180px"
         placeholder="请选择租户"
-        :options="[{ label: 'test01', value: 'test01' }, { label: 'test-0415', value: 'test-0415' }]"
+        :options="[
+          { label: 'test01', value: 'test01' },
+          { label: 'test-0415', value: 'test-0415' },
+        ]"
       >
         <template #suffixIcon><Search class="size-4 text-gray-400" /></template>
       </Select>
@@ -126,7 +137,12 @@ const handleReset = () => {
         :options="resourceSpecOptions"
         :max-tag-count="1"
       />
-      <Input v-model:value="searchText" placeholder="支持模糊搜索模型微调名称/ID" style="width: 260px" allow-clear>
+      <Input
+        v-model:value="searchText"
+        placeholder="支持模糊搜索模型微调名称/ID"
+        style="width: 260px"
+        allow-clear
+      >
         <template #prefix><Search class="size-4 text-gray-400" /></template>
       </Input>
     </template>
@@ -141,14 +157,14 @@ const handleReset = () => {
     <template #toolbar>
       <Popconfirm
         title="确认删除选中的任务？"
-        @confirm="notify(`已删除 ${rowSelection.length} 个任务`)"
+        @confirm="showNotify(`已删除 ${rowSelection.length} 个任务`)"
       >
         <Button danger :disabled="rowSelection.length === 0">
           <template #icon><X class="size-4" /></template>
           批量删除
         </Button>
       </Popconfirm>
-      <Button @click="notify('列表已刷新')">
+      <Button @click="showNotify('列表已刷新')">
         <template #icon><RotateCw class="size-4" /></template>
       </Button>
     </template>
@@ -166,10 +182,17 @@ const handleReset = () => {
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'status'">
-          <Tag :color="statusColor[record.status]" class="rounded-full">{{ record.status }}</Tag>
+          <Tag :color="statusColor[record.status]" class="rounded-full">{{
+            record.status
+          }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <Popconfirm title="确认删除该任务？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除任务 ${record.name}`)">
+          <Popconfirm
+            title="确认删除该任务？"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="showNotify(`删除任务 ${record.name}`)"
+          >
             <a class="text-red-500">删除</a>
           </Popconfirm>
         </template>
@@ -177,7 +200,9 @@ const handleReset = () => {
       <template #emptyText>
         <div class="text-center py-8">
           <div class="text-gray-400 mb-2">暂无数据</div>
-          <div class="text-gray-400 text-sm">当前没有记录，增加以后在此处查看数据。</div>
+          <div class="text-gray-400 text-sm">
+            当前没有记录，增加以后在此处查看数据。
+          </div>
         </div>
       </template>
     </Table>

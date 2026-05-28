@@ -5,13 +5,7 @@ import { ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import {
-  Button,
-  Input,
-  Radio,
-  Select,
-  Space,
-} from 'ant-design-vue';
+import { Button, Input, Radio, Select, Space } from 'ant-design-vue';
 
 import { mockDetailRows, mockImageRows } from '#/mock/image';
 
@@ -28,21 +22,11 @@ import { formatDateTime, safeCopyText, showNotify } from './utils';
 const { rows, selectedRowKeys, deleteImage, batchDelete, addImage } =
   useImageList(mockImageRows);
 
-const {
-  imageScope,
-  project,
-  keyword,
-  filteredRows,
-  resetFilters,
-} = useImageFilter(rows);
+const { imageScope, project, keyword, filteredRows, resetFilters } =
+  useImageFilter(rows);
 
-const {
-  currentPage,
-  pageSize,
-  pageSizeOptions,
-  paginatedData,
-  total,
-} = usePagination(filteredRows);
+const { currentPage, pageSize, pageSizeOptions, paginatedData, total } =
+  usePagination(filteredRows);
 
 // ============ 详情逻辑 ============
 const showDetail = ref(false);
@@ -108,7 +92,11 @@ function handleSaveCreate(form: CreateForm) {
   );
 }
 
-function handleSaveImport(form: { targetName: string; targetProject: string; targetVersion: string }) {
+function handleSaveImport(form: {
+  targetName: string;
+  targetProject: string;
+  targetVersion: string;
+}) {
   const newName = `${form.targetProject}/${form.targetName}`;
   const now = formatDateTime();
   addImage({
@@ -135,76 +123,76 @@ function handleResetFilters() {
   <Page auto-content-height>
     <div>
       <Transition name="fade-slide" mode="out-in">
-      <!-- 镜像列表视图 -->
-      <div v-if="!showDetail" key="list">
-        <ImageList
-          :data="paginatedData"
-          :selected-row-keys="selectedRowKeys"
-          :total="total"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-size-options="pageSizeOptions"
-          @view-detail="handleViewDetail"
-          @delete="handleDelete"
-          @batch-delete="handleBatchDelete"
-          @selection-change="selectedRowKeys = $event"
-          @create="handleCreateImage"
-          @update:current-page="currentPage = $event"
-          @update:page-size="pageSize = $event"
-        >
-          <template #filters>
-            <div class="flex flex-wrap items-center gap-4">
-              <Radio.Group v-model:value="imageScope" button-style="solid">
-                <Radio.Button value="public">公共镜像</Radio.Button>
-                <Radio.Button value="private">私有镜像</Radio.Button>
-              </Radio.Group>
-              <Select
-                v-model:value="project"
-                class="w-[180px]"
-                :options="PROJECT_OPTIONS"
-              />
-              <Input
-                v-model:value="keyword"
-                placeholder="请输入镜像名称"
-                class="w-[220px]"
-              />
-            </div>
-          </template>
+        <!-- 镜像列表视图 -->
+        <div v-if="!showDetail" key="list">
+          <ImageList
+            :data="paginatedData"
+            :selected-row-keys="selectedRowKeys"
+            :total="total"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-size-options="pageSizeOptions"
+            @view-detail="handleViewDetail"
+            @delete="handleDelete"
+            @batch-delete="handleBatchDelete"
+            @selection-change="selectedRowKeys = $event"
+            @create="handleCreateImage"
+            @update:current-page="currentPage = $event"
+            @update:page-size="pageSize = $event"
+          >
+            <template #filters>
+              <div class="flex flex-wrap items-center gap-4">
+                <Radio.Group v-model:value="imageScope" button-style="solid">
+                  <Radio.Button value="public">公共镜像</Radio.Button>
+                  <Radio.Button value="private">私有镜像</Radio.Button>
+                </Radio.Group>
+                <Select
+                  v-model:value="project"
+                  class="w-[180px]"
+                  :options="PROJECT_OPTIONS"
+                />
+                <Input
+                  v-model:value="keyword"
+                  placeholder="请输入镜像名称"
+                  class="w-[220px]"
+                />
+              </div>
+            </template>
 
-          <template #filterActions>
-            <Space>
-              <Button type="primary">筛选</Button>
-              <Button @click="handleResetFilters">重置</Button>
-            </Space>
-          </template>
-        </ImageList>
-      </div>
+            <template #filterActions>
+              <Space>
+                <Button type="primary">筛选</Button>
+                <Button @click="handleResetFilters">重置</Button>
+              </Space>
+            </template>
+          </ImageList>
+        </div>
 
-      <!-- 镜像详情视图 -->
-      <ImageDetail
-        v-else
-        key="detail"
-        :image="selectedImage"
-        :detail-data="detailRows"
-        :detail-page="detailPage"
-        :detail-page-size="detailPageSize"
-        @back="handleBack"
-        @delete-repo="handleDeleteImageRepo"
-        @delete-detail="handleDeleteDetailRow"
-        @copy="handleCopyText"
-        @update:detail-page="detailPage = $event"
-        @update:detail-page-size="detailPageSize = $event"
+        <!-- 镜像详情视图 -->
+        <ImageDetail
+          v-else
+          key="detail"
+          :image="selectedImage"
+          :detail-data="detailRows"
+          :detail-page="detailPage"
+          :detail-page-size="detailPageSize"
+          @back="handleBack"
+          @delete-repo="handleDeleteImageRepo"
+          @delete-detail="handleDeleteDetailRow"
+          @copy="handleCopyText"
+          @update:detail-page="detailPage = $event"
+          @update:detail-page-size="detailPageSize = $event"
+        />
+      </Transition>
+
+      <!-- 创建镜像抽屉 -->
+      <ImageDrawer
+        ref="drawerRef"
+        @save-create="handleSaveCreate"
+        @save-import="handleSaveImport"
       />
-    </Transition>
-
-    <!-- 创建镜像抽屉 -->
-    <ImageDrawer
-      ref="drawerRef"
-      @save-create="handleSaveCreate"
-      @save-import="handleSaveImport"
-    />
-  </div>
-</Page>
+    </div>
+  </Page>
 </template>
 
 <style scoped>

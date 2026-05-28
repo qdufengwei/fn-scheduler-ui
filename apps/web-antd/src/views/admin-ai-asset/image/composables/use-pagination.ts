@@ -9,10 +9,7 @@ export function usePagination<T>(
   dataSource: { value: T[] },
   options: UsePaginationOptions = {},
 ) {
-  const {
-    defaultPageSize = 10,
-    pageSizeOptions = [10, 20, 50, 100],
-  } = options;
+  const { defaultPageSize = 10, pageSizeOptions = [10, 20, 50, 100] } = options;
 
   const currentPage = ref(1);
   const pageSize = ref(defaultPageSize);

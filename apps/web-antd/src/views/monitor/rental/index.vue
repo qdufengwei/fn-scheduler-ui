@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, DatePicker, Row, Select, Space } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Row,
+  Select,
+  Space,
+} from 'ant-design-vue';
 import { Download } from '@vben/icons';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 import type { EchartsUIType } from '@vben/plugins/echarts';
@@ -22,7 +30,9 @@ const refreshInterval = computed(() => {
 });
 
 // GPU使用率趋势数据 (响应式历史列表)
-const gpuUsageHistory = ref<{ time: string; cluster1: number; cluster2: number; cluster3: number }[]>([]);
+const gpuUsageHistory = ref<
+  { time: string; cluster1: number; cluster2: number; cluster3: number }[]
+>([]);
 
 function generateInitialData() {
   const data = [];
@@ -79,12 +89,13 @@ const gpuRentalData = ref({
 const lineChartRef = ref<EchartsUIType>();
 const barChartRef = ref<EchartsUIType>();
 
-const { renderEcharts: renderLineChart, updateData: updateLineChart } = useEcharts(lineChartRef);
+const { renderEcharts: renderLineChart, updateData: updateLineChart } =
+  useEcharts(lineChartRef);
 const { renderEcharts: renderBarChart } = useEcharts(barChartRef);
 
 // ECharts options
 const getLineChartOption = (): any => {
-  const timeData = gpuUsageHistory.value.map(d => d.time);
+  const timeData = gpuUsageHistory.value.map((d) => d.time);
   return {
     tooltip: {
       trigger: 'axis',
@@ -135,7 +146,7 @@ const getLineChartOption = (): any => {
         name: '集群1',
         type: 'line',
         smooth: true,
-        data: gpuUsageHistory.value.map(d => d.cluster1),
+        data: gpuUsageHistory.value.map((d) => d.cluster1),
         showSymbol: false,
         lineStyle: { width: 2, color: '#3b82f6' },
         itemStyle: { color: '#3b82f6' },
@@ -144,7 +155,7 @@ const getLineChartOption = (): any => {
         name: '集群2',
         type: 'line',
         smooth: true,
-        data: gpuUsageHistory.value.map(d => d.cluster2),
+        data: gpuUsageHistory.value.map((d) => d.cluster2),
         showSymbol: false,
         lineStyle: { width: 2, color: '#10b981' },
         itemStyle: { color: '#10b981' },
@@ -153,7 +164,7 @@ const getLineChartOption = (): any => {
         name: '集群3',
         type: 'line',
         smooth: true,
-        data: gpuUsageHistory.value.map(d => d.cluster3),
+        data: gpuUsageHistory.value.map((d) => d.cluster3),
         showSymbol: false,
         lineStyle: { width: 2, color: '#8b5cf6' },
         itemStyle: { color: '#8b5cf6' },
@@ -248,9 +259,13 @@ onMounted(() => {
   resetTimer();
 });
 
-watch(gpuUsageHistory, () => {
-  updateLineChart(getLineChartOption());
-}, { deep: true });
+watch(
+  gpuUsageHistory,
+  () => {
+    updateLineChart(getLineChartOption());
+  },
+  { deep: true },
+);
 
 watch(refreshInterval, () => {
   generateInitialData();
@@ -280,7 +295,11 @@ onBeforeUnmount(() => {
           </div>
           <Space>
             <span class="text-sm text-gray-500">自动刷新</span>
-            <Select v-model:value="autoRefresh" style="width: 100px" :options="refreshOptions" />
+            <Select
+              v-model:value="autoRefresh"
+              style="width: 100px"
+              :options="refreshOptions"
+            />
           </Space>
         </div>
       </Card>
@@ -306,19 +325,25 @@ onBeforeUnmount(() => {
             </template>
             <Row :gutter="16">
               <Col :span="8">
-                <div class="text-center p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
+                <div
+                  class="text-center p-3 bg-blue-50/50 border border-blue-100 rounded-lg"
+                >
                   <div class="text-2xl font-bold text-blue-600">44</div>
                   <div class="text-xs text-gray-500 mt-1">总数</div>
                 </div>
               </Col>
               <Col :span="8">
-                <div class="text-center p-3 bg-green-50/50 border border-green-100 rounded-lg">
+                <div
+                  class="text-center p-3 bg-green-50/50 border border-green-100 rounded-lg"
+                >
                   <div class="text-2xl font-bold text-green-600">0</div>
                   <div class="text-xs text-gray-500 mt-1">已出租</div>
                 </div>
               </Col>
               <Col :span="8">
-                <div class="text-center p-3 bg-orange-50/50 border border-orange-100 rounded-lg">
+                <div
+                  class="text-center p-3 bg-orange-50/50 border border-orange-100 rounded-lg"
+                >
                   <div class="text-2xl font-bold text-orange-600">32</div>
                   <div class="text-xs text-gray-500 mt-1">未出租</div>
                 </div>

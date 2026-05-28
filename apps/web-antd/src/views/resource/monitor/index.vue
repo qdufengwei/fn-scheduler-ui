@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, DatePicker, Select, Space, message } from 'ant-design-vue';
+import { Button, Card, DatePicker, Select, Space } from 'ant-design-vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { IconifyIcon } from '@vben/icons';
 import dayjs from 'dayjs';
@@ -7,7 +7,7 @@ import type { Dayjs } from 'dayjs';
 
 import { getNodeList } from '#/api/node';
 import { getNodeMetricHistory } from '#/api/monitor';
-
+import { showError, showNotify } from '#/utils/notify';
 import MetricCardGroup from './components/MetricCardGroup.vue';
 
 interface MetricDataPoint {
@@ -79,7 +79,7 @@ async function fetchNodeList() {
       selectedNode.value = nodes.value[0].id;
     }
   } catch {
-    message.error('节点列表加载失败');
+    showError('节点列表加载失败');
     nodes.value = [];
   } finally {
     nodesLoading.value = false;
@@ -101,7 +101,7 @@ async function fetchMetricHistory() {
     const payload = res?.data ?? res ?? {};
     metricHistory.value = Array.isArray(payload) ? payload : [];
   } catch {
-    message.error('节点指标加载失败');
+    showError('节点指标加载失败');
     metricHistory.value = [];
   } finally {
     metricsLoading.value = false;
@@ -118,7 +118,7 @@ function resetAutoRefresh() {
 }
 
 function onDownloadReport() {
-  message.success('报表下载已触发（原型）');
+  showNotify('报表下载已触发（原型）');
 }
 
 onMounted(async () => {
@@ -140,21 +140,41 @@ onBeforeUnmount(() => {
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <span class="text-gray-500">节点</span>
-            <Select v-model:value="selectedNode" style="width: 220px" placeholder="请选择节点" :options="nodeOptions" @change="fetchMetricHistory" />
+            <Select
+              v-model:value="selectedNode"
+              style="width: 220px"
+              placeholder="请选择节点"
+              :options="nodeOptions"
+              @change="fetchMetricHistory"
+            />
           </div>
           <div class="flex items-center gap-2">
             <span class="text-gray-500">时间范围</span>
-            <RangePicker v-model:value="timeRange" :presets="presets" @change="fetchMetricHistory" style="width: 320px" />
+            <RangePicker
+              v-model:value="timeRange"
+              :presets="presets"
+              @change="fetchMetricHistory"
+              style="width: 320px"
+            />
           </div>
           <Button @click="onDownloadReport" :disabled="metricsLoading">
-            <template #icon><IconifyIcon icon="lucide:download" class="size-4 inline-block align-middle" /></template>
+            <template #icon
+              ><IconifyIcon
+                icon="lucide:download"
+                class="size-4 inline-block align-middle"
+            /></template>
             报表下载
           </Button>
         </div>
 
         <div class="flex items-center gap-2">
           <span class="text-gray-500">自动刷新</span>
-          <Select v-model:value="refreshInterval" style="width: 100px" :options="refreshOptions" @change="resetAutoRefresh" />
+          <Select
+            v-model:value="refreshInterval"
+            style="width: 100px"
+            :options="refreshOptions"
+            @change="resetAutoRefresh"
+          />
         </div>
       </div>
     </Card>
@@ -167,18 +187,30 @@ onBeforeUnmount(() => {
           :type="viewMode === 'small' ? 'primary' : 'default'"
           @click="viewMode = 'small'"
         >
-          <template #icon><IconifyIcon icon="lucide:layout-grid" class="size-4 inline-block align-middle" /></template>
+          <template #icon
+            ><IconifyIcon
+              icon="lucide:layout-grid"
+              class="size-4 inline-block align-middle"
+          /></template>
         </Button>
         <Button
           :type="viewMode === 'large' ? 'primary' : 'default'"
           @click="viewMode = 'large'"
         >
-          <template #icon><IconifyIcon icon="lucide:layout-list" class="size-4 inline-block align-middle" /></template>
+          <template #icon
+            ><IconifyIcon
+              icon="lucide:layout-list"
+              class="size-4 inline-block align-middle"
+          /></template>
         </Button>
       </Space>
     </div>
 
     <!-- 指标卡片网格（每个指标单独一个卡片） -->
-    <MetricCardGroup :metrics="metricHistory" :view-mode="viewMode" :loading="metricsLoading" />
+    <MetricCardGroup
+      :metrics="metricHistory"
+      :view-mode="viewMode"
+      :loading="metricsLoading"
+    />
   </div>
 </template>

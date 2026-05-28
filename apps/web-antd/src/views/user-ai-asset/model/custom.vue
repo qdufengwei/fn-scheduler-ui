@@ -2,9 +2,22 @@
 import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
 import {
-  Button, Divider, Form, FormItem, Input, Pagination, Popconfirm, Progress, Segmented, Space, Table, Tag, message,  } from 'ant-design-vue';
+  Button,
+  Divider,
+  Form,
+  FormItem,
+  Input,
+  Pagination,
+  Popconfirm,
+  Progress,
+  Segmented,
+  Space,
+  Table,
+  Tag,
+} from 'ant-design-vue';
 import { Plus, Search, Trash2 } from '@vben/icons';
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const ownership = ref('all');
 const filterModelId = ref<string>('');
@@ -23,7 +36,7 @@ const importForm = ref({
   accessKey: '',
   secretKey: '',
   s3Address: '',
-  versionDescription: ''
+  versionDescription: '',
 });
 
 // 新建版本抽屉
@@ -109,9 +122,7 @@ const filteredData = computed(() => {
   }
 
   if (filterModelId.value) {
-    result = result.filter((r) =>
-      String(r.id).includes(filterModelId.value),
-    );
+    result = result.filter((r) => String(r.id).includes(filterModelId.value));
   }
 
   if (filterModelName.value) {
@@ -122,8 +133,6 @@ const filteredData = computed(() => {
 
   return result;
 });
-
-const notify = (text: string) => message.success(text);
 
 function handleFilter() {
   currentPage.value = 1;
@@ -146,13 +155,13 @@ function handleImport() {
     accessKey: '',
     secretKey: '',
     s3Address: '',
-    versionDescription: ''
+    versionDescription: '',
   };
   importDrawerApi.open();
 }
 
 function handleImportSave() {
-  notify('导入模型成功（原型）');
+  showNotify('导入模型成功（原型）');
   importDrawerApi.close();
 }
 
@@ -168,20 +177,22 @@ function handleAddVersion(record: any) {
 }
 
 function handleVersionSave() {
-  notify(`为模型 ${selectedModel.value?.name} 新建版本 ${versionForm.value.version} 成功`);
+  showNotify(
+    `为模型 ${selectedModel.value?.name} 新建版本 ${versionForm.value.version} 成功`,
+  );
   versionDrawerApi.close();
 }
 
 function handleExport(record: any) {
-  notify(`导出模型 ${record.name}`);
+  showNotify(`导出模型 ${record.name}`);
 }
 
 function handleDelete(record: any) {
-  notify(`删除模型 ${record.name}`);
+  showNotify(`删除模型 ${record.name}`);
 }
 
 function handleBatchDelete() {
-  notify(`批量删除 ${selectedRowKeys.value.length} 个模型成功`);
+  showNotify(`批量删除 ${selectedRowKeys.value.length} 个模型成功`);
   selectedRowKeys.value = [];
 }
 
@@ -273,7 +284,9 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'name'">
-            <a class="text-blue-600 hover:text-blue-700 font-medium">{{ record.name }}</a>
+            <a class="text-blue-600 hover:text-blue-700 font-medium">{{
+              record.name
+            }}</a>
             <div class="text-xs text-gray-400">ID: {{ record.id }}</div>
           </template>
           <template v-if="column.dataIndex === 'status'">
@@ -300,7 +313,11 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
           </template>
           <template v-if="column.dataIndex === 'action'">
             <Space>
-              <Button type="link" size="small" @click="handleAddVersion(record)">
+              <Button
+                type="link"
+                size="small"
+                @click="handleAddVersion(record)"
+              >
                 新建版本
               </Button>
               <Button type="link" size="small" @click="handleExport(record)">
@@ -333,7 +350,12 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
 
     <!-- 导入模型抽屉 -->
     <ImportDrawer>
-      <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="importForm">
+      <Form
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 20 }"
+        label-align="left"
+        :model="importForm"
+      >
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2">基础信息</h3>
         <FormItem label="模型名称" required>
@@ -343,7 +365,13 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
           </div>
         </FormItem>
         <FormItem label="描述">
-          <Input.TextArea v-model:value="importForm.description" :rows="4" placeholder="请输入模型描述" :maxlength="1024" show-count />
+          <Input.TextArea
+            v-model:value="importForm.description"
+            :rows="4"
+            placeholder="请输入模型描述"
+            :maxlength="1024"
+            show-count
+          />
         </FormItem>
 
         <Divider />
@@ -355,18 +383,26 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
         </FormItem>
         <FormItem label="存储类型" required>
           <div class="flex gap-3">
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="px-5 py-2 border rounded text-sm transition-all"
-              :class="importForm.storageType === 'share' ? 'border-blue-500 text-blue-500 bg-blue-50/10 font-medium' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
+              :class="
+                importForm.storageType === 'share'
+                  ? 'border-blue-500 text-blue-500 bg-blue-50/10 font-medium'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+              "
               @click="importForm.storageType = 'share'"
             >
               共享存储
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="px-5 py-2 border rounded text-sm transition-all"
-              :class="importForm.storageType === 's3' ? 'border-blue-500 text-blue-500 bg-blue-50/10 font-medium' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
+              :class="
+                importForm.storageType === 's3'
+                  ? 'border-blue-500 text-blue-500 bg-blue-50/10 font-medium'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+              "
               @click="importForm.storageType = 's3'"
             >
               S3 存储
@@ -377,9 +413,14 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
         <!-- 如果是共享存储 -->
         <template v-if="importForm.storageType === 'share'">
           <FormItem label="模型地址" required>
-            <Input v-model:value="importForm.modelPath" placeholder="请输入模型地址" />
+            <Input
+              v-model:value="importForm.modelPath"
+              placeholder="请输入模型地址"
+            />
             <div class="text-xs text-gray-400 mt-1 leading-relaxed">
-              ① 地址为Linux绝对路径，必须是文件，扩展名必须是.zip，不能以/结尾，不能包含相对路径，如：./或../;上传文件仅支持 5 GB以内的单文件上传
+              ①
+              地址为Linux绝对路径，必须是文件，扩展名必须是.zip，不能以/结尾，不能包含相对路径，如：./或../;上传文件仅支持
+              5 GB以内的单文件上传
             </div>
           </FormItem>
         </template>
@@ -387,16 +428,39 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
         <!-- 如果是S3存储 -->
         <template v-else>
           <FormItem label="Access Key" required>
-            <Input v-model:value="importForm.accessKey" placeholder="请输入Access Key" />
+            <Input
+              v-model:value="importForm.accessKey"
+              placeholder="请输入Access Key"
+            />
           </FormItem>
           <FormItem label="Secret Access Key" required>
-            <Input v-model:value="importForm.secretKey" placeholder="请输入Secret Access Key" type="password" />
+            <Input
+              v-model:value="importForm.secretKey"
+              placeholder="请输入Secret Access Key"
+              type="password"
+            />
           </FormItem>
           <FormItem label="S3地址" required>
-            <Input v-model:value="importForm.s3Address" placeholder="/bucketName/subPath 或 https://s3Endpoint.region.amazonaws.com/bucketName/subPath">
+            <Input
+              v-model:value="importForm.s3Address"
+              placeholder="/bucketName/subPath 或 https://s3Endpoint.region.amazonaws.com/bucketName/subPath"
+            >
               <template #addonAfter>
-                <span class="cursor-pointer px-1 flex items-center" @click="notify('选择文件')">
-                  <svg class="size-4 text-gray-500 hover:text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/></svg>
+                <span
+                  class="cursor-pointer px-1 flex items-center"
+                  @click="showNotify('选择文件')"
+                >
+                  <svg
+                    class="size-4 text-gray-500 hover:text-blue-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"
+                    />
+                  </svg>
                 </span>
               </template>
             </Input>
@@ -404,7 +468,13 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
         </template>
 
         <FormItem label="版本描述">
-          <Input.TextArea v-model:value="importForm.versionDescription" :rows="4" placeholder="请输入版本描述" :maxlength="1024" show-count />
+          <Input.TextArea
+            v-model:value="importForm.versionDescription"
+            :rows="4"
+            placeholder="请输入版本描述"
+            :maxlength="1024"
+            show-count
+          />
         </FormItem>
       </Form>
       <template #footer>
@@ -417,7 +487,12 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
 
     <!-- 新建版本抽屉 -->
     <VersionDrawer>
-      <Form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" label-align="left" :model="versionForm">
+      <Form
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 20 }"
+        label-align="left"
+        :model="versionForm"
+      >
         <!-- 基础信息 -->
         <h3 class="font-bold mb-6 text-base border-b pb-2">基础信息</h3>
         <FormItem label="版本">
@@ -428,8 +503,8 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
         </FormItem>
         <FormItem label="存储类型" required>
           <div class="flex gap-3">
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="px-5 py-1.5 border border-blue-500 text-blue-500 rounded bg-blue-50/10 font-medium text-sm cursor-default"
             >
               共享存储
@@ -437,10 +512,19 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
           </div>
         </FormItem>
         <FormItem label="模型地址" required>
-          <Input v-model:value="versionForm.modelPath" placeholder="请输入模型地址" />
+          <Input
+            v-model:value="versionForm.modelPath"
+            placeholder="请输入模型地址"
+          />
         </FormItem>
         <FormItem label="版本描述">
-          <Input.TextArea v-model:value="versionForm.versionDescription" :rows="4" placeholder="请输入版本描述" :maxlength="1024" show-count />
+          <Input.TextArea
+            v-model:value="versionForm.versionDescription"
+            :rows="4"
+            placeholder="请输入版本描述"
+            :maxlength="1024"
+            show-count
+          />
         </FormItem>
       </Form>
       <template #footer>

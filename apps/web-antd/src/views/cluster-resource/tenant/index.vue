@@ -10,10 +10,10 @@ import {
   Select,
   Space,
   Table,
-  message,
 } from 'ant-design-vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const selectedTenant = ref<string>();
 
@@ -86,8 +86,6 @@ const dataSource = ref([
     expireTime: '-',
   },
 ]);
-
-const notify = (text: string) => message.success(text);
 </script>
 
 <template>
@@ -280,7 +278,7 @@ const notify = (text: string) => message.success(text);
             <Button
               type="link"
               size="small"
-              @click="notify(`缩减资源 ${record.tenant}`)"
+              @click="showNotify(`缩减资源 ${record.tenant}`)"
             >
               缩减资源
             </Button>
@@ -288,7 +286,7 @@ const notify = (text: string) => message.success(text);
               title="确认释放资源？"
               ok-text="确认"
               cancel-text="取消"
-              @confirm="notify(`释放资源 ${record.tenant}`)"
+              @confirm="showNotify(`释放资源 ${record.tenant}`)"
             >
               <Button type="link" size="small" danger> 释放资源 </Button>
             </Popconfirm>

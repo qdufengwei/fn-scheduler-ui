@@ -1,29 +1,90 @@
 <script setup lang="ts">
 import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
-import { Button, Form, FormItem, InputNumber, Pagination, Space, Switch, Table, message } from 'ant-design-vue';
+import {
+  Button,
+  Form,
+  FormItem,
+  InputNumber,
+  Pagination,
+  Space,
+  Switch,
+  Table,
+} from 'ant-design-vue';
 import { Inbox } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
+import { showNotify } from '#/utils/notify';
 
 const pageSize = ref(10);
 const currentPage = ref(1);
 
 const columns = [
-  { title: '资源类型', dataIndex: 'resourceType', key: 'resourceType', width: 250 },
+  {
+    title: '资源类型',
+    dataIndex: 'resourceType',
+    key: 'resourceType',
+    width: 250,
+  },
   { title: '基础价格', dataIndex: 'basePrice', key: 'basePrice', width: 200 },
-  { title: '包月折扣价', dataIndex: 'monthlyPrice', key: 'monthlyPrice', width: 150 },
-  { title: '包年折扣价', dataIndex: 'yearlyPrice', key: 'yearlyPrice', width: 150 },
+  {
+    title: '包月折扣价',
+    dataIndex: 'monthlyPrice',
+    key: 'monthlyPrice',
+    width: 150,
+  },
+  {
+    title: '包年折扣价',
+    dataIndex: 'yearlyPrice',
+    key: 'yearlyPrice',
+    width: 150,
+  },
   { title: '操作', key: 'action', width: 120 },
 ];
 
 const dataSource = ref([
-  { id: 1, resourceType: 'NVIDIA-GPU-HBM2E-80GB', basePrice: '1.00 (¥ / 卡 / 时)', monthlyPrice: '-', yearlyPrice: '-' },
-  { id: 2, resourceType: 'rook-cephfs', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
-  { id: 3, resourceType: 'nfs-client', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
-  { id: 4, resourceType: 'nfs-storage', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
-  { id: 5, resourceType: 'standard', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
-  { id: 6, resourceType: 'local-path', basePrice: '-', monthlyPrice: '-', yearlyPrice: '-' },
+  {
+    id: 1,
+    resourceType: 'NVIDIA-GPU-HBM2E-80GB',
+    basePrice: '1.00 (¥ / 卡 / 时)',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
+  {
+    id: 2,
+    resourceType: 'rook-cephfs',
+    basePrice: '-',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
+  {
+    id: 3,
+    resourceType: 'nfs-client',
+    basePrice: '-',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
+  {
+    id: 4,
+    resourceType: 'nfs-storage',
+    basePrice: '-',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
+  {
+    id: 5,
+    resourceType: 'standard',
+    basePrice: '-',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
+  {
+    id: 6,
+    resourceType: 'local-path',
+    basePrice: '-',
+    monthlyPrice: '-',
+    yearlyPrice: '-',
+  },
 ]);
 
 const editForm = ref<any>({
@@ -32,7 +93,6 @@ const editForm = ref<any>({
   monthlyDiscount: 0,
   yearlyDiscount: 0,
 });
-const notify = (text: string) => message.success(text);
 
 function openEdit(record: any) {
   const basePriceValue = parseBasePrice(record.basePrice);
@@ -48,7 +108,7 @@ function openEdit(record: any) {
 
 function handleEditOk() {
   createDrawerApi.close();
-  notify('编辑成功（原型）');
+  showNotify('编辑成功（原型）');
 }
 
 function parseBasePrice(price: string) {
@@ -56,11 +116,23 @@ function parseBasePrice(price: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-const currentPriceText = computed(() => `¥${(editForm.value.basePriceValue || 0).toFixed(2)} / 卡 / 时`);
-const monthlyOriginalPrice = computed(() => (editForm.value.basePriceValue || 0) * 24 * 30);
+const currentPriceText = computed(
+  () => `¥${(editForm.value.basePriceValue || 0).toFixed(2)} / 卡 / 时`,
+);
+const monthlyOriginalPrice = computed(
+  () => (editForm.value.basePriceValue || 0) * 24 * 30,
+);
 const yearlyOriginalPrice = computed(() => monthlyOriginalPrice.value * 12);
-const monthlyDiscountPrice = computed(() => monthlyOriginalPrice.value * (1 - (editForm.value.monthlyDiscount || 0) / 100));
-const yearlyDiscountPrice = computed(() => yearlyOriginalPrice.value * (1 - (editForm.value.yearlyDiscount || 0) / 100));
+const monthlyDiscountPrice = computed(
+  () =>
+    monthlyOriginalPrice.value *
+    (1 - (editForm.value.monthlyDiscount || 0) / 100),
+);
+const yearlyDiscountPrice = computed(
+  () =>
+    yearlyOriginalPrice.value *
+    (1 - (editForm.value.yearlyDiscount || 0) / 100),
+);
 
 function formatPrice(value: number, unit: string) {
   return `¥${value.toLocaleString('zh-CN', {
@@ -98,8 +170,12 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
         </template>
         <template v-else-if="column.key === 'basePrice'">
           <div v-if="record.basePrice !== '-'">
-            <span class="text-lg font-semibold text-blue-600">{{ record.basePrice.split(' ')[0] }}</span>
-            <span class="text-xs text-gray-500 ml-1">{{ record.basePrice.split(' ').slice(1).join(' ') }}</span>
+            <span class="text-lg font-semibold text-blue-600">{{
+              record.basePrice.split(' ')[0]
+            }}</span>
+            <span class="text-xs text-gray-500 ml-1">{{
+              record.basePrice.split(' ').slice(1).join(' ')
+            }}</span>
           </div>
           <span v-else class="text-gray-400">-</span>
         </template>
@@ -125,7 +201,12 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 
   <!-- 编辑定价抽屉 -->
   <CreateDrawer>
-    <Form :model="editForm" class="pricing-edit-form" :label-col="{ style: { width: '170px' } }" :wrapper-col="{ span: 18 }">
+    <Form
+      :model="editForm"
+      class="pricing-edit-form"
+      :label-col="{ style: { width: '170px' } }"
+      :wrapper-col="{ span: 18 }"
+    >
       <FormItem label="资源类型">
         <span>{{ editForm.resourceType }}</span>
       </FormItem>
@@ -133,7 +214,13 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
         <span>{{ currentPriceText }}</span>
       </FormItem>
       <FormItem label="基础价格(按小时计费)">
-        <InputNumber v-model:value="editForm.basePriceValue" :min="0" :step="0.1" class="pricing-edit-form__price-input" placeholder="请输入基础价格" />
+        <InputNumber
+          v-model:value="editForm.basePriceValue"
+          :min="0"
+          :step="0.1"
+          class="pricing-edit-form__price-input"
+          placeholder="请输入基础价格"
+        />
       </FormItem>
       <FormItem label="启用折扣">
         <Switch v-model:checked="editForm.discountEnabled" />
@@ -144,7 +231,13 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
           <div class="pricing-discount-card__title">包月折扣</div>
           <div class="pricing-discount-card__field">
             <div class="pricing-discount-card__label">折扣率</div>
-            <InputNumber v-model:value="editForm.monthlyDiscount" :min="0" :max="100" :step="1" class="pricing-discount-card__input" />
+            <InputNumber
+              v-model:value="editForm.monthlyDiscount"
+              :min="0"
+              :max="100"
+              :step="1"
+              class="pricing-discount-card__input"
+            />
             <span class="pricing-discount-card__unit">%</span>
           </div>
           <div class="pricing-discount-card__divider" />
@@ -166,7 +259,13 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
           <div class="pricing-discount-card__title">包年折扣</div>
           <div class="pricing-discount-card__field">
             <div class="pricing-discount-card__label">折扣率</div>
-            <InputNumber v-model:value="editForm.yearlyDiscount" :min="0" :max="100" :step="1" class="pricing-discount-card__input" />
+            <InputNumber
+              v-model:value="editForm.yearlyDiscount"
+              :min="0"
+              :max="100"
+              :step="1"
+              class="pricing-discount-card__input"
+            />
             <span class="pricing-discount-card__unit">%</span>
           </div>
           <div class="pricing-discount-card__divider" />

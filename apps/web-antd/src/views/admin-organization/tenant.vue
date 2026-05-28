@@ -2,8 +2,20 @@
 import { useVbenDrawer } from '@vben/common-ui';
 import { ref, computed } from 'vue';
 import { Page } from '@vben/common-ui';
-import { Button, Card, Input, Pagination, Popconfirm, Space, Table, Form, FormItem, message } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Input,
+  Pagination,
+  Popconfirm,
+  Space,
+  Table,
+  Form,
+  FormItem,
+} from 'ant-design-vue';
 import { Plus, Search, Settings } from '@vben/icons';
+
+import { showNotify } from '#/utils/notify';
 
 const searchText = ref('');
 const pageSize = ref(10);
@@ -18,31 +30,45 @@ const columns = [
 const dataSource = ref([
   { id: 1, tenant: 'sx-telecom', alias: '陕西电信', discount: '-' },
   { id: 2, tenant: 'test-0415', alias: '-', discount: '-' },
-  { id: 3, tenant: 'shiyusuanli-testxq', alias: 'shiyusuanli-testxq', discount: '-' },
-  { id: 4, tenant: 'shiyusuanli-demandertest', alias: 'shiyusuanli-demandertest', discount: '-' },
+  {
+    id: 3,
+    tenant: 'shiyusuanli-testxq',
+    alias: 'shiyusuanli-testxq',
+    discount: '-',
+  },
+  {
+    id: 4,
+    tenant: 'shiyusuanli-demandertest',
+    alias: 'shiyusuanli-demandertest',
+    discount: '-',
+  },
   { id: 5, tenant: 'moon', alias: '-', discount: '-' },
   { id: 6, tenant: 'test01', alias: '-', discount: '-' },
-  { id: 7, tenant: 'platform-operator', alias: 'platform-operator', discount: '-' },
+  {
+    id: 7,
+    tenant: 'platform-operator',
+    alias: 'platform-operator',
+    discount: '-',
+  },
 ]);
 
 const filteredData = computed(() => {
-  return dataSource.value.filter(r =>
-    !searchText.value ||
-    r.tenant.includes(searchText.value) ||
-    r.alias?.includes(searchText.value)
+  return dataSource.value.filter(
+    (r) =>
+      !searchText.value ||
+      r.tenant.includes(searchText.value) ||
+      r.alias?.includes(searchText.value),
   );
 });
 
 const form = ref({ name: '', alias: '', discount: '' });
-
-const notify = (text: string) => message.success(text);
 
 function handleAddTenant() {
   createDrawerApi.open();
 }
 
 function handleSave() {
-  notify('添加租户成功（原型）');
+  showNotify('添加租户成功（原型）');
   createDrawerApi.close();
 }
 
@@ -63,7 +89,12 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       </div>
 
       <div class="flex items-center justify-between mb-4">
-        <Input v-model:value="searchText" placeholder="支持模糊搜索租户名称" style="width: 260px" allow-clear>
+        <Input
+          v-model:value="searchText"
+          placeholder="支持模糊搜索租户名称"
+          style="width: 260px"
+          allow-clear
+        >
           <template #prefix><Search class="size-4 text-gray-400" /></template>
         </Input>
         <Button type="primary" @click="handleAddTenant">
@@ -87,13 +118,20 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
           </template>
           <template v-if="column.dataIndex === 'action'">
             <Space>
-              <Button type="link" size="small" @click="notify(`编辑租户 ${record.tenant}`)">
+              <Button
+                type="link"
+                size="small"
+                @click="showNotify(`编辑租户 ${record.tenant}`)"
+              >
                 编辑
               </Button>
-              <Popconfirm title="确认删除该租户？" ok-text="确认" cancel-text="取消" @confirm="notify(`删除租户 ${record.tenant}`)">
-                <Button type="link" size="small" danger>
-                  删除
-                </Button>
+              <Popconfirm
+                title="确认删除该租户？"
+                ok-text="确认"
+                cancel-text="取消"
+                @confirm="showNotify(`删除租户 ${record.tenant}`)"
+              >
+                <Button type="link" size="small" danger> 删除 </Button>
               </Popconfirm>
             </Space>
           </template>

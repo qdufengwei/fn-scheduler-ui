@@ -48,7 +48,8 @@ const routes: RouteRecordRaw[] = [
         path: '/cluster-resource/audit',
       },
       {
-        component: () => import('#/views/cluster-resource/service-config/index.vue'),
+        component: () =>
+          import('#/views/cluster-resource/service-config/index.vue'),
         meta: {
           icon: 'lucide:settings',
           title: '服务配置',
