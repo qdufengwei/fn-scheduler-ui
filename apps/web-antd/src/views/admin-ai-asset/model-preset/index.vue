@@ -11,15 +11,10 @@ import {
   Tag,
   Tooltip,
 } from 'ant-design-vue';
-import { createIconifyIcon, RotateCw } from '@vben/icons';
+import { RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
-
-// 创建额外的图标
-const Brain = createIconifyIcon('lucide:brain');
-const Cpu = createIconifyIcon('lucide:cpu');
-const Sparkles = createIconifyIcon('lucide:sparkles');
-const Zap = createIconifyIcon('lucide:zap');
+import { getModelIconSrc } from '#/utils/model-icon';
 
 // 筛选条件
 const keyword = ref('');
@@ -576,14 +571,9 @@ function handleRefresh() {
   // 刷新逻辑
 }
 
-function getIconComponent(icon: string) {
-  const icons: Record<string, any> = {
-    brain: Brain,
-    cpu: Cpu,
-    sparkles: Sparkles,
-    zap: Zap,
-  };
-  return icons[icon] || Sparkles;
+// 获取模型图标 URL
+function getModelIcon(model: { name: string; provider: string }): string {
+  return getModelIconSrc(model.name, model.provider);
 }
 </script>
 
@@ -638,17 +628,20 @@ function getIconComponent(icon: string) {
               <div
                 class="absolute inset-0 flex items-center justify-center opacity-15"
               >
-                <component
-                  :is="getIconComponent(model.icon)"
-                  class="size-20 text-white"
+                <img
+                  :src="getModelIcon(model)"
+                  :alt="model.provider"
+                  class="size-20 object-contain"
                 />
               </div>
-              <!-- 模型名称缩写 -->
-              <div class="relative z-10 text-white text-center">
-                <div class="text-2xl font-bold tracking-tight mb-0.5">
-                  {{ model.name.split('-')[0] }}
-                </div>
-                <div class="text-xs opacity-80">{{ model.provider }}</div>
+              <!-- 模型图标 -->
+              <div class="relative z-10 flex flex-col items-center">
+                <img
+                  :src="getModelIcon(model)"
+                  :alt="model.provider"
+                  class="size-14 object-contain mb-2"
+                />
+                <div class="text-xs text-white/80">{{ model.provider }}</div>
               </div>
               <!-- 参数量标签 -->
               <Tag

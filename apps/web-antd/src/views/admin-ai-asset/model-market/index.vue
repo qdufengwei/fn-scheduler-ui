@@ -13,6 +13,8 @@ import {
   Drawer,
 } from 'ant-design-vue';
 
+import { getModelIconSrc } from '#/utils/model-icon';
+
 const SlidersHorizontal = createIconifyIcon('lucide:sliders-horizontal');
 const ShieldAlert = createIconifyIcon('lucide:shield-alert');
 const BarChart3 = createIconifyIcon('lucide:bar-chart-3');
@@ -23,7 +25,6 @@ const Cpu = createIconifyIcon('lucide:cpu');
 const Zap = createIconifyIcon('lucide:zap');
 const Activity = createIconifyIcon('lucide:activity');
 const Database = createIconifyIcon('lucide:database');
-
 
 interface ModelService {
   id: string;
@@ -179,16 +180,6 @@ const modelServices = ref<ModelService[]>([
   },
 ]);
 
-// 极简中性 Morandi 风格色彩映射
-const avatarColorMap: Record<string, string> = {
-  文本生成: 'bg-blue-50/70 border border-blue-150 text-blue-600',
-  代码生成: 'bg-teal-50/70 border border-teal-150 text-teal-600',
-  视觉识别: 'bg-purple-50/70 border border-purple-150 text-purple-600',
-  语音处理: 'bg-orange-50/70 border border-orange-150 text-orange-600',
-};
-
-
-
 const filteredServices = computed(() => {
   let result = [...modelServices.value];
 
@@ -294,41 +285,45 @@ interface ModelMeta {
 }
 
 const mockModelMetaMap: Record<string, ModelMeta> = {
-  '文本生成': {
+  文本生成: {
     provider: 'DeepSeek / Meta / Google',
     contextWindow: '128K Tokens',
     maxOutput: '8,192 Tokens',
-    description: '此服务依托混合架构，部署于成都智算中心 GPU 节点群。主要用于大规模多任务语言理解（MMLU）、复杂逻辑推理及长文理解。',
+    description:
+      '此服务依托混合架构，部署于成都智算中心 GPU 节点群。主要用于大规模多任务语言理解（MMLU）、复杂逻辑推理及长文理解。',
     deploymentNode: '成都智算中心 (GPU 节点群)',
     rateLimit: '120 req/s',
     gpuInstance: 'NVIDIA-A100-SXM4-80GB × 8',
     concurrency: 150,
   },
-  '代码生成': {
+  代码生成: {
     provider: 'DeepSeek / Meta / Qwen',
     contextWindow: '64K Tokens',
     maxOutput: '4,096 Tokens',
-    description: '用于代码生成与补全服务，采用 TensorRT-LLM 优化吞吐，针对高并发补全环境进行了长效调度调优。',
+    description:
+      '用于代码生成与补全服务，采用 TensorRT-LLM 优化吞吐，针对高并发补全环境进行了长效调度调优。',
     deploymentNode: '成都智算中心 (GPU 节点群)',
     rateLimit: '80 req/s',
     gpuInstance: 'NVIDIA-A30-24GB × 4',
     concurrency: 80,
   },
-  '视觉识别': {
+  视觉识别: {
     provider: 'OpenAI / Google / Meta',
     contextWindow: '32K Tokens',
     maxOutput: '4,096 Tokens',
-    description: '多模态图像/视觉识别算力服务。结合了 OCR 提取和复杂图表结构化分析，适用于多行业多模态视觉资产解析。',
+    description:
+      '多模态图像/视觉识别算力服务。结合了 OCR 提取和复杂图表结构化分析，适用于多行业多模态视觉资产解析。',
     deploymentNode: '深圳视觉实验室',
     rateLimit: '50 req/s',
     gpuInstance: 'NVIDIA-RTX-4090 × 8',
     concurrency: 50,
   },
-  '语音处理': {
+  语音处理: {
     provider: 'OpenAI / Bilibili / Alibaba',
     contextWindow: '16K Tokens',
     maxOutput: '2,048 Tokens',
-    description: '大模型高保真语音识别与拟真合成服务。支持多说话人角色声学分离及流式音频转写吞吐。',
+    description:
+      '大模型高保真语音识别与拟真合成服务。支持多说话人角色声学分离及流式音频转写吞吐。',
     deploymentNode: '深圳视觉实验室',
     rateLimit: '60 req/s',
     gpuInstance: 'NVIDIA-A10G-24GB × 2',
@@ -349,16 +344,18 @@ const activeMeta = computed<ModelMeta>(() => {
       concurrency: 50,
     };
   }
-  return mockModelMetaMap[selectedService.value.category] ?? {
-    provider: '开源社区',
-    contextWindow: '32K Tokens',
-    maxOutput: '4,096 Tokens',
-    description: '通用模型服务。',
-    deploymentNode: '默认调度节点',
-    rateLimit: '50 req/s',
-    gpuInstance: 'NVIDIA-A10G × 2',
-    concurrency: 50,
-  };
+  return (
+    mockModelMetaMap[selectedService.value.category] ?? {
+      provider: '开源社区',
+      contextWindow: '32K Tokens',
+      maxOutput: '4,096 Tokens',
+      description: '通用模型服务。',
+      deploymentNode: '默认调度节点',
+      rateLimit: '50 req/s',
+      gpuInstance: 'NVIDIA-A10G × 2',
+      concurrency: 50,
+    }
+  );
 });
 
 // 各租户调用量分布 Mock 数据
@@ -398,21 +395,36 @@ function showDetail(service: ModelService) {
   selectedService.value = service;
   detailVisible.value = true;
 }
+
+// 获取模型图标 URL
+function getModelIcon(modelName: string): string {
+  return getModelIconSrc(modelName);
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <!-- 顶层外壳，确保无 Transition Transition 报错问题 -->
-    <div class="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[calc(100vh-148px)]">
-      
+    <div
+      class="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[calc(100vh-148px)]"
+    >
       <!-- 左侧筛选控制面板 -->
-      <aside class="w-full md:w-60 bg-gray-50 border-r border-gray-150 p-5 flex flex-col gap-6 shrink-0">
-        <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+      <aside
+        class="w-full md:w-60 bg-gray-50 border-r border-gray-150 p-5 flex flex-col gap-6 shrink-0"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-200 pb-3"
+        >
           <div class="flex items-center gap-2 text-gray-800 font-bold">
             <SlidersHorizontal class="size-4.5 text-blue-500" />
             <span>筛选模型</span>
           </div>
-          <Button type="link" size="small" class="flex items-center gap-1 p-0 font-medium text-blue-500 hover:text-blue-600" @click="handleReset">
+          <Button
+            type="link"
+            size="small"
+            class="flex items-center gap-1 p-0 font-medium text-blue-500 hover:text-blue-600"
+            @click="handleReset"
+          >
             <template #icon><RotateCw class="size-3.5" /></template>
             重置
           </Button>
@@ -420,15 +432,21 @@ function showDetail(service: ModelService) {
 
         <!-- 分类选择区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">分类</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            分类
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in categoryOptions"
               :key="item"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="selectedCategory === item 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                selectedCategory === item
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectCategory(item)"
             >
               {{ item }}
@@ -438,15 +456,21 @@ function showDetail(service: ModelService) {
 
         <!-- 排序字段区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">排序字段</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            排序字段
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in sortFieldOptions"
               :key="item.value"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="sortField === item.value 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                sortField === item.value
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectSortField(item.value)"
             >
               {{ item.label }}
@@ -456,15 +480,21 @@ function showDetail(service: ModelService) {
 
         <!-- 排序方向区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">排序方向</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            排序方向
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in sortDirectionOptions"
               :key="item.value"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="sortDirection === item.value 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                sortDirection === item.value
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectSortDirection(item.value)"
             >
               {{ item.label }}
@@ -476,8 +506,12 @@ function showDetail(service: ModelService) {
       <!-- 右侧主展示区 -->
       <section class="flex-1 flex flex-col bg-white">
         <!-- 头部搜索表单 -->
-        <div class="flex items-center justify-between gap-4 px-6 py-4.5 border-b border-gray-100 bg-white shrink-0">
-          <div class="text-sm font-bold text-gray-800 shrink-0">模型服务列表</div>
+        <div
+          class="flex items-center justify-between gap-4 px-6 py-4.5 border-b border-gray-100 bg-white shrink-0"
+        >
+          <div class="text-sm font-bold text-gray-800 shrink-0">
+            模型服务列表
+          </div>
           <div class="flex items-center gap-2.5">
             <Select
               v-model:value="tenantId"
@@ -511,8 +545,10 @@ function showDetail(service: ModelService) {
 
         <!-- 列表展现 -->
         <div class="flex-1 p-6">
-          <div v-if="paginatedServices.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-            
+          <div
+            v-if="paginatedServices.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5"
+          >
             <!-- 单个服务卡片 -->
             <div
               v-for="service in paginatedServices"
@@ -521,8 +557,13 @@ function showDetail(service: ModelService) {
               :class="service.status === 'suspended' ? 'bg-gray-50/50' : ''"
             >
               <!-- 下架状态蒙层提示 -->
-              <div v-if="service.status === 'suspended'" class="absolute inset-0 bg-gray-100/50 backdrop-blur-[0.5px] rounded-xl pointer-events-none flex items-center justify-center z-20">
-                <span class="bg-gray-800/90 text-white text-[10px] font-medium px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
+              <div
+                v-if="service.status === 'suspended'"
+                class="absolute inset-0 bg-gray-100/50 backdrop-blur-[0.5px] rounded-xl pointer-events-none flex items-center justify-center z-20"
+              >
+                <span
+                  class="bg-gray-800/90 text-white text-[10px] font-medium px-2 py-0.5 rounded flex items-center gap-1 shadow-sm"
+                >
                   <ShieldAlert class="size-3" />
                   已下架
                 </span>
@@ -530,16 +571,24 @@ function showDetail(service: ModelService) {
 
               <div>
                 <!-- 头部：极简头像、标题、服务分类 (点击可查看详情) -->
-                <div class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200" @click="showDetail(service)">
+                <div
+                  class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                  @click="showDetail(service)"
+                >
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <div 
-                      class="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-                      :class="avatarColorMap[service.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+                    <div
+                      class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 overflow-hidden bg-gray-50"
                     >
-                      {{ service.modelName.substring(0, 2).toUpperCase() }}
+                      <img
+                        :src="getModelIcon(service.modelName)"
+                        :alt="service.modelName"
+                        class="size-7 object-contain"
+                      />
                     </div>
                     <div class="min-w-0">
-                      <div class="truncate text-sm font-semibold text-gray-900 leading-tight">
+                      <div
+                        class="truncate text-sm font-semibold text-gray-900 leading-tight"
+                      >
                         {{ service.serviceName }}
                       </div>
                       <div class="mt-0.5 flex items-center">
@@ -549,7 +598,9 @@ function showDetail(service: ModelService) {
                       </div>
                     </div>
                   </div>
-                  <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+                  <Tag
+                    class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0"
+                  >
                     {{ service.category }}
                   </Tag>
                 </div>
@@ -557,28 +608,64 @@ function showDetail(service: ModelService) {
                 <!-- 价格条目展示区 (极简空白对齐设计，无虚线，无实线) -->
                 <div class="mt-4 flex items-center justify-between">
                   <div class="flex flex-col">
-                    <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
-                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.inputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400"
+                      >输入价格 / K Token</span
+                    >
+                    <span
+                      class="text-xs font-medium text-gray-700 mt-1 font-mono"
+                      >¥{{ service.inputPrice.toFixed(4) }}</span
+                    >
                   </div>
                   <div class="flex flex-col items-end">
-                    <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
-                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.outputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400"
+                      >输出价格 / K Token</span
+                    >
+                    <span
+                      class="text-xs font-medium text-gray-700 mt-1 font-mono"
+                      >¥{{ service.outputPrice.toFixed(4) }}</span
+                    >
                   </div>
                 </div>
               </div>
 
               <!-- 底部调用量和动作栏 (极简冷淡圆点) -->
-              <div class="mt-3.5 pt-3.5 border-t border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"></span>
-                  <span>调用 <span class="font-semibold text-gray-700 font-mono">{{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}</span> 次</span>
+              <div
+                class="mt-3.5 pt-3.5 border-t border-gray-100 flex items-center justify-between"
+              >
+                <div
+                  class="flex items-center gap-1.5 text-[11px] text-gray-400"
+                >
+                  <span
+                    class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"
+                  ></span>
+                  <span
+                    >调用
+                    <span class="font-semibold text-gray-700 font-mono">{{
+                      service.totalCalls >= 10000
+                        ? (service.totalCalls / 10000).toFixed(1) + 'W'
+                        : service.totalCalls
+                    }}</span>
+                    次</span
+                  >
                 </div>
-                
+
                 <div class="flex items-center gap-1">
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="流量监控" @click="showMonitorMessage(service.serviceName)">
+                  <Button
+                    type="text"
+                    size="small"
+                    class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors"
+                    title="流量监控"
+                    @click="showMonitorMessage(service.serviceName)"
+                  >
                     <template #icon><BarChart3 class="size-3.5" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="配置选项" @click="showConfigMessage(service.serviceName)">
+                  <Button
+                    type="text"
+                    size="small"
+                    class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors"
+                    title="配置选项"
+                    @click="showConfigMessage(service.serviceName)"
+                  >
                     <template #icon><Settings class="size-3.5" /></template>
                   </Button>
                   <Popconfirm
@@ -587,27 +674,46 @@ function showDetail(service: ModelService) {
                     cancel-text="取消"
                     @confirm="toggleServiceStatus(service)"
                   >
-                    <Button type="text" danger size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-red-500 hover:bg-red-50/80 rounded-md transition-colors">
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
+                      class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-red-500 hover:bg-red-50/80 rounded-md transition-colors"
+                    >
                       <template #icon><Power class="size-3.5" /></template>
                     </Button>
                   </Popconfirm>
                 </div>
               </div>
             </div>
-
           </div>
 
           <!-- 空数据状态 -->
-          <div v-else class="min-h-[380px] flex flex-col items-center justify-center text-center">
+          <div
+            v-else
+            class="min-h-[380px] flex flex-col items-center justify-center text-center"
+          >
             <ShieldAlert class="size-16 text-gray-300 mb-4" />
-            <h3 class="text-base font-bold text-gray-700 m-0">暂无符合条件的模型服务</h3>
-            <p class="text-xs text-gray-400 mt-1.5 max-w-xs">当前没有相关记录，增加服务或重置筛选条件后在此处查看数据。</p>
-            <Button type="primary" size="small" class="mt-4 px-4" @click="handleReset">重置筛选</Button>
+            <h3 class="text-base font-bold text-gray-700 m-0">
+              暂无符合条件的模型服务
+            </h3>
+            <p class="text-xs text-gray-400 mt-1.5 max-w-xs">
+              当前没有相关记录，增加服务或重置筛选条件后在此处查看数据。
+            </p>
+            <Button
+              type="primary"
+              size="small"
+              class="mt-4 px-4"
+              @click="handleReset"
+              >重置筛选</Button
+            >
           </div>
         </div>
 
         <!-- 底部大分页区 -->
-        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end">
+        <div
+          class="px-6 py-4 border-t border-gray-100 flex items-center justify-end"
+        >
           <Pagination
             v-model:current="currentPage"
             v-model:page-size="pageSize"
@@ -618,7 +724,6 @@ function showDetail(service: ModelService) {
           />
         </div>
       </section>
-
     </div>
 
     <!-- 极细致莫兰迪风模型服务运营详情抽屉 -->
@@ -630,15 +735,23 @@ function showDetail(service: ModelService) {
       :closable="false"
       class="fn-model-detail-drawer"
     >
-      <div v-if="selectedService" class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1">
+      <div
+        v-if="selectedService"
+        class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1"
+      >
         <!-- 头部标题区 -->
-        <div class="flex items-start justify-between pb-4.5 border-b border-gray-100">
+        <div
+          class="flex items-start justify-between pb-4.5 border-b border-gray-100"
+        >
           <div class="flex items-center gap-3">
-            <div 
-              class="h-11 w-11 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
-              :class="avatarColorMap[selectedService.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+            <div
+              class="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 overflow-hidden bg-gray-50"
             >
-              {{ selectedService.modelName.substring(0, 2).toUpperCase() }}
+              <img
+                :src="getModelIcon(selectedService.modelName)"
+                :alt="selectedService.modelName"
+                class="size-9 object-contain"
+              />
             </div>
             <div>
               <div class="text-base font-bold text-gray-900 leading-tight">
@@ -650,10 +763,14 @@ function showDetail(service: ModelService) {
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+            <Tag
+              class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0"
+            >
               {{ selectedService.category }}
             </Tag>
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0">
+            <span
+              class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0"
+            >
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               在线运行
             </span>
@@ -662,42 +779,60 @@ function showDetail(service: ModelService) {
 
         <!-- 运营指标网格 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">运营调度指标 / Scheduling Specs</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            运营调度指标 / Scheduling Specs
+          </div>
           <div class="grid grid-cols-3 gap-3">
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Globe class="size-3" />
                 限流速率 (Rate Limit)
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.rateLimit }}</div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">
+                {{ activeMeta.rateLimit }}
+              </div>
             </div>
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Cpu class="size-3" />
                 并发阈值 (Concurrency)
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.concurrency }} req</div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">
+                {{ activeMeta.concurrency }} req
+              </div>
             </div>
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Zap class="size-3" />
                 上下文长度 (Context)
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.contextWindow }}</div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">
+                {{ activeMeta.contextWindow }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- 部署集群与算力规格 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">部署集群与硬件规格 / Deployment & Hardware</div>
-          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            部署集群与硬件规格 / Deployment & Hardware
+          </div>
+          <div
+            class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex flex-col gap-3"
+          >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5 text-xs text-gray-400">
                 <Database class="size-3.5" />
                 <span>部署节点/集群</span>
               </div>
-              <span class="text-xs font-medium text-gray-800">{{ activeMeta.deploymentNode }}</span>
+              <span class="text-xs font-medium text-gray-800">{{
+                activeMeta.deploymentNode
+              }}</span>
             </div>
             <div class="h-px bg-gray-200/60"></div>
             <div class="flex items-center justify-between">
@@ -705,50 +840,77 @@ function showDetail(service: ModelService) {
                 <Activity class="size-3.5" />
                 <span>算力硬件规格</span>
               </div>
-              <span class="text-xs font-mono font-medium text-gray-800">{{ activeMeta.gpuInstance }}</span>
+              <span class="text-xs font-mono font-medium text-gray-800">{{
+                activeMeta.gpuInstance
+              }}</span>
             </div>
           </div>
         </div>
 
         <!-- 价格明细 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">资费与单价 / Service Pricing</div>
-          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            资费与单价 / Service Pricing
+          </div>
+          <div
+            class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between"
+          >
             <div class="flex flex-col">
               <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
-              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.inputPrice.toFixed(4) }}</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono"
+                >¥{{ selectedService.inputPrice.toFixed(4) }}</span
+              >
             </div>
             <div class="h-6 w-px bg-gray-200"></div>
             <div class="flex flex-col items-end">
               <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
-              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.outputPrice.toFixed(4) }}</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono"
+                >¥{{ selectedService.outputPrice.toFixed(4) }}</span
+              >
             </div>
           </div>
         </div>
 
         <!-- 租户调用比例分担 -->
         <div class="flex flex-col gap-2 flex-1 min-h-0">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">租户消费与调用分布 / Tenant Allocation Details</div>
-          <div class="border border-gray-100 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0 bg-white">
-            <div class="bg-gray-50/70 border-b border-gray-100 px-4 py-2 flex items-center justify-between text-[11px] text-gray-400 uppercase font-semibold shrink-0">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            租户消费与调用分布 / Tenant Allocation Details
+          </div>
+          <div
+            class="border border-gray-100 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0 bg-white"
+          >
+            <div
+              class="bg-gray-50/70 border-b border-gray-100 px-4 py-2 flex items-center justify-between text-[11px] text-gray-400 uppercase font-semibold shrink-0"
+            >
               <div class="w-1/3">租户名称</div>
               <div class="w-1/3 text-right">调用量 (次)</div>
               <div class="w-1/3 text-right">产生资费</div>
             </div>
             <div class="overflow-auto divide-y divide-gray-100 flex-1">
-              <div 
-                v-for="tenantShare in mockTenantShares" 
+              <div
+                v-for="tenantShare in mockTenantShares"
                 :key="tenantShare.tenantName"
                 class="px-4 py-2.5 flex items-center justify-between text-xs text-gray-700 hover:bg-gray-50/50"
               >
-                <div class="w-1/3 font-medium text-gray-800 truncate" :title="tenantShare.tenantName">
+                <div
+                  class="w-1/3 font-medium text-gray-800 truncate"
+                  :title="tenantShare.tenantName"
+                >
                   {{ tenantShare.tenantName }}
                 </div>
                 <div class="w-1/3 text-right font-mono">
                   {{ Number(tenantShare.calls).toLocaleString() }}
-                  <span class="text-[10px] text-gray-400 ml-1">({{ tenantShare.percentage }}%)</span>
+                  <span class="text-[10px] text-gray-400 ml-1"
+                    >({{ tenantShare.percentage }}%)</span
+                  >
                 </div>
-                <div class="w-1/3 text-right font-mono text-emerald-600 font-semibold">
+                <div
+                  class="w-1/3 text-right font-mono text-emerald-600 font-semibold"
+                >
                   {{ tenantShare.revenue }}
                 </div>
               </div>
@@ -757,8 +919,12 @@ function showDetail(service: ModelService) {
         </div>
 
         <!-- 关闭抽屉按钮 -->
-        <div class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0">
-          <Button class="rounded-lg text-xs" @click="detailVisible = false">关闭窗口</Button>
+        <div
+          class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0"
+        >
+          <Button class="rounded-lg text-xs" @click="detailVisible = false"
+            >关闭窗口</Button
+          >
         </div>
       </div>
     </Drawer>

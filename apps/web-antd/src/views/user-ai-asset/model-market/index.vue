@@ -14,6 +14,8 @@ import {
   TabPane,
 } from 'ant-design-vue';
 
+import { getModelIconSrc } from '#/utils/model-icon';
+
 const SlidersHorizontal = createIconifyIcon('lucide:sliders-horizontal');
 const ShieldAlert = createIconifyIcon('lucide:shield-alert');
 const Terminal = createIconifyIcon('lucide:terminal');
@@ -153,16 +155,6 @@ const modelServices = ref<ModelService[]>([
   },
 ]);
 
-// 极简中性 Morandi 风格色彩映射
-const avatarColorMap: Record<string, string> = {
-  文本生成: 'bg-blue-50/70 border border-blue-150 text-blue-600',
-  代码生成: 'bg-teal-50/70 border border-teal-150 text-teal-600',
-  视觉识别: 'bg-purple-50/70 border border-purple-150 text-purple-600',
-  语音处理: 'bg-orange-50/70 border border-orange-150 text-orange-600',
-};
-
-
-
 const filteredServices = computed(() => {
   let result = [...modelServices.value];
 
@@ -235,11 +227,15 @@ function startDebug(serviceName: string) {
 }
 
 function generateApiKey(serviceName: string) {
-  message.success(`成功为服务 ${serviceName} 生成临时调试 API-Key！已自动保存至您的凭证管理。`);
+  message.success(
+    `成功为服务 ${serviceName} 生成临时调试 API-Key！已自动保存至您的凭证管理。`,
+  );
 }
 
 function copyEndpoint(serviceName: string) {
-  navigator.clipboard.writeText(`https://api.fn-compute.net/v1/models/${serviceName}/chat/completions`);
+  navigator.clipboard.writeText(
+    `https://api.fn-compute.net/v1/models/${serviceName}/chat/completions`,
+  );
   message.success(`已复制 ${serviceName} 的服务 Endpoint！`);
 }
 
@@ -258,33 +254,53 @@ interface ModelMeta {
 }
 
 const mockModelMetaMap: Record<string, ModelMeta> = {
-  '文本生成': {
+  文本生成: {
     provider: 'DeepSeek / Meta / Google',
     contextWindow: '128K Tokens',
     maxOutput: '8,192 Tokens',
-    description: '采用最先进的指令微调与强化学习算法。在大规模多任务语言理解（MMLU）、复杂推理、数学计算及代码编写方面展现出极其出色的水平，特别适用于智能助手、专业文本生成、逻辑推导及语义分析等企业级复杂场景。',
-    advantages: ['业界顶级数学与逻辑推理表现', '深度支持中文与英文指令遵循', '超长上下文关联感知能力'],
+    description:
+      '采用最先进的指令微调与强化学习算法。在大规模多任务语言理解（MMLU）、复杂推理、数学计算及代码编写方面展现出极其出色的水平，特别适用于智能助手、专业文本生成、逻辑推导及语义分析等企业级复杂场景。',
+    advantages: [
+      '业界顶级数学与逻辑推理表现',
+      '深度支持中文与英文指令遵循',
+      '超长上下文关联感知能力',
+    ],
   },
-  '代码生成': {
+  代码生成: {
     provider: 'DeepSeek / Meta / Qwen',
     contextWindow: '64K Tokens',
     maxOutput: '4,096 Tokens',
-    description: '专为多语言代码生成、补全、解释和重构而优化。理解复杂系统架构设计，支持数十种编程语言，生成符合行业最佳实践的高安全性、高质量规范代码，内置单元测试建议及错误排查提示。',
-    advantages: ['跨文件上下文代码补全', '出色的 SQL 与 Shell 脚本处理', '开箱即用的单元测试生成能力'],
+    description:
+      '专为多语言代码生成、补全、解释和重构而优化。理解复杂系统架构设计，支持数十种编程语言，生成符合行业最佳实践的高安全性、高质量规范代码，内置单元测试建议及错误排查提示。',
+    advantages: [
+      '跨文件上下文代码补全',
+      '出色的 SQL 与 Shell 脚本处理',
+      '开箱即用的单元测试生成能力',
+    ],
   },
-  '视觉识别': {
+  视觉识别: {
     provider: 'OpenAI / Google / Meta',
     contextWindow: '32K Tokens',
     maxOutput: '4,096 Tokens',
-    description: '结合领先的多模态视觉-语言大模型，不仅支持精准的通用物体识别和多语言 OCR 文本提取，更能深度解析复杂图表、电路图、医学影像、工程图纸等多行业视觉资产，具备高精度语义理解。',
-    advantages: ['业界顶级的 OCR 识别精度', '深度支持多图复杂关联推理', '智能图表及数据大屏数据还原'],
+    description:
+      '结合领先的多模态视觉-语言大模型，不仅支持精准的通用物体识别和多语言 OCR 文本提取，更能深度解析复杂图表、电路图、医学影像、工程图纸等多行业视觉资产，具备高精度语义理解。',
+    advantages: [
+      '业界顶级的 OCR 识别精度',
+      '深度支持多图复杂关联推理',
+      '智能图表及数据大屏数据还原',
+    ],
   },
-  '语音处理': {
+  语音处理: {
     provider: 'OpenAI / Bilibili / Alibaba',
     contextWindow: '16K Tokens',
     maxOutput: '2,048 Tokens',
-    description: '多语种高保真语音识别与合成大模型。支持几十种方言与外语混合识别，能够自动进行背景降噪与说话人角色区分，提供自然感叹词、情绪合成等拟真语音服务，实现近乎零延迟的音频吞吐。',
-    advantages: ['抗噪及多说话人声学分离', '毫秒级流式语音识别响应', '超写实拟人化情绪声线合成'],
+    description:
+      '多语种高保真语音识别与合成大模型。支持几十种方言与外语混合识别，能够自动进行背景降噪与说话人角色区分，提供自然感叹词、情绪合成等拟真语音服务，实现近乎零延迟的音频吞吐。',
+    advantages: [
+      '抗噪及多说话人声学分离',
+      '毫秒级流式语音识别响应',
+      '超写实拟人化情绪声线合成',
+    ],
   },
 };
 
@@ -298,19 +314,26 @@ const activeMeta = computed<ModelMeta>(() => {
       advantages: ['高性能推理吞吐', '极速并发响应'],
     };
   }
-  return mockModelMetaMap[selectedService.value.category] ?? {
-    provider: '开源社区',
-    contextWindow: '32K Tokens',
-    maxOutput: '4,096 Tokens',
-    description: '通用智能算力调度平台大模型服务。',
-    advantages: ['高性能推理吞吐', '极速并发响应'],
-  };
+  return (
+    mockModelMetaMap[selectedService.value.category] ?? {
+      provider: '开源社区',
+      contextWindow: '32K Tokens',
+      maxOutput: '4,096 Tokens',
+      description: '通用智能算力调度平台大模型服务。',
+      advantages: ['高性能推理吞吐', '极速并发响应'],
+    }
+  );
 });
 
 function showDetail(service: ModelService) {
   selectedService.value = service;
   detailVisible.value = true;
   activeTabKey.value = 'curl';
+}
+
+// 获取模型图标 URL
+function getModelIcon(modelName: string): string {
+  return getModelIconSrc(modelName);
 }
 
 const curlCode = computed(() => {
@@ -375,27 +398,40 @@ main();`;
 });
 
 function handleCopyCode(code: string) {
-  navigator.clipboard.writeText(code).then(() => {
-    message.success('示例代码已复制到剪贴板！');
-  }).catch(() => {
-    message.error('复制失败，请手动选择复制');
-  });
+  navigator.clipboard
+    .writeText(code)
+    .then(() => {
+      message.success('示例代码已复制到剪贴板！');
+    })
+    .catch(() => {
+      message.error('复制失败，请手动选择复制');
+    });
 }
 </script>
 
 <template>
   <Page auto-content-height>
     <!-- 顶层外壳，确保无 Transition Transition 报错问题 -->
-    <div class="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[calc(100vh-148px)]">
-      
+    <div
+      class="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[calc(100vh-148px)]"
+    >
       <!-- 左侧筛选控制面板 -->
-      <aside class="w-full md:w-60 bg-gray-50 border-r border-gray-150 p-5 flex flex-col gap-6 shrink-0">
-        <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+      <aside
+        class="w-full md:w-60 bg-gray-50 border-r border-gray-150 p-5 flex flex-col gap-6 shrink-0"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-200 pb-3"
+        >
           <div class="flex items-center gap-2 text-gray-800 font-bold">
             <SlidersHorizontal class="size-4.5 text-blue-500" />
             <span>筛选模型</span>
           </div>
-          <Button type="link" size="small" class="flex items-center gap-1 p-0 font-medium text-blue-500 hover:text-blue-600" @click="handleReset">
+          <Button
+            type="link"
+            size="small"
+            class="flex items-center gap-1 p-0 font-medium text-blue-500 hover:text-blue-600"
+            @click="handleReset"
+          >
             <template #icon><RotateCw class="size-3.5" /></template>
             重置
           </Button>
@@ -403,15 +439,21 @@ function handleCopyCode(code: string) {
 
         <!-- 分类选择区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">分类</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            分类
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in categoryOptions"
               :key="item"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="selectedCategory === item 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                selectedCategory === item
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectCategory(item)"
             >
               {{ item }}
@@ -421,15 +463,21 @@ function handleCopyCode(code: string) {
 
         <!-- 排序字段区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">排序字段</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            排序字段
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in sortFieldOptions"
               :key="item.value"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="sortField === item.value 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                sortField === item.value
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectSortField(item.value)"
             >
               {{ item.label }}
@@ -439,15 +487,21 @@ function handleCopyCode(code: string) {
 
         <!-- 排序方向区 -->
         <div class="flex flex-col gap-3">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">排序方向</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            排序方向
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <button
               v-for="item in sortDirectionOptions"
               :key="item.value"
               class="h-8.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
-              :class="sortDirection === item.value 
-                ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'"
+              :class="
+                sortDirection === item.value
+                  ? 'bg-blue-50 border-blue-500 text-blue-600 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-500'
+              "
               @click="selectSortDirection(item.value)"
             >
               {{ item.label }}
@@ -459,8 +513,12 @@ function handleCopyCode(code: string) {
       <!-- 右侧主展示区 -->
       <section class="flex-1 flex flex-col bg-white">
         <!-- 头部搜索表单（租户端仅有用户选择与搜索框） -->
-        <div class="flex items-center justify-between gap-4 px-6 py-4.5 border-b border-gray-100 bg-white shrink-0">
-          <div class="text-sm font-bold text-gray-800 shrink-0">模型服务列表</div>
+        <div
+          class="flex items-center justify-between gap-4 px-6 py-4.5 border-b border-gray-100 bg-white shrink-0"
+        >
+          <div class="text-sm font-bold text-gray-800 shrink-0">
+            模型服务列表
+          </div>
           <div class="flex items-center gap-2.5">
             <Select
               v-model:value="userId"
@@ -486,8 +544,10 @@ function handleCopyCode(code: string) {
 
         <!-- 列表展现 -->
         <div class="flex-1 p-6">
-          <div v-if="paginatedServices.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-            
+          <div
+            v-if="paginatedServices.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5"
+          >
             <!-- 单个服务卡片 -->
             <div
               v-for="service in paginatedServices"
@@ -496,16 +556,24 @@ function handleCopyCode(code: string) {
             >
               <div>
                 <!-- 头部：极简头像、标题、服务分类 (点击可查看详情) -->
-                <div class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200" @click="showDetail(service)">
+                <div
+                  class="flex items-start justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                  @click="showDetail(service)"
+                >
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <div 
-                      class="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-                      :class="avatarColorMap[service.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+                    <div
+                      class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 overflow-hidden bg-gray-50"
                     >
-                      {{ service.modelName.substring(0, 2).toUpperCase() }}
+                      <img
+                        :src="getModelIcon(service.modelName)"
+                        :alt="service.modelName"
+                        class="size-7 object-contain"
+                      />
                     </div>
                     <div class="min-w-0">
-                      <div class="truncate text-sm font-semibold text-gray-900 leading-tight">
+                      <div
+                        class="truncate text-sm font-semibold text-gray-900 leading-tight"
+                      >
                         {{ service.serviceName }}
                       </div>
                       <div class="mt-0.5 flex items-center">
@@ -515,7 +583,9 @@ function handleCopyCode(code: string) {
                       </div>
                     </div>
                   </div>
-                  <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+                  <Tag
+                    class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0"
+                  >
                     {{ service.category }}
                   </Tag>
                 </div>
@@ -523,49 +593,105 @@ function handleCopyCode(code: string) {
                 <!-- 价格条目展示区 (极简空白对齐设计，无虚线，无实线) -->
                 <div class="mt-4 flex items-center justify-between">
                   <div class="flex flex-col">
-                    <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
-                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.inputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400"
+                      >输入价格 / K Token</span
+                    >
+                    <span
+                      class="text-xs font-medium text-gray-700 mt-1 font-mono"
+                      >¥{{ service.inputPrice.toFixed(4) }}</span
+                    >
                   </div>
                   <div class="flex flex-col items-end">
-                    <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
-                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.outputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400"
+                      >输出价格 / K Token</span
+                    >
+                    <span
+                      class="text-xs font-medium text-gray-700 mt-1 font-mono"
+                      >¥{{ service.outputPrice.toFixed(4) }}</span
+                    >
                   </div>
                 </div>
               </div>
 
               <!-- 底部调用量和动作栏 (极简冷淡圆点) -->
-              <div class="mt-3.5 pt-3.5 border-t border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"></span>
-                  <span>调用 <span class="font-semibold text-gray-700 font-mono">{{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}</span> 次</span>
+              <div
+                class="mt-3.5 pt-3.5 border-t border-gray-100 flex items-center justify-between"
+              >
+                <div
+                  class="flex items-center gap-1.5 text-[11px] text-gray-400"
+                >
+                  <span
+                    class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"
+                  ></span>
+                  <span
+                    >调用
+                    <span class="font-semibold text-gray-700 font-mono">{{
+                      service.totalCalls >= 10000
+                        ? (service.totalCalls / 10000).toFixed(1) + 'W'
+                        : service.totalCalls
+                    }}</span>
+                    次</span
+                  >
                 </div>
                 <div class="flex items-center gap-1">
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="在线调试" @click="startDebug(service.serviceName)">
+                  <Button
+                    type="text"
+                    size="small"
+                    class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors"
+                    title="在线调试"
+                    @click="startDebug(service.serviceName)"
+                  >
                     <template #icon><Terminal class="size-3.5" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="生成 Key" @click="generateApiKey(service.serviceName)">
+                  <Button
+                    type="text"
+                    size="small"
+                    class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors"
+                    title="生成 Key"
+                    @click="generateApiKey(service.serviceName)"
+                  >
                     <template #icon><Key class="size-3.5" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="复制 Endpoint" @click="copyEndpoint(service.serviceName)">
+                  <Button
+                    type="text"
+                    size="small"
+                    class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors"
+                    title="复制 Endpoint"
+                    @click="copyEndpoint(service.serviceName)"
+                  >
                     <template #icon><Copy class="size-3.5" /></template>
                   </Button>
                 </div>
               </div>
             </div>
-
           </div>
 
           <!-- 空数据状态 -->
-          <div v-else class="min-h-[380px] flex flex-col items-center justify-center text-center">
+          <div
+            v-else
+            class="min-h-[380px] flex flex-col items-center justify-center text-center"
+          >
             <ShieldAlert class="size-16 text-gray-300 mb-4" />
-            <h3 class="text-base font-bold text-gray-700 m-0">暂无符合条件的模型服务</h3>
-            <p class="text-xs text-gray-400 mt-1.5 max-w-xs">当前没有相关记录，增加服务或重置筛选条件后在此处查看数据。</p>
-            <Button type="primary" size="small" class="mt-4 px-4" @click="handleReset">重置筛选</Button>
+            <h3 class="text-base font-bold text-gray-700 m-0">
+              暂无符合条件的模型服务
+            </h3>
+            <p class="text-xs text-gray-400 mt-1.5 max-w-xs">
+              当前没有相关记录，增加服务或重置筛选条件后在此处查看数据。
+            </p>
+            <Button
+              type="primary"
+              size="small"
+              class="mt-4 px-4"
+              @click="handleReset"
+              >重置筛选</Button
+            >
           </div>
         </div>
 
         <!-- 底部大分页区 -->
-        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end">
+        <div
+          class="px-6 py-4 border-t border-gray-100 flex items-center justify-end"
+        >
           <Pagination
             v-model:current="currentPage"
             v-model:page-size="pageSize"
@@ -576,7 +702,6 @@ function handleCopyCode(code: string) {
           />
         </div>
       </section>
-
     </div>
 
     <!-- 极细致莫兰迪风模型详情抽屉 -->
@@ -588,15 +713,23 @@ function handleCopyCode(code: string) {
       :closable="false"
       class="fn-model-detail-drawer"
     >
-      <div v-if="selectedService" class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1">
+      <div
+        v-if="selectedService"
+        class="flex flex-col h-full gap-6 text-sm text-gray-750 p-1"
+      >
         <!-- 头部标题区 -->
-        <div class="flex items-start justify-between pb-4.5 border-b border-gray-100">
+        <div
+          class="flex items-start justify-between pb-4.5 border-b border-gray-100"
+        >
           <div class="flex items-center gap-3">
-            <div 
-              class="h-11 w-11 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
-              :class="avatarColorMap[selectedService.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
+            <div
+              class="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 overflow-hidden bg-gray-50"
             >
-              {{ selectedService.modelName.substring(0, 2).toUpperCase() }}
+              <img
+                :src="getModelIcon(selectedService.modelName)"
+                :alt="selectedService.modelName"
+                class="size-9 object-contain"
+              />
             </div>
             <div>
               <div class="text-base font-bold text-gray-900 leading-tight">
@@ -608,10 +741,14 @@ function handleCopyCode(code: string) {
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
+            <Tag
+              class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0"
+            >
               {{ selectedService.category }}
             </Tag>
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0">
+            <span
+              class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100/60 text-[10px] font-medium shrink-0"
+            >
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               在线运行
             </span>
@@ -620,58 +757,87 @@ function handleCopyCode(code: string) {
 
         <!-- 技术参数网格 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">技术指标 / Specifications</div>
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            技术指标 / Specifications
+          </div>
           <div class="grid grid-cols-3 gap-3">
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Globe class="size-3" />
                 Provider
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 truncate" :title="activeMeta.provider">{{ activeMeta.provider }}</div>
+              <div
+                class="mt-1 text-xs font-semibold text-gray-800 truncate"
+                :title="activeMeta.provider"
+              >
+                {{ activeMeta.provider }}
+              </div>
             </div>
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Cpu class="size-3" />
                 Context Window
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.contextWindow }}</div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">
+                {{ activeMeta.contextWindow }}
+              </div>
             </div>
             <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
               <div class="text-[10px] text-gray-400 flex items-center gap-1">
                 <Zap class="size-3" />
                 Max Output
               </div>
-              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">{{ activeMeta.maxOutput }}</div>
+              <div class="mt-1 text-xs font-semibold text-gray-800 font-mono">
+                {{ activeMeta.maxOutput }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- 价格明细 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">计费规则 / Pricing</div>
-          <div class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            计费规则 / Pricing
+          </div>
+          <div
+            class="bg-gray-50/40 border border-gray-100 rounded-xl p-4 flex items-center justify-between"
+          >
             <div class="flex flex-col">
               <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
-              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.inputPrice.toFixed(4) }}</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono"
+                >¥{{ selectedService.inputPrice.toFixed(4) }}</span
+              >
             </div>
             <div class="h-6 w-px bg-gray-200"></div>
             <div class="flex flex-col items-end">
               <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
-              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono">¥{{ selectedService.outputPrice.toFixed(4) }}</span>
+              <span class="text-sm font-semibold text-gray-800 mt-1 font-mono"
+                >¥{{ selectedService.outputPrice.toFixed(4) }}</span
+              >
             </div>
           </div>
         </div>
 
         <!-- 详细介绍 -->
         <div class="flex flex-col gap-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">模型描述 / Model Profile</div>
-          <div class="bg-white text-xs leading-relaxed text-gray-550 text-justify">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            模型描述 / Model Profile
+          </div>
+          <div
+            class="bg-white text-xs leading-relaxed text-gray-550 text-justify"
+          >
             {{ activeMeta.description }}
           </div>
           <div class="flex flex-wrap gap-2 mt-1">
-            <span 
-              v-for="adv in activeMeta.advantages" 
-              :key="adv" 
+            <span
+              v-for="adv in activeMeta.advantages"
+              :key="adv"
               class="inline-block px-2.5 py-1 text-[10px] bg-gray-50 text-gray-500 rounded-full border border-gray-200"
             >
               ✓ {{ adv }}
@@ -681,17 +847,34 @@ function handleCopyCode(code: string) {
 
         <!-- 快速集成与示例代码 -->
         <div class="flex flex-col gap-2 flex-1 min-h-0">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+          <div
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center justify-between"
+          >
             <span>快速集成 / Quick Start</span>
-            <span class="text-[10px] font-normal text-gray-400 font-mono">OpenAI SDK 兼容</span>
+            <span class="text-[10px] font-normal text-gray-400 font-mono"
+              >OpenAI SDK 兼容</span
+            >
           </div>
-          
-          <Tabs v-model:activeKey="activeTabKey" class="fn-integration-tabs flex-1 flex flex-col min-h-0">
+
+          <Tabs
+            v-model:activeKey="activeTabKey"
+            class="fn-integration-tabs flex-1 flex flex-col min-h-0"
+          >
             <TabPane key="curl" tab="cURL">
-              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
-                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ curlCode }}</pre>
+              <div
+                class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between"
+              >
+                <pre
+                  class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed"
+                  >{{ curlCode }}</pre
+                >
                 <div class="mt-2.5 flex justify-end">
-                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(curlCode)">
+                  <Button
+                    type="primary"
+                    size="small"
+                    class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1"
+                    @click="handleCopyCode(curlCode)"
+                  >
                     <template #icon><Copy class="size-3" /></template>
                     复制代码
                   </Button>
@@ -699,10 +882,20 @@ function handleCopyCode(code: string) {
               </div>
             </TabPane>
             <TabPane key="python" tab="Python">
-              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
-                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ pythonCode }}</pre>
+              <div
+                class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between"
+              >
+                <pre
+                  class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed"
+                  >{{ pythonCode }}</pre
+                >
                 <div class="mt-2.5 flex justify-end">
-                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(pythonCode)">
+                  <Button
+                    type="primary"
+                    size="small"
+                    class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1"
+                    @click="handleCopyCode(pythonCode)"
+                  >
                     <template #icon><Copy class="size-3" /></template>
                     复制代码
                   </Button>
@@ -710,10 +903,20 @@ function handleCopyCode(code: string) {
               </div>
             </TabPane>
             <TabPane key="js" tab="Node.js">
-              <div class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between">
-                <pre class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed">{{ jsCode }}</pre>
+              <div
+                class="relative bg-gray-900 rounded-xl p-4 overflow-hidden h-full flex flex-col justify-between"
+              >
+                <pre
+                  class="m-0 text-xs text-blue-100 font-mono overflow-auto max-h-[150px] leading-relaxed"
+                  >{{ jsCode }}</pre
+                >
                 <div class="mt-2.5 flex justify-end">
-                  <Button type="primary" size="small" class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1" @click="handleCopyCode(jsCode)">
+                  <Button
+                    type="primary"
+                    size="small"
+                    class="h-7 px-3 text-xs bg-blue-600 border-0 hover:bg-blue-500 flex items-center gap-1"
+                    @click="handleCopyCode(jsCode)"
+                  >
                     <template #icon><Copy class="size-3" /></template>
                     复制代码
                   </Button>
@@ -724,8 +927,12 @@ function handleCopyCode(code: string) {
         </div>
 
         <!-- 关闭抽屉按钮 -->
-        <div class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0">
-          <Button class="rounded-lg text-xs" @click="detailVisible = false">关闭窗口</Button>
+        <div
+          class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0"
+        >
+          <Button class="rounded-lg text-xs" @click="detailVisible = false"
+            >关闭窗口</Button
+          >
         </div>
       </div>
     </Drawer>
