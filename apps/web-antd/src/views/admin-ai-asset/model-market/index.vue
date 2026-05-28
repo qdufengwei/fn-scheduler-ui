@@ -353,14 +353,14 @@ function showMonitorMessage(serviceName: string) {
       <!-- 右侧主展示区 -->
       <section class="flex-1 flex flex-col bg-white">
         <!-- 头部搜索表单 -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 bg-white">
-          <h2 class="text-lg font-bold text-gray-900 m-0">模型服务市场</h2>
-          <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center justify-between gap-4 px-6 py-4.5 border-b border-gray-100 bg-white shrink-0">
+          <div class="text-sm font-bold text-gray-800 shrink-0">模型服务列表</div>
+          <div class="flex items-center gap-2.5">
             <Select
               v-model:value="tenantId"
               :options="tenantOptions"
               allow-clear
-              class="w-48"
+              class="w-36"
               placeholder="请选择租户"
               @change="handleSearch"
             />
@@ -368,19 +368,19 @@ function showMonitorMessage(serviceName: string) {
               v-model:value="userId"
               :options="userOptions"
               allow-clear
-              class="w-48"
+              class="w-32"
               placeholder="请选择用户"
               @change="handleSearch"
             />
             <Input
               v-model:value="keyword"
               allow-clear
-              class="w-56"
-              placeholder="搜索服务名/模型名"
+              class="w-44"
+              placeholder="搜索服务/模型"
               @press-enter="handleSearch"
             >
               <template #prefix>
-                <Search class="size-4 text-gray-400 mr-1.5" />
+                <Search class="size-3.5 text-gray-400 mr-1" />
               </template>
             </Input>
           </div>
@@ -394,70 +394,75 @@ function showMonitorMessage(serviceName: string) {
             <div
               v-for="service in paginatedServices"
               :key="service.id"
-              class="relative bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[210px]"
-              :class="service.status === 'suspended' ? 'border-gray-200 bg-gray-50/50' : 'border-gray-150'"
+              class="group relative bg-white rounded-2xl border border-gray-150 p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.05)] hover:border-blue-200/80 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-[215px]"
+              :class="service.status === 'suspended' ? 'bg-gray-50/50' : ''"
             >
               <!-- 下架状态蒙层提示 -->
-              <div v-if="service.status === 'suspended'" class="absolute inset-0 bg-gray-100/40 rounded-xl pointer-events-none flex items-center justify-center">
-                <span class="bg-gray-800/80 text-white text-[11px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                  <ShieldAlert class="size-3" />
+              <div v-if="service.status === 'suspended'" class="absolute inset-0 bg-gray-100/60 backdrop-blur-[0.5px] rounded-2xl pointer-events-none flex items-center justify-center z-20">
+                <span class="bg-gray-800/85 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+                  <ShieldAlert class="size-3.5" />
                   已下架暂停调用
                 </span>
               </div>
 
               <div>
-                <!-- 头部：渐变图标、标题、服务分类 -->
+                <!-- 头部：渐变图标（发光呼吸灯效果）、标题、服务分类 -->
                 <div class="flex items-start justify-between gap-2.5">
                   <div class="flex items-center gap-3 min-w-0">
                     <div 
-                      class="h-10 w-10 rounded-lg flex items-center justify-center text-white font-black text-sm bg-gradient-to-br shadow-sm"
+                      class="h-10.5 w-10.5 rounded-xl flex items-center justify-center text-white font-extrabold text-xs bg-gradient-to-br shadow-sm relative shrink-0"
                       :class="avatarGradientMap[service.category] ?? 'from-gray-400 to-gray-600'"
                     >
-                      {{ service.modelName.substring(0, 2).toUpperCase() }}
+                      <span class="absolute inset-0 rounded-xl bg-inherit blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300"></span>
+                      <span class="relative z-10">{{ service.modelName.substring(0, 2).toUpperCase() }}</span>
                     </div>
                     <div class="min-w-0">
-                      <div class="truncate text-sm font-bold text-gray-800 leading-tight">
+                      <div class="truncate text-sm font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors duration-200">
                         {{ service.serviceName }}
                       </div>
-                      <div class="mt-1 flex items-center gap-1.5">
-                        <span class="text-[11px] text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[120px]">
+                      <div class="mt-0.5 flex items-center gap-1.5">
+                        <span class="text-[10px] text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[125px]">
                           {{ service.modelName }}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <Tag :color="categoryTagColorMap[service.category] ?? 'default'" class="m-0 rounded-full text-[10px] scale-95 shrink-0 px-2.5">
+                  <Tag :color="categoryTagColorMap[service.category] ?? 'default'" class="m-0 rounded-full text-[10px] scale-95 shrink-0 px-2.5 border-0 bg-opacity-10">
                     {{ service.category }}
                   </Tag>
                 </div>
 
-                <!-- 价格条目展示区 -->
-                <div class="mt-4 grid grid-cols-2 gap-3 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
-                  <div>
-                    <div class="text-[10px] text-gray-400 leading-none">输入价格 (K Tokens)</div>
-                    <div class="text-xs font-semibold text-gray-800 mt-1">¥{{ service.inputPrice.toFixed(4) }}</div>
+                <!-- 价格条目展示区 (极简分栏虚线分割设计) -->
+                <div class="mt-4 flex items-center justify-between border-y border-dashed border-gray-150 py-2.5">
+                  <div class="flex flex-col">
+                    <span class="text-[10px] text-gray-400 leading-none">输入价格 / K Token</span>
+                    <span class="text-xs font-bold text-gray-700 mt-1.5 font-mono">¥{{ service.inputPrice.toFixed(4) }}</span>
                   </div>
-                  <div>
-                    <div class="text-[10px] text-gray-400 leading-none">输出价格 (K Tokens)</div>
-                    <div class="text-xs font-semibold text-gray-800 mt-1">¥{{ service.outputPrice.toFixed(4) }}</div>
+                  <div class="h-6 w-px bg-gray-200"></div>
+                  <div class="flex flex-col items-end">
+                    <span class="text-[10px] text-gray-400 leading-none">输出价格 / K Token</span>
+                    <span class="text-xs font-bold text-gray-700 mt-1.5 font-mono">¥{{ service.outputPrice.toFixed(4) }}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- 底部调用量和动作栏 -->
-              <div class="mt-4 pt-3.5 border-t border-gray-100 flex items-center justify-between">
-                <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
-                  累计调用
-                  <span class="font-bold text-gray-800 font-mono">
-                    {{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}
+              <!-- 底部调用量和动作栏 (呼吸小绿点) -->
+              <div class="mt-3.5 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  次
+                  <span class="text-[11px] text-gray-400 font-medium">
+                    调用 <span class="font-bold text-gray-700 font-mono">{{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}</span> 次
+                  </span>
                 </div>
+                
                 <div class="flex items-center gap-2">
-                  <Button type="text" size="small" class="flex items-center justify-center p-0.5 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded" title="流量监控" @click="showMonitorMessage(service.serviceName)">
+                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-lg transition-all duration-200" title="流量监控" @click="showMonitorMessage(service.serviceName)">
                     <template #icon><BarChart3 class="size-4" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0.5 h-6 w-6 text-gray-400 hover:text-blue-500 hover:bg-gray-100 rounded" title="配置选项" @click="showConfigMessage(service.serviceName)">
+                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-lg transition-all duration-200" title="配置选项" @click="showConfigMessage(service.serviceName)">
                     <template #icon><Settings class="size-4" /></template>
                   </Button>
                   <Popconfirm
@@ -466,7 +471,7 @@ function showMonitorMessage(serviceName: string) {
                     cancel-text="取消"
                     @confirm="toggleServiceStatus(service)"
                   >
-                    <Button type="text" danger size="small" class="flex items-center justify-center p-0.5 h-6 w-6 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded">
+                    <Button type="text" danger size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200">
                       <template #icon><Power class="size-4" /></template>
                     </Button>
                   </Popconfirm>
