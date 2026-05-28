@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { computed, nextTick, ref } from 'vue';
+
 import { useVbenDrawer } from '@vben/common-ui';
-import { Button, Checkbox, Col, Form, FormItem, Input, Pagination, Popconfirm, Radio, Row, Select, Space, Switch, Table, Tag, message } from 'ant-design-vue';
-import { ref, computed, nextTick } from 'vue';
-import { ArrowLeft, Copy, Info, Plus, Trash2 } from '@vben/icons';
+import { ArrowLeft, ChevronRight, Copy, Info, Plus, Trash2 } from '@vben/icons';
+
+import { Button, Checkbox, Col, Form, FormItem, Input, message, Pagination, Popconfirm, Radio, Row, Select, Space, Switch, Table, Tag } from 'ant-design-vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -44,6 +46,10 @@ const detailRows = ref([
     size: '16835.17MB',
     address: '',
     created: '2026-03-12 08:57:23',
+    children: [
+      { id: 1011, name: 'layer 1: sha256:8f2ad615fb', tags: [], size: '2542.4MB', address: '', created: '2026-03-12 08:50:00' },
+      { id: 1012, name: 'layer 2: sha256:5d1ee55b2a', tags: [], size: '14292.77MB', address: '', created: '2026-03-12 08:55:00' },
+    ],
   },
   {
     id: 102,
@@ -64,7 +70,7 @@ const createForm = ref({
   version: '',
   isLatest: false,
   tags: [] as string[],
-  buildType: 'Dockerfile' as 'Dockerfile' | 'DevBox' | 'Task',
+  buildType: 'Dockerfile' as 'DevBox' | 'Dockerfile' | 'Task',
   dockerfile: '',
   devboxName: undefined as string | undefined,
   pauseContainer: true,
@@ -148,11 +154,7 @@ function removeTag(index: number) {
 }
 
 function handleLatestChange() {
-  if (createForm.value.isLatest) {
-    createForm.value.version = 'latest';
-  } else {
-    createForm.value.version = '';
-  }
+  createForm.value.version = createForm.value.isLatest ? 'latest' : '';
 }
 
 const notify = (text: string) => message.success(text);
@@ -193,7 +195,7 @@ function handleSave() {
     }
     const newName = `${importForm.value.targetProject}/${importForm.value.targetName}`;
     const newId = rows.value.length + 1;
-    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
     rows.value.unshift({
       id: newId,
       name: newName,
@@ -215,7 +217,7 @@ function handleSave() {
     }
     const newName = `${createForm.value.directory}/${createForm.value.name}`;
     const newId = rows.value.length + 1;
-    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
     rows.value.unshift({
       id: newId,
       name: newName,
@@ -299,6 +301,7 @@ const columns = [
 ];
 
 const detailColumns = [
+  { title: '', dataIndex: 'expand', width: 50 },
   { title: '名称', dataIndex: 'name', key: 'name', width: 340 },
   { title: '标签', dataIndex: 'tags', key: 'tags', width: 240 },
   { title: '大小', dataIndex: 'size', key: 'size', width: 120 },
@@ -316,7 +319,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
 </script>
 
 <template>
-  <div class="p-4">
+  <div>
     <transition name="fade-slide" mode="out-in">
       <!-- 镜像列表视图 -->
       <div v-if="!showDetail" key="list">
@@ -378,7 +381,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
           <div class="fn-list-pagination flex items-center justify-end mt-4">
             <Pagination
               v-model:current="currentPage"
-              v-model:pageSize="pageSize"
+              v-model:page-size="pageSize"
               :total="filteredRows.length"
               :show-size-changer="true"
               :show-quick-jumper="true"
@@ -403,7 +406,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             </Popconfirm>
           </div>
 
-          <div class="border-t border-solid border-neutral-100 dark:border-neutral-800/50 my-4" />
+          <div class="border-t border-solid border-neutral-100 dark:border-neutral-800/50 my-4"></div>
 
           <div class="bg-neutral-50/60 dark:bg-zinc-900/40 border border-solid border-neutral-100 dark:border-neutral-800/80 rounded-xl p-6">
             <Row :gutter="[48, 16]">
@@ -442,7 +445,19 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             :data-source="detailRows"
             :columns="detailColumns"
             :pagination="false"
+            :expand-icon-column-index="0"
           >
+            <template #expandIcon="slotProps">
+              <span v-if="(slotProps as any).record?.children && (slotProps as any).record?.children.length > 0" class="mr-2 inline-block align-middle">
+                <ChevronRight
+                  class="size-4 text-gray-400 cursor-pointer transition-transform duration-200"
+                  :class="(slotProps as any).expanded ? 'rotate-90' : ''"
+                  @click="e => (slotProps as any).onExpand((slotProps as any).record, e)"
+                />
+              </span>
+              <span v-else class="inline-block w-6" />
+            </template>
+
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'name'">
                 <span class="text-sm text-gray-800 dark:text-zinc-300 font-mono select-all break-all">{{ record.name }}</span>
@@ -478,7 +493,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
           <div class="flex items-center justify-end mt-4 pt-4 border-t border-solid border-neutral-100 dark:border-neutral-800">
             <Pagination
               v-model:current="detailPage"
-              v-model:pageSize="detailPageSize"
+              v-model:page-size="detailPageSize"
               :total="detailRows.length"
               :show-size-changer="true"
               :show-quick-jumper="true"
@@ -547,7 +562,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             </div>
           </FormItem>
 
-          <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6" />
+          <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"></div>
 
           <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">构建方式</h3>
 
@@ -636,7 +651,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             <Input v-model:value="importForm.sourceAddress" placeholder="请输入源镜像地址" style="width: 480px" />
           </FormItem>
 
-          <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6" />
+          <div class="border-t border-solid border-gray-100 dark:border-zinc-800 my-6"></div>
 
           <h3 class="font-bold text-base mb-4 text-gray-800 dark:text-zinc-200">地址拼接</h3>
           <div class="space-y-4 max-w-[640px] bg-neutral-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80">
