@@ -146,20 +146,15 @@ const modelServices = ref<ModelService[]>([
   },
 ]);
 
-// 渐变色彩映射，体现高级感
-const avatarGradientMap: Record<string, string> = {
-  文本生成: 'from-blue-500 to-indigo-600',
-  代码生成: 'from-emerald-400 to-teal-600',
-  视觉识别: 'from-purple-500 to-pink-600',
-  语音处理: 'from-amber-400 to-orange-600',
+// 极简中性 Morandi 风格色彩映射
+const avatarColorMap: Record<string, string> = {
+  文本生成: 'bg-blue-50/70 border border-blue-150 text-blue-600',
+  代码生成: 'bg-teal-50/70 border border-teal-150 text-teal-600',
+  视觉识别: 'bg-purple-50/70 border border-purple-150 text-purple-600',
+  语音处理: 'bg-orange-50/70 border border-orange-150 text-orange-600',
 };
 
-const categoryTagColorMap: Record<string, string> = {
-  文本生成: 'processing',
-  代码生成: 'success',
-  视觉识别: 'warning',
-  语音处理: 'error',
-};
+
 
 const filteredServices = computed(() => {
   let result = [...modelServices.value];
@@ -351,69 +346,62 @@ function copyEndpoint(serviceName: string) {
             <div
               v-for="service in paginatedServices"
               :key="service.id"
-              class="group relative bg-white rounded-2xl border border-gray-150 p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.05)] hover:border-blue-200/80 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-[215px]"
+              class="group relative bg-white rounded-xl border border-gray-150 p-5 hover:border-gray-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all duration-200 flex flex-col justify-between h-[180px]"
             >
               <div>
-                <!-- 头部：渐变图标（发光呼吸灯效果）、标题、服务分类 -->
-                <div class="flex items-start justify-between gap-2.5">
-                  <div class="flex items-center gap-3 min-w-0">
+                <!-- 头部：极简头像、标题、服务分类 -->
+                <div class="flex items-start justify-between gap-2">
+                  <div class="flex items-center gap-2.5 min-w-0">
                     <div 
-                      class="h-10.5 w-10.5 rounded-xl flex items-center justify-center text-white font-extrabold text-xs bg-gradient-to-br shadow-sm relative shrink-0"
-                      :class="avatarGradientMap[service.category] ?? 'from-gray-400 to-gray-600'"
+                      class="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
+                      :class="avatarColorMap[service.category] ?? 'bg-gray-50 border border-gray-200 text-gray-600'"
                     >
-                      <span class="absolute inset-0 rounded-xl bg-inherit blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300"></span>
-                      <span class="relative z-10">{{ service.modelName.substring(0, 2).toUpperCase() }}</span>
+                      {{ service.modelName.substring(0, 2).toUpperCase() }}
                     </div>
                     <div class="min-w-0">
-                      <div class="truncate text-sm font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors duration-200">
+                      <div class="truncate text-sm font-semibold text-gray-900 leading-tight">
                         {{ service.serviceName }}
                       </div>
-                      <div class="mt-0.5 flex items-center gap-1.5">
-                        <span class="text-[10px] text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[125px]">
+                      <div class="mt-0.5 flex items-center">
+                        <span class="text-[10px] text-gray-400 font-mono">
                           {{ service.modelName }}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <Tag :color="categoryTagColorMap[service.category] ?? 'default'" class="m-0 rounded-full text-[10px] scale-95 shrink-0 px-2.5 border-0 bg-opacity-10">
+                  <Tag class="m-0 rounded-md text-[10px] bg-gray-50 border-gray-200 text-gray-500 px-2 shrink-0">
                     {{ service.category }}
                   </Tag>
                 </div>
 
-                <!-- 价格条目展示区 (极简分栏虚线分割设计) -->
-                <div class="mt-4 flex items-center justify-between border-y border-dashed border-gray-150 py-2.5">
+                <!-- 价格条目展示区 (极简空白对齐设计，无虚线，无实线) -->
+                <div class="mt-4 flex items-center justify-between">
                   <div class="flex flex-col">
-                    <span class="text-[10px] text-gray-400 leading-none">输入价格 / K Token</span>
-                    <span class="text-xs font-bold text-gray-700 mt-1.5 font-mono">¥{{ service.inputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400">输入价格 / K Token</span>
+                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.inputPrice.toFixed(4) }}</span>
                   </div>
-                  <div class="h-6 w-px bg-gray-200"></div>
                   <div class="flex flex-col items-end">
-                    <span class="text-[10px] text-gray-400 leading-none">输出价格 / K Token</span>
-                    <span class="text-xs font-bold text-gray-700 mt-1.5 font-mono">¥{{ service.outputPrice.toFixed(4) }}</span>
+                    <span class="text-[10px] text-gray-400">输出价格 / K Token</span>
+                    <span class="text-xs font-medium text-gray-700 mt-1 font-mono">¥{{ service.outputPrice.toFixed(4) }}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- 底部调用量和动作栏 (呼吸小绿点) -->
-              <div class="mt-3.5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-1.5">
-                  <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <span class="text-[11px] text-gray-400 font-medium">
-                    调用 <span class="font-bold text-gray-700 font-mono">{{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}</span> 次
-                  </span>
+              <!-- 底部调用量和动作栏 (极简冷淡圆点) -->
+              <div class="mt-3.5 pt-3.5 border-t border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"></span>
+                  <span>调用 <span class="font-semibold text-gray-700 font-mono">{{ service.totalCalls >= 10000 ? (service.totalCalls / 10000).toFixed(1) + 'W' : service.totalCalls }}</span> 次</span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-lg transition-all duration-200" title="在线调试" @click="startDebug(service.serviceName)">
-                    <template #icon><Terminal class="size-4" /></template>
+                <div class="flex items-center gap-1">
+                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="在线调试" @click="startDebug(service.serviceName)">
+                    <template #icon><Terminal class="size-3.5" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-lg transition-all duration-200" title="生成 Key" @click="generateApiKey(service.serviceName)">
-                    <template #icon><Key class="size-4" /></template>
+                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="生成 Key" @click="generateApiKey(service.serviceName)">
+                    <template #icon><Key class="size-3.5" /></template>
                   </Button>
-                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-lg transition-all duration-200" title="复制 Endpoint" @click="copyEndpoint(service.serviceName)">
-                    <template #icon><Copy class="size-4" /></template>
+                  <Button type="text" size="small" class="flex items-center justify-center p-0 h-6.5 w-6.5 text-gray-400 hover:text-blue-600 hover:bg-gray-100/80 rounded-md transition-colors" title="复制 Endpoint" @click="copyEndpoint(service.serviceName)">
+                    <template #icon><Copy class="size-3.5" /></template>
                   </Button>
                 </div>
               </div>
