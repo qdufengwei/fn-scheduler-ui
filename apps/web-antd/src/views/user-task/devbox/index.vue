@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -21,13 +21,21 @@ import { showInfo } from '#/utils/notify';
 const router = useRouter();
 const statusFilter = ref<string | undefined>();
 const typeFilter = ref<string | undefined>();
+const selectedUser = ref<string>();
 const currentPage = ref(1);
 const pageSize = ref(10);
+
+const userOptions = [
+  { label: 'test01', value: 'test01' },
+  { label: 'moon', value: 'moon' },
+  { label: 'ai-research', value: 'ai-research' },
+];
 
 const rows = ref([
   {
     id: 'DV-001',
-    name: '测试开发机1',
+    name: '测试开发机 1',
+    user: 'test01',
     status: '排队中',
     type: 'Jupyter',
     spec: 'A800-80GB',
@@ -39,6 +47,7 @@ const rows = ref([
   {
     id: 'DV-002',
     name: '模型调试环境',
+    user: 'moon',
     status: '运行中',
     type: 'VSCode',
     spec: 'A100-40GB',
@@ -50,6 +59,7 @@ const rows = ref([
   {
     id: 'DV-003',
     name: '数据处理机',
+    user: 'test01',
     status: '已停止',
     type: 'SSH',
     spec: 'A10-24GB',
@@ -60,7 +70,8 @@ const rows = ref([
   },
   {
     id: 'DV-004',
-    name: 'Qwen2微调开发机',
+    name: 'Qwen2 微调开发机',
+    user: 'ai-research',
     status: '运行中',
     type: 'Jupyter',
     spec: 'A800-80GB',
@@ -71,7 +82,8 @@ const rows = ref([
   },
   {
     id: 'DV-005',
-    name: 'LLaMA3调试环境',
+    name: 'LLaMA3 调试环境',
+    user: 'moon',
     status: '运行中',
     type: 'VSCode',
     spec: 'H100-80GB',
@@ -83,6 +95,7 @@ const rows = ref([
   {
     id: 'DV-006',
     name: '图像生成开发机',
+    user: 'test01',
     status: '已停止',
     type: 'Jupyter',
     spec: 'A10-24GB',
@@ -94,6 +107,7 @@ const rows = ref([
   {
     id: 'DV-007',
     name: '分布式训练调试机',
+    user: 'ai-research',
     status: '排队中',
     type: 'SSH',
     spec: 'H100-80GB',
@@ -104,7 +118,8 @@ const rows = ref([
   },
   {
     id: 'DV-008',
-    name: 'NLP标注开发机',
+    name: 'NLP 标注开发机',
+    user: 'moon',
     status: '运行中',
     type: 'VSCode',
     spec: 'A100-40GB',
@@ -122,13 +137,14 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
   title: '创建开发机',
 });
 
-const filteredRows = () => {
+const filteredRows = computed(() => {
   return rows.value.filter((r) => {
+    if (selectedUser.value && r.user !== selectedUser.value) return false;
     if (statusFilter.value && r.status !== statusFilter.value) return false;
     if (typeFilter.value && r.type !== typeFilter.value) return false;
     return true;
   });
-};
+});
 
 const getStatusColor = (status: string) => {
   const colorMap: Record<string, string> = {
@@ -142,6 +158,7 @@ const getStatusColor = (status: string) => {
 const resetFilters = () => {
   statusFilter.value = undefined;
   typeFilter.value = undefined;
+  selectedUser.value = undefined;
 };
 </script>
 
@@ -150,6 +167,13 @@ const resetFilters = () => {
     <ListPageLayout>
       <template #filters>
         <div class="flex flex-wrap items-center gap-4">
+          <Select
+            v-model:value="selectedUser"
+            allow-clear
+            placeholder="选择用户"
+            style="width: 150px"
+            :options="userOptions"
+          />
           <Select
             v-model:value="statusFilter"
             allow-clear
@@ -198,7 +222,7 @@ const resetFilters = () => {
 
       <Table
         row-key="id"
-        :data-source="filteredRows()"
+        :data-source="filteredRows"
         :pagination="false"
         :columns="[
           { title: '名称', dataIndex: 'name' },
@@ -257,7 +281,7 @@ const resetFilters = () => {
         <Pagination
           v-model:current="currentPage"
           v-model:page-size="pageSize"
-          :total="filteredRows().length"
+          :total="rows.length"
           :show-size-changer="true"
           :show-quick-jumper="true"
           :page-size-options="['10', '20', '50', '100']"

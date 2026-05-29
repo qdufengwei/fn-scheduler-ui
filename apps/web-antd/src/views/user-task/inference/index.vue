@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -10,6 +10,8 @@ import {
   Input,
   Pagination,
   Popconfirm,
+  Segmented,
+  Select,
   Space,
   Table,
   Tag,
@@ -19,15 +21,24 @@ import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
 const router = useRouter();
+const ownership = ref('all');
+const selectedUser = ref<string>();
 const keyword = ref('');
 const selected = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
+const userOptions = [
+  { label: 'test01', value: 'test01' },
+  { label: 'moon', value: 'moon' },
+  { label: 'ai-research', value: 'ai-research' },
+];
+
 const rows = ref([
   {
     id: 'INF-001',
     service: 'chat-qwen2',
+    user: 'test01',
     framework: 'vLLM',
     status: '运行中',
     ready: 'Ready',
@@ -39,6 +50,7 @@ const rows = ref([
   {
     id: 'INF-002',
     service: 'ocr-prod',
+    user: 'moon',
     framework: 'Triton',
     status: '运行中',
     ready: 'NotReady',
@@ -50,6 +62,7 @@ const rows = ref([
   {
     id: 'INF-003',
     service: 'embedding-api',
+    user: 'test01',
     framework: 'vLLM',
     status: '已停止',
     ready: 'NotReady',
@@ -61,6 +74,7 @@ const rows = ref([
   {
     id: 'INF-004',
     service: 'llama3-chat',
+    user: 'ai-research',
     framework: 'TGI',
     status: '异常',
     ready: 'NotReady',
@@ -72,31 +86,34 @@ const rows = ref([
   {
     id: 'INF-005',
     service: 'deepseek-coder-api',
+    user: 'test01',
     framework: 'vLLM',
     status: '运行中',
     ready: 'Ready',
     replicas: 3,
     instances: 3,
     spec: 'A800',
-    createdAt: '2026-05-26 08:00',
+    createdAt: '2026-05-26 11:00',
   },
   {
     id: 'INF-006',
-    service: 'speech-tts',
+    service: 'whisper-asr',
+    user: 'moon',
     framework: 'Triton',
-    status: '已停止',
-    ready: 'NotReady',
-    replicas: 0,
-    instances: 0,
+    status: '运行中',
+    ready: 'Ready',
+    replicas: 2,
+    instances: 2,
     spec: 'A10',
-    createdAt: '2026-05-22 11:30',
+    createdAt: '2026-05-27 08:30',
   },
   {
     id: 'INF-007',
-    service: 'multimodal-vqa',
-    framework: 'vLLM',
+    service: 'rerank-v2',
+    user: 'ai-research',
+    framework: 'TGI',
     status: '运行中',
-    ready: 'Ready',
+    ready: 'NotReady',
     replicas: 2,
     instances: 2,
     spec: 'A100',
@@ -105,6 +122,7 @@ const rows = ref([
   {
     id: 'INF-008',
     service: 'rerank-service',
+    user: 'test01',
     framework: 'TGI',
     status: '运行中',
     ready: 'NotReady',
@@ -114,6 +132,28 @@ const rows = ref([
     createdAt: '2026-05-27 09:40',
   },
 ]);
+
+const filteredRows = computed(() => {
+  return rows.value.filter((r) => {
+    // 所有权筛选
+    if (ownership.value === 'mine' && r.user !== 'test01') {
+      return false;
+    }
+    // 用户筛选（全部模式下才生效）
+    if (
+      ownership.value === 'all' &&
+      selectedUser.value &&
+      r.user !== selectedUser.value
+    ) {
+      return false;
+    }
+    // 关键字筛选
+    if (keyword.value && !`${r.id}${r.service}`.includes(keyword.value)) {
+      return false;
+    }
+    return true;
+  });
+});
 
 const [CreateDrawer, createDrawerApi] = useVbenDrawer({
   contentClass: 'p-6',
@@ -137,6 +177,21 @@ const getStatusColor = (status: string) => {
     <ListPageLayout>
       <template #filters>
         <div class="flex flex-wrap items-center gap-4">
+          <Segmented
+            v-model:value="ownership"
+            :options="[
+              { label: '全部', value: 'all' },
+              { label: '我创建的', value: 'mine' },
+            ]"
+          />
+          <Select
+            v-if="ownership === 'all'"
+            v-model:value="selectedUser"
+            placeholder="选择用户"
+            :options="userOptions"
+            allow-clear
+            style="width: 150px"
+          />
           <Input
             v-model:value="keyword"
             placeholder="搜索服务名称/ID"
@@ -149,7 +204,15 @@ const getStatusColor = (status: string) => {
       <template #filterActions>
         <Space>
           <Button type="primary">筛选</Button>
-          <Button @click="keyword = ''">重置</Button>
+          <Button
+            @click="
+              keyword = '';
+              ownership = 'all';
+              selectedUser = undefined;
+            "
+          >
+            重置
+          </Button>
         </Space>
       </template>
 
@@ -180,15 +243,11 @@ const getStatusColor = (status: string) => {
           selectedRowKeys: selected,
           onChange: (keys: any[]) => (selected = keys),
         }"
-        :data-source="
-          rows.filter(
-            (r) => !keyword || `${r.id}${r.service}`.includes(keyword),
-          )
-        "
+        :data-source="filteredRows"
         :pagination="false"
         :columns="[
           { title: '服务名称', dataIndex: 'service' },
-          { title: '服务ID', dataIndex: 'id' },
+          { title: '服务 ID', dataIndex: 'id' },
           { title: '状态', dataIndex: 'status' },
           { title: '推理框架', dataIndex: 'framework' },
           { title: '就绪状态', dataIndex: 'ready' },
@@ -220,7 +279,7 @@ const getStatusColor = (status: string) => {
           </template>
           <template v-if="column.dataIndex === 'action'">
             <Space :size="12">
-              <a @click="showNotify(`查看服务 ${record.id}`)">详情</a>
+              <a @click="showNotify(`查看推理服务 ${record.id}`)">详情</a>
               <a
                 :class="{
                   'pointer-events-none text-gray-300':
@@ -228,17 +287,11 @@ const getStatusColor = (status: string) => {
                 }"
                 @click="
                   record.status === '运行中' &&
-                  showNotify(`扩容服务 ${record.id}`)
+                  showNotify(`停止推理服务 ${record.id}`)
                 "
               >
-                扩容
+                停止
               </a>
-              <Popconfirm
-                title="确认删除该服务？"
-                @confirm="showNotify(`删除服务 ${record.id}`)"
-              >
-                <a class="text-red-500">删除</a>
-              </Popconfirm>
             </Space>
           </template>
         </template>

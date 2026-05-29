@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -10,6 +10,8 @@ import {
   Input,
   Pagination,
   Popconfirm,
+  Segmented,
+  Select,
   Space,
   Table,
   Tag,
@@ -19,15 +21,24 @@ import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
 const router = useRouter();
+const ownership = ref('all');
+const selectedUser = ref<string>();
 const keyword = ref('');
 const selected = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
+const userOptions = [
+  { label: 'test01', value: 'test01' },
+  { label: 'moon', value: 'moon' },
+  { label: 'ai-research', value: 'ai-research' },
+];
+
 const rows = ref([
   {
     id: 'FT-1001',
     name: '客服场景微调',
+    user: 'test01',
     model: 'Qwen2-7B',
     status: '运行中',
     ready: 'Ready',
@@ -40,6 +51,7 @@ const rows = ref([
   {
     id: 'FT-1002',
     name: '法务语料微调',
+    user: 'moon',
     model: 'Llama3-8B',
     status: '成功',
     ready: 'Ready',
@@ -52,6 +64,7 @@ const rows = ref([
   {
     id: 'FT-1003',
     name: '医疗问答微调',
+    user: 'test01',
     model: 'ChatGLM3-6B',
     status: '排队中',
     ready: 'NotReady',
@@ -64,6 +77,7 @@ const rows = ref([
   {
     id: 'FT-1004',
     name: '代码助手微调',
+    user: 'ai-research',
     model: 'DeepSeek-Coder-33B',
     status: '失败',
     ready: 'NotReady',
@@ -76,6 +90,7 @@ const rows = ref([
   {
     id: 'FT-1005',
     name: '金融风控微调',
+    user: 'test01',
     model: 'Qwen2-14B',
     status: '运行中',
     ready: 'Ready',
@@ -88,6 +103,7 @@ const rows = ref([
   {
     id: 'FT-1006',
     name: '教育辅导微调',
+    user: 'moon',
     model: 'Yi-34B',
     status: '成功',
     ready: 'Ready',
@@ -100,6 +116,7 @@ const rows = ref([
   {
     id: 'FT-1007',
     name: '电商客服微调',
+    user: 'test01',
     model: 'Baichuan2-13B',
     status: '排队中',
     ready: 'NotReady',
@@ -112,6 +129,7 @@ const rows = ref([
   {
     id: 'FT-1008',
     name: '新闻摘要微调',
+    user: 'ai-research',
     model: 'InternLM2-20B',
     status: '运行中',
     ready: 'Ready',
@@ -122,6 +140,31 @@ const rows = ref([
     spec: 'A800',
   },
 ]);
+
+const filteredRows = computed(() => {
+  return rows.value.filter((r) => {
+    // 所有权筛选
+    if (ownership.value === 'mine' && r.user !== 'test01') {
+      return false;
+    }
+    // 用户筛选（全部模式下才生效）
+    if (
+      ownership.value === 'all' &&
+      selectedUser.value &&
+      r.user !== selectedUser.value
+    ) {
+      return false;
+    }
+    // 关键字筛选
+    if (
+      keyword.value &&
+      !`${r.id}${r.model}${r.name}`.includes(keyword.value)
+    ) {
+      return false;
+    }
+    return true;
+  });
+});
 
 const [CreateDrawer, createDrawerApi] = useVbenDrawer({
   contentClass: 'p-6',
@@ -146,9 +189,24 @@ const getStatusColor = (status: string) => {
     <ListPageLayout>
       <template #filters>
         <div class="flex flex-wrap items-center gap-4">
+          <Segmented
+            v-model:value="ownership"
+            :options="[
+              { label: '全部', value: 'all' },
+              { label: '我创建的', value: 'mine' },
+            ]"
+          />
+          <Select
+            v-if="ownership === 'all'"
+            v-model:value="selectedUser"
+            placeholder="选择用户"
+            :options="userOptions"
+            allow-clear
+            style="width: 150px"
+          />
           <Input
             v-model:value="keyword"
-            placeholder="搜索任务ID/模型名/任务名"
+            placeholder="搜索任务 ID/模型名/任务名"
             style="width: 280px"
             allow-clear
           />
@@ -158,7 +216,15 @@ const getStatusColor = (status: string) => {
       <template #filterActions>
         <Space>
           <Button type="primary">筛选</Button>
-          <Button @click="keyword = ''">重置</Button>
+          <Button
+            @click="
+              keyword = '';
+              ownership = 'all';
+              selectedUser = undefined;
+            "
+          >
+            重置
+          </Button>
         </Space>
       </template>
 
@@ -189,21 +255,17 @@ const getStatusColor = (status: string) => {
           selectedRowKeys: selected,
           onChange: (keys: any[]) => (selected = keys),
         }"
-        :data-source="
-          rows.filter(
-            (r) => !keyword || `${r.id}${r.model}${r.name}`.includes(keyword),
-          )
-        "
+        :data-source="filteredRows"
         :pagination="false"
         :columns="[
           { title: '任务名称', dataIndex: 'name' },
-          { title: '任务ID', dataIndex: 'id' },
+          { title: '任务 ID', dataIndex: 'id' },
           { title: '状态', dataIndex: 'status' },
           { title: '模型名称', dataIndex: 'model' },
           { title: '就绪状态', dataIndex: 'ready' },
           { title: '运行时长', dataIndex: 'duration' },
           { title: '实例数', dataIndex: 'instances' },
-          { title: 'GPU数', dataIndex: 'gpu' },
+          { title: 'GPU 数', dataIndex: 'gpu' },
           { title: '资源规格', dataIndex: 'spec' },
           { title: '创建时间', dataIndex: 'created' },
           { title: '操作', dataIndex: 'action' },
