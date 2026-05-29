@@ -38,10 +38,9 @@ const rows = ref([
     user: 'test01',
     status: '排队中',
     type: 'Jupyter',
-    spec: 'A800-80GB',
+    spec: 'NVIDIA-A800-80GB',
     gpu: 1,
     cpu: 8,
-    memory: '32GB',
     created: '2026-05-27 01:33:13',
   },
   {
@@ -50,10 +49,9 @@ const rows = ref([
     user: 'moon',
     status: '运行中',
     type: 'VSCode',
-    spec: 'A100-40GB',
+    spec: 'NVIDIA-A100-40GB',
     gpu: 2,
     cpu: 16,
-    memory: '64GB',
     created: '2026-05-26 10:15:00',
   },
   {
@@ -62,10 +60,9 @@ const rows = ref([
     user: 'test01',
     status: '已停止',
     type: 'SSH',
-    spec: 'A10-24GB',
+    spec: 'NVIDIA-A10-24GB',
     gpu: 1,
     cpu: 4,
-    memory: '16GB',
     created: '2026-05-20 14:30:00',
   },
   {
@@ -74,10 +71,9 @@ const rows = ref([
     user: 'ai-research',
     status: '运行中',
     type: 'Jupyter',
-    spec: 'A800-80GB',
+    spec: 'NVIDIA-A800-80GB',
     gpu: 4,
     cpu: 32,
-    memory: '128GB',
     created: '2026-05-25 09:00:00',
   },
   {
@@ -86,10 +82,9 @@ const rows = ref([
     user: 'moon',
     status: '运行中',
     type: 'VSCode',
-    spec: 'H100-80GB',
+    spec: 'NVIDIA-H100-80GB',
     gpu: 2,
     cpu: 16,
-    memory: '64GB',
     created: '2026-05-24 15:20:00',
   },
   {
@@ -98,10 +93,9 @@ const rows = ref([
     user: 'test01',
     status: '已停止',
     type: 'Jupyter',
-    spec: 'A10-24GB',
+    spec: 'NVIDIA-A10-24GB',
     gpu: 1,
     cpu: 8,
-    memory: '32GB',
     created: '2026-05-22 11:45:00',
   },
   {
@@ -110,10 +104,9 @@ const rows = ref([
     user: 'ai-research',
     status: '排队中',
     type: 'SSH',
-    spec: 'H100-80GB',
+    spec: 'NVIDIA-H100-80GB',
     gpu: 8,
     cpu: 64,
-    memory: '256GB',
     created: '2026-05-23 08:30:00',
   },
   {
@@ -122,10 +115,9 @@ const rows = ref([
     user: 'moon',
     status: '运行中',
     type: 'VSCode',
-    spec: 'A100-40GB',
+    spec: 'NVIDIA-A100-40GB',
     gpu: 1,
     cpu: 8,
-    memory: '32GB',
     created: '2026-05-21 16:10:00',
   },
 ]);
@@ -225,44 +217,59 @@ const resetFilters = () => {
         :data-source="filteredRows"
         :pagination="false"
         :columns="[
-          { title: '名称', dataIndex: 'name' },
-          { title: 'ID', dataIndex: 'id' },
-          { title: '状态', dataIndex: 'status' },
-          { title: '类型', dataIndex: 'type' },
-          { title: '资源规格', dataIndex: 'spec' },
-          { title: 'GPU', dataIndex: 'gpu' },
-          { title: 'CPU', dataIndex: 'cpu' },
-          { title: '内存', dataIndex: 'memory' },
-          { title: '创建时间', dataIndex: 'created' },
-          { title: '操作', dataIndex: 'action' },
+          {
+            title: '名称',
+            dataIndex: 'name',
+            key: 'name',
+            width: 160,
+          },
+          { title: '状态', dataIndex: 'status', key: 'status', width: 90 },
+          { title: '类型', dataIndex: 'type', key: 'type', width: 100 },
+          { title: '资源规格', dataIndex: 'spec', key: 'spec', width: 200 },
+          {
+            title: 'GPU',
+            dataIndex: 'gpu',
+            key: 'gpu',
+            width: 80,
+            sorter: true,
+          },
+          {
+            title: 'CPU',
+            dataIndex: 'cpu',
+            key: 'cpu',
+            width: 80,
+            sorter: true,
+          },
+          { title: '用户', dataIndex: 'user', key: 'user', width: 100 },
+          {
+            title: '创建时间',
+            dataIndex: 'created',
+            key: 'created',
+            width: 160,
+            sorter: true,
+          },
+          { title: '操作', key: 'action', width: 120, fixed: 'right' },
         ]"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'name'">
-            <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+          <template v-if="column.key === 'name'">
+            <div class="flex flex-col">
+              <a class="text-blue-600 hover:text-blue-700 cursor-pointer">{{
+                record.name
+              }}</a>
+              <span class="text-xs text-gray-400">{{ record.id }}</span>
+            </div>
           </template>
-          <template v-if="column.dataIndex === 'status'">
+          <template v-else-if="column.key === 'status'">
             <Tag :color="getStatusColor(record.status)" class="rounded-full">
               {{ record.status }}
             </Tag>
           </template>
-          <template v-if="column.dataIndex === 'type'">
+          <template v-else-if="column.key === 'type'">
             <Tag color="blue" class="rounded-full">{{ record.type }}</Tag>
           </template>
-          <template v-if="column.dataIndex === 'action'">
+          <template v-else-if="column.key === 'action'">
             <Space :size="12">
-              <a
-                :class="{
-                  'pointer-events-none text-gray-300':
-                    record.status !== '运行中',
-                }"
-                @click="
-                  record.status === '运行中' &&
-                  showInfo(`进入开发机 ${record.id}`)
-                "
-              >
-                进入
-              </a>
               <a @click="showInfo(`保存开发机 ${record.id} 为镜像`)"
                 >保存镜像</a
               >
