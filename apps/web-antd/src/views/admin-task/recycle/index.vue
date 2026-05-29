@@ -59,6 +59,83 @@ const data = ref([
     user: 'test-0415',
     tenant: 'test-0415',
   },
+  {
+    id: 2,
+    name: 'qwen2-finetune',
+    taskId: 'job-3b92cde8a012-20260414103520',
+    deleteTime: '2026-04-14 15:30:45',
+    taskType: 'PyTorch',
+    gpuCount: 4,
+    resourceSpec: 'NVIDIA-A800-HBM2E-80GB',
+    user: 'zhangsan',
+    tenant: 'ai-lab',
+  },
+  {
+    id: 3,
+    name: 'llama-inference',
+    taskId: 'job-8e47f1b23c90-20260413082210',
+    deleteTime: '2026-04-13 09:15:30',
+    taskType: 'MPI',
+    gpuCount: 8,
+    resourceSpec: 'NVIDIA-H100-HBM2E-80GB',
+    user: 'lisi',
+    tenant: 'research-center',
+  },
+  {
+    id: 4,
+    name: 'data-preprocess',
+    taskId: 'job-5d19ab67ef01-20260412164055',
+    deleteTime: '2026-04-12 18:22:10',
+    taskType: 'CPU',
+    gpuCount: 0,
+    resourceSpec: 'CPU-Only-16C32G',
+    user: 'wangwu',
+    tenant: 'data-team',
+  },
+  {
+    id: 5,
+    name: 'chatglm-train',
+    taskId: 'job-2c84de90ab33-20260411120533',
+    deleteTime: '2026-04-11 14:08:22',
+    taskType: 'PyTorch',
+    gpuCount: 2,
+    resourceSpec: 'NVIDIA-A100-HBM2E-40GB',
+    user: 'zhaoliu',
+    tenant: 'nlp-group',
+  },
+  {
+    id: 6,
+    name: 'sd-image-gen',
+    taskId: 'job-9f36bc014578-20260410093018',
+    deleteTime: '2026-04-10 11:45:33',
+    taskType: 'Simple',
+    gpuCount: 1,
+    resourceSpec: 'NVIDIA-A10-24GB',
+    user: 'sunqi',
+    tenant: 'cv-lab',
+  },
+  {
+    id: 7,
+    name: 'bert-ner-train',
+    taskId: 'job-4a72ef58cd69-20260409151742',
+    deleteTime: '2026-04-09 16:30:10',
+    taskType: 'PyTorch',
+    gpuCount: 1,
+    resourceSpec: 'NVIDIA-GPU-HBM2E-80GB',
+    user: 'zhouba',
+    tenant: 'ai-lab',
+  },
+  {
+    id: 8,
+    name: 'model-deploy-test',
+    taskId: 'job-6e05da23f834-20260408102356',
+    deleteTime: '2026-04-08 12:10:44',
+    taskType: 'Deployment',
+    gpuCount: 2,
+    resourceSpec: 'NVIDIA-A800-HBM2E-80GB',
+    user: 'wujiu',
+    tenant: 'platform-ops',
+  },
 ]);
 
 // 重置筛选
@@ -173,7 +250,7 @@ const handleReset = () => {
       <Pagination
         v-model:current="currentPage"
         v-model:page-size="pageSize"
-        :total="1"
+        :total="8"
         :show-size-changer="true"
         :show-quick-jumper="true"
         :page-size-options="['10', '20', '50', '100']"

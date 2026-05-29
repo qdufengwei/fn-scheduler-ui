@@ -58,6 +58,41 @@ const tasks: TaskItem[] = [
     status: '排队中',
     type: '模型微调',
   },
+  {
+    id: 'user-train-qwen72b',
+    name: 'Qwen72B预训练',
+    runTime: '23h 45m 30s',
+    status: '运行中',
+    type: '训练任务',
+  },
+  {
+    id: 'user-devbox-v100',
+    name: '开发机-v100',
+    runTime: '5h 12m 44s',
+    status: '已停止',
+    type: '开发机',
+  },
+  {
+    id: 'user-finetune-legal',
+    name: '法律文本微调',
+    runTime: '0h 00m 00s',
+    status: '排队中',
+    type: '模型微调',
+  },
+  {
+    id: 'user-train-multimodal',
+    name: '多模态大模型训练',
+    runTime: '48h 22m 15s',
+    status: '运行中',
+    type: '训练任务',
+  },
+  {
+    id: 'user-inference-chat',
+    name: '对话推理服务',
+    runTime: '12h 33m 50s',
+    status: '运行中',
+    type: '推理服务',
+  },
 ];
 
 const metrics: MetricItem[] = [

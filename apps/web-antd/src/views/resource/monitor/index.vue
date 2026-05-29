@@ -8,9 +8,7 @@ import { IconifyIcon } from '@vben/icons';
 import { Button, Card, DatePicker, Select, Space } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
-import { getNodeMetricHistory } from '#/api/monitor';
-import { getNodeList } from '#/api/node';
-import { showError, showNotify } from '#/utils/notify';
+import { showNotify } from '#/utils/notify';
 
 import MetricCardGroup from './components/MetricCardGroup.vue';
 
@@ -29,7 +27,16 @@ interface MetricHistoryData {
 
 const { RangePicker } = DatePicker;
 
-const nodes = ref<any[]>([]);
+const nodes = ref<any[]>([
+  { id: 1, name: 'gpu-node-01', ipAddress: '10.0.1.101', status: '运行中' },
+  { id: 2, name: 'gpu-node-02', ipAddress: '10.0.1.102', status: '运行中' },
+  { id: 3, name: 'gpu-node-03', ipAddress: '10.0.1.103', status: '运行中' },
+  { id: 4, name: 'gpu-node-04', ipAddress: '10.0.1.104', status: '停止' },
+  { id: 5, name: 'gpu-node-05', ipAddress: '10.0.1.105', status: '运行中' },
+  { id: 6, name: 'gpu-node-06', ipAddress: '10.0.1.106', status: '运行中' },
+  { id: 7, name: 'gpu-node-07', ipAddress: '10.0.1.107', status: '运行中' },
+  { id: 8, name: 'gpu-node-08', ipAddress: '10.0.1.108', status: '停止' },
+]);
 const selectedNode = ref<number>();
 const nodesLoading = ref(false);
 const metricsLoading = ref(false);
@@ -60,56 +67,120 @@ const nodeOptions = computed(() =>
   })),
 );
 
-function resolveTimeRange() {
-  if (timeRange.value && timeRange.value.length === 2) {
-    return {
-      startTime: timeRange.value[0].toISOString(),
-      endTime: timeRange.value[1].toISOString(),
-    };
-  }
-  return {
-    startTime: dayjs().subtract(1, 'hour').toISOString(),
-    endTime: dayjs().toISOString(),
-  };
-}
-
-async function fetchNodeList() {
+function fetchNodeList() {
   nodesLoading.value = true;
-  try {
-    const res: any = await getNodeList();
-    const payload = res?.data ?? res ?? {};
-    nodes.value = Array.isArray(payload.list) ? payload.list : [];
-    if (!selectedNode.value && nodes.value.length > 0) {
-      selectedNode.value = nodes.value[0].id;
-    }
-  } catch {
-    showError('节点列表加载失败');
-    nodes.value = [];
-  } finally {
-    nodesLoading.value = false;
+  // 模拟数据，直接使用本地 mock
+  if (!selectedNode.value && nodes.value.length > 0) {
+    selectedNode.value = nodes.value[0].id;
   }
+  nodesLoading.value = false;
 }
 
-async function fetchMetricHistory() {
+function fetchMetricHistory() {
   if (!selectedNode.value) {
     metricHistory.value = [];
     return;
   }
   metricsLoading.value = true;
-  try {
-    const timeRangeParams = resolveTimeRange();
-    const res: any = await getNodeMetricHistory({
+  // 模拟数据，生成随机指标历史
+  const now = Date.now();
+  const node = nodes.value.find((n) => n.id === selectedNode.value);
+  const nodeName = node?.name ?? '未知节点';
+  const isRunning = node?.status === '运行中';
+  const generatePoints = (base: number, variance: number) =>
+    Array.from({ length: 12 }, (_, i) => ({
+      timestamp: new Date(now - (11 - i) * 300_000).toISOString(),
+      value: isRunning
+        ? Math.round((base + (Math.random() - 0.5) * variance) * 10) / 10
+        : 0,
+    }));
+  metricHistory.value = [
+    {
+      data: generatePoints(320, 40),
+      metricKey: 'gpuPower',
       nodeId: selectedNode.value,
-      ...timeRangeParams,
-    });
-    const payload = res?.data ?? res ?? {};
-    metricHistory.value = Array.isArray(payload) ? payload : [];
-  } catch {
-    showError('节点指标加载失败');
-    metricHistory.value = [];
-  } finally {
-    metricsLoading.value = false;
-  }
+      nodeName,
+      unit: 'W',
+    },
+    {
+      data: generatePoints(72, 10),
+      metricKey: 'gpuTemperature',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '°C',
+    },
+    {
+      data: generatePoints(80, 20),
+      metricKey: 'nvLinkBandwidth',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: 'GB/s',
+    },
+    {
+      data: generatePoints(500, 100),
+      metricKey: 'nvLinkTxBytes',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: 'GB',
+    },
+    {
+      data: generatePoints(450, 80),
+      metricKey: 'nvLinkRxBytes',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: 'GB',
+    },
+    {
+      data: generatePoints(78, 20),
+      metricKey: 'gpuUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+    {
+      data: generatePoints(65, 15),
+      metricKey: 'gpuMemoryUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+    {
+      data: generatePoints(70, 15),
+      metricKey: 'gpuSmUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+    {
+      data: generatePoints(52, 10),
+      metricKey: 'gpuMemoryUsed',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: 'GB',
+    },
+    {
+      data: generatePoints(60, 20),
+      metricKey: 'tensorCoreUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+    {
+      data: generatePoints(45, 20),
+      metricKey: 'cpuUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+    {
+      data: generatePoints(62, 15),
+      metricKey: 'memoryUtilization',
+      nodeId: selectedNode.value,
+      nodeName,
+      unit: '%',
+    },
+  ];
+  metricsLoading.value = false;
 }
 
 function resetAutoRefresh() {
@@ -125,9 +196,9 @@ function onDownloadReport() {
   showNotify('报表下载已触发（原型）');
 }
 
-onMounted(async () => {
-  await fetchNodeList();
-  await fetchMetricHistory();
+onMounted(() => {
+  fetchNodeList();
+  fetchMetricHistory();
   resetAutoRefresh();
 });
 

@@ -58,6 +58,41 @@ const dataSource = ref([
     usage: '包年: 5.00 GB/ years\n按需（小时）: 3026.25 hours',
     cost: '¥0.00',
   },
+  {
+    id: 4,
+    tenant: 'ai-lab-team',
+    alias: 'AI实验室',
+    usage: '按需（小时）: 1280.50 hours\n包月: 2.00 GB/ months',
+    cost: '¥1,280.50',
+  },
+  {
+    id: 5,
+    tenant: 'nlp-research',
+    alias: '自然语言研究组',
+    usage: '按需（小时）: 876.33 hours',
+    cost: '¥876.33',
+  },
+  {
+    id: 6,
+    tenant: 'cv-department',
+    alias: '计算机视觉部',
+    usage: '包年: 10.00 GB/ years\n按需（小时）: 542.18 hours',
+    cost: '¥542.18',
+  },
+  {
+    id: 7,
+    tenant: 'data-mining-group',
+    alias: '数据挖掘组',
+    usage: '按需（小时）: 3215.77 hours',
+    cost: '¥3,215.77',
+  },
+  {
+    id: 8,
+    tenant: 'speech-lab',
+    alias: '语音实验室',
+    usage: '包月: 8.00 GB/ months\n按需（小时）: 198.60 hours',
+    cost: '¥198.60',
+  },
 ]);
 </script>
 
@@ -181,7 +216,7 @@ const dataSource = ref([
           <Pagination
             v-model:current="currentPage"
             v-model:page-size="pageSize"
-            :total="3"
+            :total="dataSource.length"
             :show-size-changer="true"
             :show-quick-jumper="true"
             :page-size-options="['10', '20', '50', '100']"

@@ -72,7 +72,13 @@ const columns = [
     width: 250,
   },
   { title: '已用/总计', dataIndex: 'used', key: 'used', width: 120 },
-  { title: '到期时间', dataIndex: 'expireTime', key: 'expireTime', width: 150 },
+  {
+    title: '到期时间',
+    dataIndex: 'expireTime',
+    key: 'expireTime',
+    width: 150,
+    customRender: ({ text }: { text: any }) => text || '-',
+  },
   { title: '操作', key: 'action', width: 180, fixed: 'right' as const },
 ];
 
@@ -255,8 +261,8 @@ const dataSource = computed(() => {
           name: tenant,
           alias: tenantInfo.alias,
         },
-        // 存储列合并信息（同一租户内，第一条有存储值的记录显示存储，其余为0）
-        storageRowSpan: index === 0 && item.storage ? 1 : 0,
+        // 存储列合并信息（同一租户内，第一条记录显示存储并合并行，其余为0）
+        storageRowSpan: index === 0 ? items.length : 0,
       });
     });
   });

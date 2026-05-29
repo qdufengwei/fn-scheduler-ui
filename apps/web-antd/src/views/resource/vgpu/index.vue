@@ -82,6 +82,84 @@ const dataSource = ref([
     totalInstances: 5,
     price: '¥5.00/时',
   },
+  {
+    id: 3,
+    name: 'GPU-10%-8GiB',
+    resourceSpec: 'NVIDIA-A10-24GB',
+    status: '启用',
+    compute: '10%',
+    memory: '8GiB',
+    userPurchase: 20,
+    allocated: 18,
+    inUse: 15,
+    totalInstances: 20,
+    price: '¥1.00/时',
+  },
+  {
+    id: 4,
+    name: 'GPU-75%-60GiB',
+    resourceSpec: 'NVIDIA-H100-HBM2E-80GB',
+    status: '启用',
+    compute: '75%',
+    memory: '60GiB',
+    userPurchase: 4,
+    allocated: 4,
+    inUse: 3,
+    totalInstances: 4,
+    price: '¥7.50/时',
+  },
+  {
+    id: 5,
+    name: 'GPU-20%-16GiB',
+    resourceSpec: 'NVIDIA-A800-HBM2E-80GB',
+    status: '停用',
+    compute: '20%',
+    memory: '16GiB',
+    userPurchase: 8,
+    allocated: 0,
+    inUse: 0,
+    totalInstances: 8,
+    price: '¥2.00/时',
+  },
+  {
+    id: 6,
+    name: 'GPU-100%-80GiB',
+    resourceSpec: 'NVIDIA-GPU-HBM2E-80GB',
+    status: '启用',
+    compute: '100%',
+    memory: '80GiB',
+    userPurchase: 2,
+    allocated: 2,
+    inUse: 2,
+    totalInstances: 2,
+    price: '¥10.00/时',
+  },
+  {
+    id: 7,
+    name: 'GPU-33%-24GiB',
+    resourceSpec: 'NVIDIA-A100-HBM2E-40GB',
+    status: '启用',
+    compute: '33%',
+    memory: '24GiB',
+    userPurchase: 6,
+    allocated: 5,
+    inUse: 4,
+    totalInstances: 6,
+    price: '¥3.30/时',
+  },
+  {
+    id: 8,
+    name: 'GPU-50%-12GiB',
+    resourceSpec: 'NVIDIA-A10-24GB',
+    status: '停用',
+    compute: '50%',
+    memory: '12GiB',
+    userPurchase: 3,
+    allocated: 0,
+    inUse: 0,
+    totalInstances: 3,
+    price: '¥2.50/时',
+  },
 ]);
 
 const showWarning = ref(false);
@@ -185,7 +263,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       <Pagination
         v-model:current="currentPage"
         v-model:page-size="pageSize"
-        :total="2"
+        :total="8"
         :show-size-changer="true"
         :show-quick-jumper="true"
         :page-size-options="['10', '20', '50', '100']"

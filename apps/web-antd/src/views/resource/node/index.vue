@@ -19,8 +19,7 @@ import {
   Tag,
 } from 'ant-design-vue';
 
-import { getNodeList } from '#/api/node';
-import { showError, showNotify, showWarning } from '#/utils/notify';
+import { showNotify, showWarning } from '#/utils/notify';
 
 interface NodeRow {
   allocatedGpu: number;
@@ -39,7 +38,173 @@ interface NodeRow {
 }
 
 const loading = ref(false);
-const rows = ref<NodeRow[]>([]);
+const rows = ref<NodeRow[]>([
+  {
+    id: 1,
+    name: 'gpu-node-01',
+    region: '华东',
+    gpuModel: 'NVIDIA A100-SXM4-80GB',
+    allocatedGpu: 8,
+    totalGpu: 8,
+    allocationType: '整机分配',
+    status: '就绪',
+    createTime: '2025-03-15 10:30:00',
+    ipAddress: '10.0.1.101',
+    isOnline: true,
+    onlineTime: '2025-03-15 11:00:00',
+    price: 28.5,
+  },
+  {
+    id: 2,
+    name: 'gpu-node-02',
+    region: '华东',
+    gpuModel: 'NVIDIA A100-SXM4-80GB',
+    allocatedGpu: 4,
+    totalGpu: 8,
+    allocationType: '弹性分配',
+    status: '就绪',
+    createTime: '2025-03-16 09:15:00',
+    ipAddress: '10.0.1.102',
+    isOnline: true,
+    onlineTime: '2025-03-16 09:30:00',
+    price: 28.5,
+  },
+  {
+    id: 3,
+    name: 'gpu-node-03',
+    region: '华北',
+    gpuModel: 'NVIDIA H100-HBM2E-80GB',
+    allocatedGpu: 0,
+    totalGpu: 8,
+    allocationType: '未出售',
+    status: '未就绪',
+    createTime: '2025-04-01 14:20:00',
+    ipAddress: '10.0.2.101',
+    isOnline: false,
+    onlineTime: '-',
+    price: 42,
+  },
+  {
+    id: 4,
+    name: 'gpu-node-04',
+    region: '华北',
+    gpuModel: 'NVIDIA H100-HBM2E-80GB',
+    allocatedGpu: 2,
+    totalGpu: 8,
+    allocationType: 'MIG分配',
+    status: '就绪',
+    createTime: '2025-04-02 08:45:00',
+    ipAddress: '10.0.2.102',
+    isOnline: true,
+    onlineTime: '2025-04-02 09:00:00',
+    price: 42,
+  },
+  {
+    id: 5,
+    name: 'gpu-node-05',
+    region: '华南',
+    gpuModel: 'NVIDIA A800-SXM4-80GB',
+    allocatedGpu: 4,
+    totalGpu: 8,
+    allocationType: 'vGPU分配',
+    status: '就绪',
+    createTime: '2025-04-10 16:30:00',
+    ipAddress: '10.0.3.101',
+    isOnline: true,
+    onlineTime: '2025-04-10 17:00:00',
+    price: 22,
+  },
+  {
+    id: 6,
+    name: 'gpu-node-06',
+    region: '华东',
+    gpuModel: 'NVIDIA A100-SXM4-80GB',
+    allocatedGpu: 8,
+    totalGpu: 8,
+    allocationType: '整机分配',
+    status: '维护中',
+    createTime: '2025-02-20 11:00:00',
+    ipAddress: '10.0.1.103',
+    isOnline: false,
+    onlineTime: '-',
+    price: 28.5,
+  },
+  {
+    id: 7,
+    name: 'gpu-node-07',
+    region: '华北',
+    gpuModel: 'NVIDIA H100-HBM2E-80GB',
+    allocatedGpu: 6,
+    totalGpu: 8,
+    allocationType: '弹性分配',
+    status: '就绪',
+    createTime: '2025-04-15 13:20:00',
+    ipAddress: '10.0.2.103',
+    isOnline: true,
+    onlineTime: '2025-04-15 13:45:00',
+    price: 42,
+  },
+  {
+    id: 8,
+    name: 'gpu-node-08',
+    region: '华南',
+    gpuModel: 'NVIDIA A800-SXM4-80GB',
+    allocatedGpu: 0,
+    totalGpu: 4,
+    allocationType: '未出售',
+    status: '就绪',
+    createTime: '2025-04-18 09:10:00',
+    ipAddress: '10.0.3.102',
+    isOnline: false,
+    onlineTime: '-',
+    price: 22,
+  },
+  {
+    id: 9,
+    name: 'gpu-node-09',
+    region: '华东',
+    gpuModel: 'NVIDIA A100-SXM4-40GB',
+    allocatedGpu: 3,
+    totalGpu: 4,
+    allocationType: 'MIG分配',
+    status: '就绪',
+    createTime: '2025-05-01 10:00:00',
+    ipAddress: '10.0.1.104',
+    isOnline: true,
+    onlineTime: '2025-05-01 10:30:00',
+    price: 18,
+  },
+  {
+    id: 10,
+    name: 'gpu-node-10',
+    region: '华北',
+    gpuModel: 'NVIDIA H100-HBM2E-80GB',
+    allocatedGpu: 8,
+    totalGpu: 8,
+    allocationType: '整机分配',
+    status: '维护中',
+    createTime: '2025-03-28 15:45:00',
+    ipAddress: '10.0.2.104',
+    isOnline: false,
+    onlineTime: '-',
+    price: 42,
+  },
+  {
+    id: 11,
+    name: 'gpu-node-11',
+    region: '华南',
+    gpuModel: 'NVIDIA A800-SXM4-80GB',
+    allocatedGpu: 2,
+    totalGpu: 8,
+    allocationType: 'vGPU分配',
+    status: '未就绪',
+    createTime: '2025-05-05 08:30:00',
+    ipAddress: '10.0.3.103',
+    isOnline: false,
+    onlineTime: '-',
+    price: 22,
+  },
+]);
 const selectedRowKeys = ref<number[]>([]);
 
 const filters = ref({
@@ -283,18 +448,10 @@ const columns = [
   { title: '操作', key: 'action', width: 180, fixed: 'right' as const },
 ];
 
-async function fetchData() {
+function fetchData() {
   loading.value = true;
-  try {
-    const res: any = await getNodeList();
-    const payload = res?.data ?? res ?? {};
-    rows.value = (payload.list ?? []) as NodeRow[];
-  } catch {
-    showError('节点数据加载失败，请稍后重试');
-    rows.value = [];
-  } finally {
-    loading.value = false;
-  }
+  // 模拟数据，直接使用本地 mock
+  loading.value = false;
 }
 
 onMounted(fetchData);

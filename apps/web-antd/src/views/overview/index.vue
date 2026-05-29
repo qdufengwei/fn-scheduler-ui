@@ -37,7 +37,56 @@ const billingStats = ref({
   pendingIncome: 0,
 });
 
-const messages = ref<any[]>([]);
+const messages = ref<any[]>([
+  {
+    id: 1,
+    type: 'warning',
+    title: '节点 gpu-node-06 进入维护状态',
+    time: '2025-05-28 14:30',
+  },
+  {
+    id: 2,
+    type: 'info',
+    title: '租户 test01 资源分配已更新',
+    time: '2025-05-28 11:20',
+  },
+  {
+    id: 3,
+    type: 'error',
+    title: '推理服务 baichuan2-13b-api-06 运行失败',
+    time: '2025-05-27 16:45',
+  },
+  {
+    id: 4,
+    type: 'info',
+    title: '新节点 gpu-node-11 已添加到集群',
+    time: '2025-05-27 09:00',
+  },
+  {
+    id: 5,
+    type: 'success',
+    title: '微调任务 qwen2.5-72b-lora-01 训练完成',
+    time: '2025-05-26 20:15',
+  },
+  {
+    id: 6,
+    type: 'warning',
+    title: 'GPU利用率超过90%阈值告警',
+    time: '2025-05-26 15:30',
+  },
+  {
+    id: 7,
+    type: 'info',
+    title: '系统将于6月1日进行例行维护升级',
+    time: '2025-05-25 10:00',
+  },
+  {
+    id: 8,
+    type: 'success',
+    title: '节点 gpu-node-09 MIG配置已生效',
+    time: '2025-05-25 08:30',
+  },
+]);
 
 const topologyStats = ref({
   singleTask: { current: 0, total: 6 },
@@ -318,6 +367,31 @@ const topologyStats = ref({
             >
               <Inbox class="size-10 mx-auto mb-2 opacity-30" />
               <div class="text-sm">暂无数据</div>
+            </div>
+            <div v-else class="space-y-2 max-h-64 overflow-y-auto">
+              <div
+                v-for="msg in messages"
+                :key="msg.id"
+                class="flex items-start gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer"
+              >
+                <span
+                  class="mt-1 size-2 rounded-full shrink-0"
+                  :class="{
+                    'bg-blue-500': msg.type === 'info',
+                    'bg-green-500': msg.type === 'success',
+                    'bg-orange-500': msg.type === 'warning',
+                    'bg-red-500': msg.type === 'error',
+                  }"
+                ></span>
+                <div class="min-w-0 flex-1">
+                  <div class="text-sm text-gray-700 truncate">
+                    {{ msg.title }}
+                  </div>
+                  <div class="text-xs text-gray-400 mt-0.5">
+                    {{ msg.time }}
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
         </Col>
