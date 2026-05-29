@@ -24,6 +24,8 @@ const router = useRouter();
 const ownership = ref('mine');
 const selectedUser = ref<string>();
 const keyword = ref('');
+const statusFilter = ref<string>();
+const specFilter = ref<string>();
 const selected = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -34,101 +36,131 @@ const userOptions = [
   { label: 'ai-research', value: 'ai-research' },
 ];
 
+const statusOptions = [
+  { label: '运行中', value: '运行中' },
+  { label: '已停止', value: '已停止' },
+  { label: '异常', value: '异常' },
+];
+
+const specOptions = [
+  { label: 'NVIDIA-H100-HBM2E-80GB', value: 'NVIDIA-H100-HBM2E-80GB' },
+  { label: 'NVIDIA-GPU-HBM2E-80GB', value: 'NVIDIA-GPU-HBM2E-80GB' },
+  { label: 'NVIDIA-A800-80GB', value: 'NVIDIA-A800-80GB' },
+  { label: 'NVIDIA-A100-40GB', value: 'NVIDIA-A100-40GB' },
+  { label: 'NVIDIA-A10-24GB', value: 'NVIDIA-A10-24GB' },
+];
+
 const rows = ref([
   {
     id: 'INF-001',
-    service: 'chat-qwen2',
+    name: 'chat-qwen2',
     user: 'test01',
+    model: 'Qwen2-7B',
     framework: 'vLLM',
     status: '运行中',
-    ready: 'Ready',
+    ready: '2/2',
     replicas: 2,
     instances: 2,
-    spec: 'A800',
+    gpu: 2,
+    spec: 'NVIDIA-A800-80GB',
     createdAt: '2026-05-25 10:30',
   },
   {
     id: 'INF-002',
-    service: 'ocr-prod',
+    name: 'ocr-prod',
     user: 'moon',
+    model: 'PaddleOCR',
     framework: 'Triton',
     status: '运行中',
-    ready: 'NotReady',
+    ready: '1/1',
     replicas: 1,
     instances: 1,
-    spec: 'A10',
+    gpu: 1,
+    spec: 'NVIDIA-A10-24GB',
     createdAt: '2026-05-24 14:20',
   },
   {
     id: 'INF-003',
-    service: 'embedding-api',
+    name: 'embedding-api',
     user: 'test01',
+    model: 'bge-large-zh',
     framework: 'vLLM',
     status: '已停止',
-    ready: 'NotReady',
+    ready: '0/0',
     replicas: 0,
     instances: 0,
-    spec: 'A800',
+    gpu: 0,
+    spec: 'NVIDIA-A800-80GB',
     createdAt: '2026-05-20 09:15',
   },
   {
     id: 'INF-004',
-    service: 'llama3-chat',
+    name: 'llama3-chat',
     user: 'ai-research',
+    model: 'Llama3-8B',
     framework: 'TGI',
     status: '异常',
-    ready: 'NotReady',
+    ready: '1/2',
     replicas: 2,
     instances: 1,
-    spec: 'A100',
+    gpu: 1,
+    spec: 'NVIDIA-A100-40GB',
     createdAt: '2026-05-23 16:45',
   },
   {
     id: 'INF-005',
-    service: 'deepseek-coder-api',
+    name: 'deepseek-coder-api',
     user: 'test01',
+    model: 'DeepSeek-Coder-33B',
     framework: 'vLLM',
     status: '运行中',
-    ready: 'Ready',
+    ready: '3/3',
     replicas: 3,
     instances: 3,
-    spec: 'A800',
+    gpu: 3,
+    spec: 'NVIDIA-A800-80GB',
     createdAt: '2026-05-26 11:00',
   },
   {
     id: 'INF-006',
-    service: 'whisper-asr',
+    name: 'whisper-asr',
     user: 'moon',
+    model: 'Whisper-large',
     framework: 'Triton',
     status: '运行中',
-    ready: 'Ready',
+    ready: '2/2',
     replicas: 2,
     instances: 2,
-    spec: 'A10',
+    gpu: 2,
+    spec: 'NVIDIA-A10-24GB',
     createdAt: '2026-05-27 08:30',
   },
   {
     id: 'INF-007',
-    service: 'rerank-v2',
+    name: 'rerank-v2',
     user: 'ai-research',
+    model: 'bge-reranker',
     framework: 'TGI',
     status: '运行中',
-    ready: 'NotReady',
+    ready: '2/2',
     replicas: 2,
     instances: 2,
-    spec: 'A100',
+    gpu: 2,
+    spec: 'NVIDIA-A100-40GB',
     createdAt: '2026-05-25 17:15',
   },
   {
     id: 'INF-008',
-    service: 'rerank-service',
+    name: 'rerank-service',
     user: 'test01',
+    model: 'bge-reranker',
     framework: 'TGI',
     status: '运行中',
-    ready: 'NotReady',
+    ready: '0/1',
     replicas: 1,
     instances: 0,
-    spec: 'A800',
+    gpu: 0,
+    spec: 'NVIDIA-A800-80GB',
     createdAt: '2026-05-27 09:40',
   },
 ]);
@@ -147,8 +179,19 @@ const filteredRows = computed(() => {
     ) {
       return false;
     }
+    // 状态筛选
+    if (statusFilter.value && r.status !== statusFilter.value) {
+      return false;
+    }
+    // 资源规格筛选
+    if (specFilter.value && r.spec !== specFilter.value) {
+      return false;
+    }
     // 关键字筛选
-    if (keyword.value && !`${r.id}${r.service}`.includes(keyword.value)) {
+    if (
+      keyword.value &&
+      !`${r.id}${r.name}${r.model}`.includes(keyword.value)
+    ) {
       return false;
     }
     return true;
@@ -169,6 +212,14 @@ const getStatusColor = (status: string) => {
     异常: 'error',
   };
   return colorMap[status] || 'default';
+};
+
+const resetFilters = () => {
+  keyword.value = '';
+  ownership.value = 'mine';
+  selectedUser.value = undefined;
+  statusFilter.value = undefined;
+  specFilter.value = undefined;
 };
 </script>
 
@@ -192,9 +243,23 @@ const getStatusColor = (status: string) => {
             allow-clear
             style="width: 150px"
           />
+          <Select
+            v-model:value="statusFilter"
+            placeholder="状态"
+            :options="statusOptions"
+            allow-clear
+            style="width: 120px"
+          />
+          <Select
+            v-model:value="specFilter"
+            placeholder="资源规格"
+            :options="specOptions"
+            allow-clear
+            style="width: 200px"
+          />
           <Input
             v-model:value="keyword"
-            placeholder="搜索服务名称/ID"
+            placeholder="搜索服务名称/ID/模型名"
             style="width: 260px"
             allow-clear
           />
@@ -204,15 +269,7 @@ const getStatusColor = (status: string) => {
       <template #filterActions>
         <Space>
           <Button type="primary">筛选</Button>
-          <Button
-            @click="
-              keyword = '';
-              ownership = 'all';
-              selectedUser = undefined;
-            "
-          >
-            重置
-          </Button>
+          <Button @click="resetFilters">重置</Button>
         </Space>
       </template>
 
@@ -246,38 +303,77 @@ const getStatusColor = (status: string) => {
         :data-source="filteredRows"
         :pagination="false"
         :columns="[
-          { title: '服务名称', dataIndex: 'service' },
-          { title: '服务 ID', dataIndex: 'id' },
-          { title: '状态', dataIndex: 'status' },
-          { title: '推理框架', dataIndex: 'framework' },
-          { title: '就绪状态', dataIndex: 'ready' },
-          { title: '副本数', dataIndex: 'replicas' },
-          { title: '实例数', dataIndex: 'instances' },
-          { title: '资源规格', dataIndex: 'spec' },
-          { title: '创建时间', dataIndex: 'createdAt' },
-          { title: '操作', dataIndex: 'action' },
+          {
+            title: '服务名称',
+            dataIndex: 'name',
+            key: 'name',
+            width: 160,
+          },
+          { title: '模型名称', dataIndex: 'model', key: 'model', width: 140 },
+          {
+            title: '推理框架',
+            dataIndex: 'framework',
+            key: 'framework',
+            width: 100,
+          },
+          { title: '状态', dataIndex: 'status', key: 'status', width: 90 },
+          { title: '就绪状态', dataIndex: 'ready', key: 'ready', width: 90 },
+          {
+            title: '创建时间',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            width: 160,
+            sorter: true,
+          },
+          {
+            title: 'GPU 数量',
+            dataIndex: 'gpu',
+            key: 'gpu',
+            width: 90,
+            sorter: true,
+          },
+          { title: '资源规格', dataIndex: 'spec', key: 'spec', width: 200 },
+          {
+            title: '当前副本数',
+            dataIndex: 'replicas',
+            key: 'replicas',
+            width: 100,
+            sorter: true,
+          },
+          {
+            title: '实例数量',
+            dataIndex: 'instances',
+            key: 'instances',
+            width: 90,
+            sorter: true,
+          },
+          { title: '用户', dataIndex: 'user', key: 'user', width: 100 },
+          { title: '操作', key: 'action', width: 120, fixed: 'right' },
         ]"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'service'">
-            <a class="text-blue-600 hover:text-blue-700">{{
-              record.service
-            }}</a>
+          <template v-if="column.key === 'name'">
+            <div class="flex flex-col">
+              <a class="text-blue-600 hover:text-blue-700 cursor-pointer">{{
+                record.name
+              }}</a>
+              <span class="text-xs text-gray-400">{{ record.id }}</span>
+            </div>
           </template>
-          <template v-if="column.dataIndex === 'status'">
+          <template v-else-if="column.key === 'status'">
             <Tag :color="getStatusColor(record.status)" class="rounded-full">
               {{ record.status }}
             </Tag>
           </template>
-          <template v-if="column.dataIndex === 'ready'">
+          <template v-else-if="column.key === 'ready'">
             <Tag
-              :color="record.ready === 'Ready' ? 'success' : 'warning'"
+              :color="record.ready.startsWith('0') ? 'warning' : 'success'"
               class="rounded-full"
             >
               {{ record.ready }}
             </Tag>
           </template>
-          <template v-if="column.dataIndex === 'action'">
+          <template v-else-if="column.key === 'action'">
             <Space :size="12">
               <a @click="showNotify(`查看推理服务 ${record.id}`)">详情</a>
               <a

@@ -24,6 +24,8 @@ const router = useRouter();
 const ownership = ref('mine');
 const selectedUser = ref<string>();
 const keyword = ref('');
+const statusFilter = ref<string>();
+const specFilter = ref<string>();
 const selected = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -34,6 +36,22 @@ const userOptions = [
   { label: 'ai-research', value: 'ai-research' },
 ];
 
+const statusOptions = [
+  { label: '创建中', value: '创建中' },
+  { label: '排队中', value: '排队中' },
+  { label: '运行中', value: '运行中' },
+  { label: '成功', value: '成功' },
+  { label: '失败', value: '失败' },
+];
+
+const specOptions = [
+  { label: 'NVIDIA-H100-HBM2E-80GB', value: 'NVIDIA-H100-HBM2E-80GB' },
+  { label: 'NVIDIA-GPU-HBM2E-80GB', value: 'NVIDIA-GPU-HBM2E-80GB' },
+  { label: 'NVIDIA-A800-80GB', value: 'NVIDIA-A800-80GB' },
+  { label: 'NVIDIA-A100-40GB', value: 'NVIDIA-A100-40GB' },
+  { label: 'NVIDIA-A10-24GB', value: 'NVIDIA-A10-24GB' },
+];
+
 const rows = ref([
   {
     id: 'FT-1001',
@@ -41,12 +59,12 @@ const rows = ref([
     user: 'test01',
     model: 'Qwen2-7B',
     status: '运行中',
-    ready: 'Ready',
+    ready: '2/2',
     duration: '1h 10m',
     created: '2026-05-26 11:20',
     instances: 2,
     gpu: 4,
-    spec: 'A800',
+    spec: 'NVIDIA-A800-80GB',
   },
   {
     id: 'FT-1002',
@@ -54,12 +72,12 @@ const rows = ref([
     user: 'moon',
     model: 'Llama3-8B',
     status: '成功',
-    ready: 'Ready',
+    ready: '1/1',
     duration: '3h 40m',
     created: '2026-05-25 14:03',
     instances: 1,
     gpu: 2,
-    spec: 'A10',
+    spec: 'NVIDIA-A10-24GB',
   },
   {
     id: 'FT-1003',
@@ -67,12 +85,12 @@ const rows = ref([
     user: 'test01',
     model: 'ChatGLM3-6B',
     status: '排队中',
-    ready: 'NotReady',
+    ready: '0/1',
     duration: '-',
     created: '2026-05-27 09:00',
     instances: 1,
     gpu: 4,
-    spec: 'A800',
+    spec: 'NVIDIA-A800-80GB',
   },
   {
     id: 'FT-1004',
@@ -80,12 +98,12 @@ const rows = ref([
     user: 'ai-research',
     model: 'DeepSeek-Coder-33B',
     status: '失败',
-    ready: 'NotReady',
+    ready: '0/2',
     duration: '0h 45m',
     created: '2026-05-24 08:30',
     instances: 2,
     gpu: 8,
-    spec: 'A100',
+    spec: 'NVIDIA-A100-40GB',
   },
   {
     id: 'FT-1005',
@@ -93,12 +111,12 @@ const rows = ref([
     user: 'test01',
     model: 'Qwen2-14B',
     status: '运行中',
-    ready: 'Ready',
+    ready: '1/1',
     duration: '2h 35m',
     created: '2026-05-26 16:45',
     instances: 1,
     gpu: 4,
-    spec: 'A800',
+    spec: 'NVIDIA-A800-80GB',
   },
   {
     id: 'FT-1006',
@@ -106,12 +124,12 @@ const rows = ref([
     user: 'moon',
     model: 'Yi-34B',
     status: '成功',
-    ready: 'Ready',
+    ready: '2/2',
     duration: '5h 20m',
     created: '2026-05-23 10:15',
     instances: 2,
     gpu: 8,
-    spec: 'A100',
+    spec: 'NVIDIA-A100-40GB',
   },
   {
     id: 'FT-1007',
@@ -119,12 +137,12 @@ const rows = ref([
     user: 'test01',
     model: 'Baichuan2-13B',
     status: '排队中',
-    ready: 'NotReady',
+    ready: '0/1',
     duration: '-',
     created: '2026-05-27 13:30',
     instances: 1,
     gpu: 2,
-    spec: 'A10',
+    spec: 'NVIDIA-A10-24GB',
   },
   {
     id: 'FT-1008',
@@ -132,12 +150,12 @@ const rows = ref([
     user: 'ai-research',
     model: 'InternLM2-20B',
     status: '运行中',
-    ready: 'Ready',
+    ready: '2/2',
     duration: '0h 55m',
     created: '2026-05-27 15:10',
     instances: 2,
     gpu: 4,
-    spec: 'A800',
+    spec: 'NVIDIA-A800-80GB',
   },
 ]);
 
@@ -153,6 +171,14 @@ const filteredRows = computed(() => {
       selectedUser.value &&
       r.user !== selectedUser.value
     ) {
+      return false;
+    }
+    // 状态筛选
+    if (statusFilter.value && r.status !== statusFilter.value) {
+      return false;
+    }
+    // 资源规格筛选
+    if (specFilter.value && r.spec !== specFilter.value) {
       return false;
     }
     // 关键字筛选
@@ -179,8 +205,17 @@ const getStatusColor = (status: string) => {
     成功: 'success',
     失败: 'error',
     排队中: 'default',
+    创建中: 'processing',
   };
   return colorMap[status] || 'default';
+};
+
+const resetFilters = () => {
+  keyword.value = '';
+  ownership.value = 'mine';
+  selectedUser.value = undefined;
+  statusFilter.value = undefined;
+  specFilter.value = undefined;
 };
 </script>
 
@@ -204,10 +239,24 @@ const getStatusColor = (status: string) => {
             allow-clear
             style="width: 150px"
           />
+          <Select
+            v-model:value="statusFilter"
+            placeholder="状态"
+            :options="statusOptions"
+            allow-clear
+            style="width: 120px"
+          />
+          <Select
+            v-model:value="specFilter"
+            placeholder="资源规格"
+            :options="specOptions"
+            allow-clear
+            style="width: 200px"
+          />
           <Input
             v-model:value="keyword"
             placeholder="搜索任务 ID/模型名/任务名"
-            style="width: 280px"
+            style="width: 260px"
             allow-clear
           />
         </div>
@@ -216,15 +265,7 @@ const getStatusColor = (status: string) => {
       <template #filterActions>
         <Space>
           <Button type="primary">筛选</Button>
-          <Button
-            @click="
-              keyword = '';
-              ownership = 'all';
-              selectedUser = undefined;
-            "
-          >
-            重置
-          </Button>
+          <Button @click="resetFilters">重置</Button>
         </Space>
       </template>
 
@@ -258,37 +299,70 @@ const getStatusColor = (status: string) => {
         :data-source="filteredRows"
         :pagination="false"
         :columns="[
-          { title: '任务名称', dataIndex: 'name' },
-          { title: '任务 ID', dataIndex: 'id' },
-          { title: '状态', dataIndex: 'status' },
-          { title: '模型名称', dataIndex: 'model' },
-          { title: '就绪状态', dataIndex: 'ready' },
-          { title: '运行时长', dataIndex: 'duration' },
-          { title: '实例数', dataIndex: 'instances' },
-          { title: 'GPU 数', dataIndex: 'gpu' },
-          { title: '资源规格', dataIndex: 'spec' },
-          { title: '创建时间', dataIndex: 'created' },
-          { title: '操作', dataIndex: 'action' },
+          {
+            title: '任务名称',
+            dataIndex: 'name',
+            key: 'name',
+            width: 160,
+          },
+          { title: '状态', dataIndex: 'status', key: 'status', width: 90 },
+          { title: '模型名称', dataIndex: 'model', key: 'model', width: 140 },
+          { title: '就绪状态', dataIndex: 'ready', key: 'ready', width: 90 },
+          {
+            title: '运行时长',
+            dataIndex: 'duration',
+            key: 'duration',
+            width: 100,
+          },
+          {
+            title: '创建时间',
+            dataIndex: 'created',
+            key: 'created',
+            width: 160,
+            sorter: true,
+          },
+          {
+            title: '实例数量',
+            dataIndex: 'instances',
+            key: 'instances',
+            width: 90,
+            sorter: true,
+          },
+          {
+            title: 'GPU 数量',
+            dataIndex: 'gpu',
+            key: 'gpu',
+            width: 90,
+            sorter: true,
+          },
+          { title: '资源规格', dataIndex: 'spec', key: 'spec', width: 200 },
+          { title: '用户', dataIndex: 'user', key: 'user', width: 100 },
+          { title: '操作', key: 'action', width: 120, fixed: 'right' },
         ]"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'name'">
-            <a class="text-blue-600 hover:text-blue-700">{{ record.name }}</a>
+          <template v-if="column.key === 'name'">
+            <div class="flex flex-col">
+              <a class="text-blue-600 hover:text-blue-700 cursor-pointer">{{
+                record.name
+              }}</a>
+              <span class="text-xs text-gray-400">{{ record.id }}</span>
+            </div>
           </template>
-          <template v-if="column.dataIndex === 'status'">
+          <template v-else-if="column.key === 'status'">
             <Tag :color="getStatusColor(record.status)" class="rounded-full">
               {{ record.status }}
             </Tag>
           </template>
-          <template v-if="column.dataIndex === 'ready'">
+          <template v-else-if="column.key === 'ready'">
             <Tag
-              :color="record.ready === 'Ready' ? 'success' : 'warning'"
+              :color="record.ready.startsWith('0') ? 'warning' : 'success'"
               class="rounded-full"
             >
               {{ record.ready }}
             </Tag>
           </template>
-          <template v-if="column.dataIndex === 'action'">
+          <template v-else-if="column.key === 'action'">
             <Space :size="12">
               <a @click="showNotify(`查看微调任务 ${record.id}`)">详情</a>
               <a
