@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
-import { CircleAlert, RotateCw } from '@vben/icons';
+import { CircleAlert, RotateCw, Search } from '@vben/icons';
 
 import {
   Button,
@@ -211,7 +211,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
         allow-clear
         style="width: 220px"
       >
-        <template #prefix>🔎</template>
+        <template #icon><Search class="size-4" /></template>
       </Input>
     </template>
 
