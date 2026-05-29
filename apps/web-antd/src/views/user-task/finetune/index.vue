@@ -21,7 +21,7 @@ import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
 const router = useRouter();
-const ownership = ref('all');
+const ownership = ref('mine');
 const selectedUser = ref<string>();
 const keyword = ref('');
 const selected = ref<string[]>([]);

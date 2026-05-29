@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Plus, RotateCw } from '@vben/icons';
@@ -10,6 +10,7 @@ import {
   Pagination,
   Popconfirm,
   Segmented,
+  Select,
   Space,
   Table,
   Tag,
@@ -19,16 +20,24 @@ import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showInfo } from '#/utils/notify';
 
 const router = useRouter();
-const ownership = ref('all');
+const ownership = ref('mine');
+const selectedUser = ref<string>();
 const keyword = ref('');
 const rowSelection = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
+const userOptions = [
+  { label: 'test01', value: 'test01' },
+  { label: 'moon', value: 'moon' },
+  { label: 'ai-research', value: 'ai-research' },
+];
+
 const rows = ref([
   {
     id: 'TR-001',
     name: 'llm-pretrain-v3',
+    user: 'test01',
     model: 'Qwen2-72B',
     status: '运行中',
     progress: 67,
@@ -41,6 +50,7 @@ const rows = ref([
   {
     id: 'TR-002',
     name: 'cv-foundation',
+    user: 'moon',
     model: 'ViT-Large',
     status: '排队中',
     progress: 0,
@@ -53,6 +63,7 @@ const rows = ref([
   {
     id: 'TR-003',
     name: 'speech-asr',
+    user: 'test01',
     model: 'Whisper-Large',
     status: '成功',
     progress: 100,
@@ -65,6 +76,7 @@ const rows = ref([
   {
     id: 'TR-004',
     name: 'nlp-ner',
+    user: 'ai-research',
     model: 'BERT-Large',
     status: '失败',
     progress: 23,
@@ -77,6 +89,7 @@ const rows = ref([
   {
     id: 'TR-005',
     name: 'multimodal-align',
+    user: 'moon',
     model: 'CLIP-ViT-L',
     status: '运行中',
     progress: 41,
@@ -89,6 +102,7 @@ const rows = ref([
   {
     id: 'TR-006',
     name: 'codegen-v2',
+    user: 'test01',
     model: 'DeepSeek-Coder-33B',
     status: '成功',
     progress: 100,
@@ -101,6 +115,7 @@ const rows = ref([
   {
     id: 'TR-007',
     name: 'video-understand',
+    user: 'ai-research',
     model: 'InternVideo2',
     status: '排队中',
     progress: 0,
@@ -113,6 +128,7 @@ const rows = ref([
   {
     id: 'TR-008',
     name: 'rlhf-reward',
+    user: 'moon',
     model: 'Qwen2-7B',
     status: '运行中',
     progress: 85,
@@ -124,13 +140,27 @@ const rows = ref([
   },
 ]);
 
-const filteredRows = () => {
+const filteredRows = computed(() => {
   return rows.value.filter((r) => {
-    if (keyword.value && !`${r.name}${r.id}`.includes(keyword.value))
+    // 所有权筛选
+    if (ownership.value === 'mine' && r.user !== 'test01') {
       return false;
+    }
+    // 用户筛选（全部模式下才生效）
+    if (
+      ownership.value === 'all' &&
+      selectedUser.value &&
+      r.user !== selectedUser.value
+    ) {
+      return false;
+    }
+    // 关键字筛选
+    if (keyword.value && !`${r.name}${r.id}`.includes(keyword.value)) {
+      return false;
+    }
     return true;
   });
-};
+});
 
 const getStatusColor = (status: string) => {
   const colorMap: Record<string, string> = {
@@ -154,6 +184,14 @@ const getStatusColor = (status: string) => {
             { label: '我创建的', value: 'mine' },
           ]"
         />
+        <Select
+          v-if="ownership === 'all'"
+          v-model:value="selectedUser"
+          placeholder="选择用户"
+          :options="userOptions"
+          allow-clear
+          style="width: 150px"
+        />
         <Input
           v-model:value="keyword"
           placeholder="支持模糊搜索任务名称/ID"
@@ -170,6 +208,7 @@ const getStatusColor = (status: string) => {
           @click="
             keyword = '';
             ownership = 'all';
+            selectedUser = undefined;
           "
         >
           重置
@@ -204,7 +243,7 @@ const getStatusColor = (status: string) => {
         selectedRowKeys: rowSelection,
         onChange: (keys: any[]) => (rowSelection = keys),
       }"
-      :data-source="filteredRows()"
+      :data-source="filteredRows"
       :pagination="false"
       :columns="[
         { title: '任务名称', dataIndex: 'name' },
@@ -267,7 +306,7 @@ const getStatusColor = (status: string) => {
       <Pagination
         v-model:current="currentPage"
         v-model:page-size="pageSize"
-        :total="filteredRows().length"
+        :total="filteredRows.length"
         :show-size-changer="true"
         :show-quick-jumper="true"
         :page-size-options="['10', '20', '50', '100']"
