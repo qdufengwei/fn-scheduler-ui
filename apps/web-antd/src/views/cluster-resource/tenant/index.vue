@@ -1,6 +1,8 @@
 <script setup lang="tsx">
 import { computed, ref } from 'vue';
 
+import { IconifyIcon } from '@vben/icons';
+
 import {
   Button,
   Card,
@@ -296,7 +298,10 @@ const filteredDataSource = computed(() => {
               class="p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100"
             >
               <div class="flex items-center gap-2 mb-3">
-                <Layers class="size-5 text-blue-500" />
+                <IconifyIcon
+                  icon="lucide:layers"
+                  class="size-5 text-blue-500"
+                />
                 <span class="text-sm text-gray-600">GPU总资源</span>
               </div>
               <div class="text-xs text-gray-400 mb-2">
@@ -333,7 +338,10 @@ const filteredDataSource = computed(() => {
               class="p-4 rounded-lg bg-gradient-to-br from-green-50 to-green-100/50 border border-green-100"
             >
               <div class="flex items-center gap-2 mb-3">
-                <ArrowUpFromLine class="size-5 text-green-500" />
+                <IconifyIcon
+                  icon="lucide:arrow-up-from-line"
+                  class="size-5 text-green-500"
+                />
                 <span class="text-sm text-gray-600">已分配(白名单)</span>
               </div>
               <div class="text-xs text-gray-400 mb-2">包含逻辑GPU等效分配</div>
@@ -368,7 +376,10 @@ const filteredDataSource = computed(() => {
               class="p-4 rounded-lg bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100"
             >
               <div class="flex items-center gap-2 mb-3">
-                <HardDrive class="size-5 text-orange-500" />
+                <IconifyIcon
+                  icon="lucide:hard-drive"
+                  class="size-5 text-orange-500"
+                />
                 <span class="text-sm text-gray-600">已出售(用户购买)</span>
               </div>
               <div class="text-xs text-gray-400 mb-2">包含逻辑GPU等效售出</div>
@@ -403,7 +414,10 @@ const filteredDataSource = computed(() => {
               class="p-4 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-100"
             >
               <div class="flex items-center gap-2 mb-3">
-                <Database class="size-5 text-purple-500" />
+                <IconifyIcon
+                  icon="lucide:database"
+                  class="size-5 text-purple-500"
+                />
                 <span class="text-sm text-gray-600">剩余可用配额</span>
               </div>
               <div class="text-xs text-gray-400 mb-2">
