@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Card, Col, Row, Select } from 'ant-design-vue';
+
 import { createIconifyIcon } from '@vben/icons';
+
+import { Card, Col, Row, Select } from 'ant-design-vue';
 
 // Lucide 图标引用
 const PlaySquare = createIconifyIcon('lucide:play-square');
@@ -170,14 +172,19 @@ const billingPeriod = ref('day');
             <RouterLink
               to="/user-resource"
               class="text-xs text-blue-600 font-medium hover:text-blue-500"
-              >去查看 &gt;</RouterLink
             >
+              去查看 &gt;
+            </RouterLink>
           </template>
           <div class="grid grid-cols-3 gap-6 py-2">
             <!-- 标准实例 -->
-            <div class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow">
+            <div
+              class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow"
+            >
               <div class="flex items-center gap-4">
-                <div class="flex items-center justify-center rounded-xl bg-blue-50 p-3 text-blue-500 shadow-inner">
+                <div
+                  class="flex items-center justify-center rounded-xl bg-blue-50 p-3 text-blue-500 shadow-inner"
+                >
                   <Server class="h-7 w-7" />
                 </div>
                 <div class="flex flex-col">
@@ -185,35 +192,48 @@ const billingPeriod = ref('day');
                     >标准实例</span
                   >
                   <span class="text-xs text-slate-400 mt-0.5"
-                    ><strong class="text-slate-700 text-sm font-bold">0</strong
-                    > 总计</span
+                    ><strong class="text-slate-700 text-sm font-bold">0</strong>
+                    总计</span
                   >
                 </div>
               </div>
-              <div class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium">
+              <div
+                class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium"
+              >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>活跃
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span
+                  >活跃 0</span
                 >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>空闲
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span
+                  >空闲 0</span
                 >
               </div>
               <div class="flex flex-col gap-1.5">
-                <div class="flex justify-between text-xs text-slate-400 font-medium">
+                <div
+                  class="flex justify-between text-xs text-slate-400 font-medium"
+                >
                   <span>利用率: 0%</span>
                 </div>
-                <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div class="h-full bg-blue-500 rounded-full" style="width: 0%"></div>
+                <div
+                  class="h-2 w-full rounded-full bg-slate-100 overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-blue-500 rounded-full"
+                    style="width: 0%"
+                  ></div>
                 </div>
               </div>
             </div>
 
             <!-- MIG实例 -->
-            <div class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow">
+            <div
+              class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow"
+            >
               <div class="flex items-center gap-4">
-                <div class="flex items-center justify-center rounded-xl bg-indigo-50 p-3 text-indigo-500 shadow-inner">
+                <div
+                  class="flex items-center justify-center rounded-xl bg-indigo-50 p-3 text-indigo-500 shadow-inner"
+                >
                   <Server class="h-7 w-7" />
                 </div>
                 <div class="flex flex-col">
@@ -221,35 +241,48 @@ const billingPeriod = ref('day');
                     >MIG实例</span
                   >
                   <span class="text-xs text-slate-400 mt-0.5"
-                    ><strong class="text-slate-700 text-sm font-bold">0</strong
-                    > 总计</span
+                    ><strong class="text-slate-700 text-sm font-bold">0</strong>
+                    总计</span
                   >
                 </div>
               </div>
-              <div class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium">
+              <div
+                class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium"
+              >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>活跃
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span
+                  >活跃 0</span
                 >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>空闲
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span
+                  >空闲 0</span
                 >
               </div>
               <div class="flex flex-col gap-1.5">
-                <div class="flex justify-between text-xs text-slate-400 font-medium">
+                <div
+                  class="flex justify-between text-xs text-slate-400 font-medium"
+                >
                   <span>利用率: 0%</span>
                 </div>
-                <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div class="h-full bg-indigo-500 rounded-full" style="width: 0%"></div>
+                <div
+                  class="h-2 w-full rounded-full bg-slate-100 overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-indigo-500 rounded-full"
+                    style="width: 0%"
+                  ></div>
                 </div>
               </div>
             </div>
 
             <!-- vGPU实例 -->
-            <div class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow">
+            <div
+              class="flex flex-col gap-4 rounded-xl border border-slate-100 p-4 bg-white hover:shadow-md transition-shadow"
+            >
               <div class="flex items-center gap-4">
-                <div class="flex items-center justify-center rounded-xl bg-emerald-50 p-3 text-emerald-500 shadow-inner">
+                <div
+                  class="flex items-center justify-center rounded-xl bg-emerald-50 p-3 text-emerald-500 shadow-inner"
+                >
                   <Server class="h-7 w-7" />
                 </div>
                 <div class="flex flex-col">
@@ -257,27 +290,36 @@ const billingPeriod = ref('day');
                     >vGPU实例</span
                   >
                   <span class="text-xs text-slate-400 mt-0.5"
-                    ><strong class="text-slate-700 text-sm font-bold">0</strong
-                    > 总计</span
+                    ><strong class="text-slate-700 text-sm font-bold">0</strong>
+                    总计</span
                   >
                 </div>
               </div>
-              <div class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium">
+              <div
+                class="flex justify-between items-center text-xs px-1 text-slate-500 font-medium"
+              >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>活跃
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span
+                  >活跃 0</span
                 >
                 <span class="flex items-center gap-1"
-                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>空闲
-                  0</span
+                  ><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span
+                  >空闲 0</span
                 >
               </div>
               <div class="flex flex-col gap-1.5">
-                <div class="flex justify-between text-xs text-slate-400 font-medium">
+                <div
+                  class="flex justify-between text-xs text-slate-400 font-medium"
+                >
                   <span>利用率: 0%</span>
                 </div>
-                <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
+                <div
+                  class="h-2 w-full rounded-full bg-slate-100 overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-emerald-500 rounded-full"
+                    style="width: 0%"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -309,8 +351,9 @@ const billingPeriod = ref('day');
               <RouterLink
                 to="/user-bill"
                 class="text-xs text-blue-600 font-medium hover:text-blue-500"
-                >去查看 &gt;</RouterLink
               >
+                去查看 &gt;
+              </RouterLink>
             </div>
           </template>
           <div class="grid grid-cols-3 gap-3 py-2">

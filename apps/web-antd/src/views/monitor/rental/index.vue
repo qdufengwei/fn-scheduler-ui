@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import type { EchartsUIType } from '@vben/plugins/echarts';
+
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
 import { Page } from '@vben/common-ui';
+import { Download } from '@vben/icons';
+import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+
 import {
   Button,
   Card,
@@ -10,9 +16,6 @@ import {
   Select,
   Space,
 } from 'ant-design-vue';
-import { Download } from '@vben/icons';
-import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
-import type { EchartsUIType } from '@vben/plugins/echarts';
 
 const { RangePicker } = DatePicker;
 
@@ -26,12 +29,12 @@ const refreshOptions = [
 
 const refreshInterval = computed(() => {
   if (autoRefresh.value === 'off') return 0;
-  return parseInt(autoRefresh.value.replace('s', ''), 10);
+  return Number.parseInt(autoRefresh.value.replace('s', ''), 10);
 });
 
 // GPU使用率趋势数据 (响应式历史列表)
 const gpuUsageHistory = ref<
-  { time: string; cluster1: number; cluster2: number; cluster3: number }[]
+  { cluster1: number; cluster2: number; cluster3: number; time: string }[]
 >([]);
 
 function generateInitialData() {
@@ -65,7 +68,7 @@ function addDataPoint() {
   }
 }
 
-let refreshTimer: ReturnType<typeof setInterval> | null = null;
+let refreshTimer: null | ReturnType<typeof setInterval> = null;
 
 function resetTimer() {
   if (refreshTimer) {

@@ -257,8 +257,9 @@ defineExpose({
             <Checkbox
               v-model:checked="createForm.isLatest"
               @change="handleLatestChange"
-              >作为latest版本</Checkbox
             >
+              作为latest版本
+            </Checkbox>
           </div>
         </FormItem>
 

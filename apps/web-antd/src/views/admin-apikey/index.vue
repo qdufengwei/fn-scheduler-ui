@@ -1,7 +1,20 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
-import { ref, computed } from 'vue';
 import type { Dayjs } from 'dayjs';
+
+import { computed, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import {
+  Check,
+  Copy,
+  Ellipsis,
+  Eye,
+  Inbox,
+  LockKeyhole,
+  Plus,
+  Trash2,
+} from '@vben/icons';
+
 import {
   Button,
   Checkbox,
@@ -20,16 +33,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import {
-  Plus,
-  Trash2,
-  Copy,
-  LockKeyhole,
-  Check,
-  Inbox,
-  Eye,
-  Ellipsis,
-} from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify, showWarning } from '#/utils/notify';
@@ -44,9 +47,9 @@ interface ApiKey {
   name: string;
   keyId: string;
   permissions: string[];
-  expireType: 'never' | 'custom';
-  expireDate: string | null;
-  status: '运行' | '禁用';
+  expireType: 'custom' | 'never';
+  expireDate: null | string;
+  status: '禁用' | '运行';
   tenant: string;
   owner: string;
   created: string;
@@ -65,11 +68,11 @@ const form = ref({
   id: '',
   name: '',
   permissions: [] as string[],
-  expireType: 'never' as 'never' | 'custom',
+  expireType: 'never' as 'custom' | 'never',
   expireDate: undefined as Dayjs | undefined,
   boundTasks: [] as Array<{
-    tenant: string | undefined;
     taskName: string | undefined;
+    tenant: string | undefined;
   }>,
 });
 
@@ -313,22 +316,22 @@ function handleSave() {
   if (isEdit.value) {
     const idx = rows.value.findIndex((item) => item.id === form.value.id);
     if (idx !== -1) {
-      const current = rows.value[idx]!;
+      const existing = rows.value[idx] as ApiKey;
       rows.value[idx] = {
-        ...current,
+        ...existing,
         name: form.value.name,
         permissions: [...form.value.permissions],
         expireType: form.value.expireType,
         expireDate: form.value.expireType === 'custom' ? null : null,
         boundTasks: form.value.boundTasks.map((t) => ({
-          tenant: t.tenant!,
-          taskName: t.taskName!,
+          tenant: t.tenant as string,
+          taskName: t.taskName as string,
         })),
       };
       showNotify(`编辑 API KEY [${form.value.name}] 成功`);
     }
   } else {
-    const newId = `ak_${Math.random().toString(36).substring(2, 12)}`;
+    const newId = `ak_${Math.random().toString(36).slice(2, 12)}`;
     const now = new Date();
     const formatTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
@@ -345,8 +348,8 @@ function handleSave() {
       created: formatTime,
       lastUsed: '-',
       boundTasks: form.value.boundTasks.map((t) => ({
-        tenant: t.tenant!,
-        taskName: t.taskName!,
+        tenant: t.tenant as string,
+        taskName: t.taskName as string,
       })),
     });
     showNotify(`创建 API KEY [${form.value.name}] 成功`);
@@ -626,7 +629,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredData.length"
           :show-size-changer="true"
           :show-quick-jumper="true"
@@ -744,7 +747,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       v-model:open="tasksModalVisible"
       :title="
         selectedKeyForTasks
-          ? 'API KEY [' + selectedKeyForTasks.name + '] 绑定推理任务'
+          ? `API KEY [${selectedKeyForTasks.name}] 绑定推理任务`
           : ''
       "
       :footer="null"

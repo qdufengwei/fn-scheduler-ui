@@ -16,7 +16,7 @@ withDefaults(
     <div class="fn-list-page flex flex-col gap-4">
       <!-- 列表前的插槽（如说明性文字、广告等） -->
       <div v-if="$slots.before" class="fn-list-before w-full">
-        <slot name="before" />
+        <slot name="before"></slot>
       </div>
 
       <!-- 顶部筛选卡片 -->
@@ -25,12 +25,12 @@ withDefaults(
         class="fn-list-filter-card flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl border border-solid border-neutral-100 dark:border-neutral-800/80 bg-white dark:bg-zinc-950 shadow-sm transition-all"
       >
         <div class="fn-list-filter-fields flex-1 min-w-0">
-          <slot name="filters" />
+          <slot name="filters"></slot>
         </div>
         <div
           class="fn-list-filter-actions flex items-center justify-end flex-shrink-0 gap-2.5"
         >
-          <slot name="filterActions" />
+          <slot name="filterActions"></slot>
         </div>
       </div>
 
@@ -46,18 +46,18 @@ withDefaults(
           <div
             class="fn-list-toolbar-main flex items-center flex-wrap gap-2.5 flex-1 min-w-0"
           >
-            <slot name="toolbar" />
+            <slot name="toolbar"></slot>
           </div>
           <div
             class="fn-list-toolbar-view flex items-center gap-2.5 flex-shrink-0"
           >
-            <slot name="viewSwitch" />
+            <slot name="viewSwitch"></slot>
           </div>
         </div>
 
         <!-- 列表展示内容区 -->
         <div class="fn-list-content min-w-0 flex-1 bg-transparent">
-          <slot />
+          <slot></slot>
         </div>
       </div>
     </div>

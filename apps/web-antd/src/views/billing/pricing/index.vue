@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import { Inbox } from '@vben/icons';
+
 import {
   Button,
   Form,
@@ -11,7 +14,6 @@ import {
   Switch,
   Table,
 } from 'ant-design-vue';
-import { Inbox } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -190,7 +192,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="6"
         :show-size-changer="true"
         :show-quick-jumper="true"
@@ -240,7 +242,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             />
             <span class="pricing-discount-card__unit">%</span>
           </div>
-          <div class="pricing-discount-card__divider" />
+          <div class="pricing-discount-card__divider"></div>
           <div class="pricing-discount-card__row">
             <span>原价</span>
             <span>{{ formatPrice(monthlyOriginalPrice, '月') }}</span>
@@ -268,7 +270,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
             />
             <span class="pricing-discount-card__unit">%</span>
           </div>
-          <div class="pricing-discount-card__divider" />
+          <div class="pricing-discount-card__divider"></div>
           <div class="pricing-discount-card__row">
             <span>原价</span>
             <span>{{ formatPrice(yearlyOriginalPrice, '年') }}</span>

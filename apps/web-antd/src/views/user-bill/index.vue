@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import {
   Button,
   Card,
@@ -10,7 +12,6 @@ import {
   Space,
   Table,
 } from 'ant-design-vue';
-import { ref } from 'vue';
 const period = ref('day');
 const user = ref<string>();
 const rows = ref([
@@ -31,9 +32,9 @@ const rows = ref([
     <Card class="mb-4" title="钱包">
       <div class="mb-2">余额：¥0.00</div>
       <div class="mb-3 text-gray-500">上次充值：暂无记录</div>
-      <Space
-        ><Button type="primary">充值</Button><Button>充值记录</Button></Space
-      >
+      <Space>
+        <Button type="primary">充值</Button><Button>充值记录</Button>
+      </Space>
     </Card>
 
     <Card class="mb-4" title="账单概览">
@@ -42,32 +43,37 @@ const rows = ref([
           :type="period === 'day' ? 'primary' : 'default'"
           size="small"
           @click="period = 'day'"
-          >日</Button
         >
+          日
+        </Button>
         <Button
           :type="period === 'week' ? 'primary' : 'default'"
           size="small"
           @click="period = 'week'"
-          >周</Button
         >
+          周
+        </Button>
         <Button
           :type="period === 'month' ? 'primary' : 'default'"
           size="small"
           @click="period = 'month'"
-          >月</Button
         >
+          月
+        </Button>
         <Button
           :type="period === 'quarter' ? 'primary' : 'default'"
           size="small"
           @click="period = 'quarter'"
-          >季度</Button
         >
+          季度
+        </Button>
         <Button
           :type="period === 'year' ? 'primary' : 'default'"
           size="small"
           @click="period = 'year'"
-          >年</Button
         >
+          年
+        </Button>
       </Space>
       <Row :gutter="12">
         <Col :span="6"><Card size="small">总金额：¥0.00</Card></Col>
@@ -79,7 +85,7 @@ const rows = ref([
 
     <Card class="mb-4" title="预算管理">
       <Space class="mb-2"><Button>配置预算</Button></Space>
-      <div>总预算：¥0.00　使用数量：¥0.00　剩余：¥0.00　预算利用率：0.00%</div>
+      <div>总预算：¥0.00 使用数量：¥0.00 剩余：¥0.00 预算利用率：0.00%</div>
     </Card>
 
     <Card title="账单明细">

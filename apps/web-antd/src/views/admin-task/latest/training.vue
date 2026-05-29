@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { RotateCw, Search, X } from '@vben/icons';
+
 import {
   Button,
   Input,
@@ -9,9 +14,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { RotateCw, Search, X } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -292,9 +294,11 @@ const handleReset = () => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div>
-            <a class="font-medium text-blue-600 hover:text-blue-700" @click="router.push(`/admin-task/latest/detail/${record.taskId}`)">{{
-              record.name
-            }}</a>
+            <a
+              class="font-medium text-blue-600 hover:text-blue-700"
+              @click="router.push(`/admin-task/latest/detail/${record.taskId}`)"
+              >{{ record.name }}</a
+            >
             <div class="text-xs text-gray-400">{{ record.taskId }}</div>
           </div>
         </template>
@@ -302,9 +306,9 @@ const handleReset = () => {
           <Tag class="rounded-full">{{ record.taskType }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'status'">
-          <Tag :color="statusColor[record.status]" class="rounded-full">{{
-            record.status
-          }}</Tag>
+          <Tag :color="statusColor[record.status]" class="rounded-full">
+            {{ record.status }}
+          </Tag>
         </template>
         <template v-if="column.dataIndex === 'tenant'">
           <div>
@@ -314,7 +318,10 @@ const handleReset = () => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="router.push(`/admin-task/latest/detail/${record.taskId}`)">详情</a>
+            <a
+              @click="router.push(`/admin-task/latest/detail/${record.taskId}`)"
+              >详情</a
+            >
             <Popconfirm
               title="确认删除该任务？"
               ok-text="确认"
@@ -331,7 +338,7 @@ const handleReset = () => {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="5"
         :show-size-changer="true"
         :show-quick-jumper="true"

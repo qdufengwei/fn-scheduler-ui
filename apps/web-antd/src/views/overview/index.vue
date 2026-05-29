@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
-import { Button, Card, Col, Progress, Row, Select } from 'ant-design-vue';
 import {
   ArrowRight,
   BookOpenText,
@@ -11,6 +11,8 @@ import {
   LayoutGrid,
   Settings,
 } from '@vben/icons';
+
+import { Button, Card, Col, Progress, Row, Select } from 'ant-design-vue';
 
 const billingCycle = ref('day');
 const taskStats = ref({
@@ -30,9 +32,9 @@ const nodeStats = ref({
 const gpuServerStats = ref({ total: 6, running: 0 });
 
 const billingStats = ref({
-  totalIncome: 0.0,
-  actualIncome: 0.0,
-  pendingIncome: 0.0,
+  totalIncome: 0,
+  actualIncome: 0,
+  pendingIncome: 0,
 });
 
 const messages = ref<any[]>([]);
@@ -238,7 +240,7 @@ const topologyStats = ref({
                     (gpuServerStats.running / gpuServerStats.total) * 100
                   "
                   :size="100"
-                  :stroke-color="'#722ed1'"
+                  stroke-color="#722ed1"
                 />
               </div>
             </div>

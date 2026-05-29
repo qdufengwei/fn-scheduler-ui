@@ -1,22 +1,24 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
+import { ArrowLeft, Info, Plus } from '@vben/icons';
+
 import {
   Button,
   Card,
+  Divider,
   Form,
   FormItem,
   Input,
+  InputNumber,
+  RadioButton,
+  RadioGroup,
+  Select,
   Space,
   Switch,
-  Divider,
-  Select,
-  InputNumber,
-  RadioGroup,
-  RadioButton,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Info, Plus, ArrowLeft } from '@vben/icons';
 
 import { showInfo } from '#/utils/notify';
 
@@ -158,7 +160,7 @@ const goBack = () => {
         </FormItem>
 
         <FormItem label="优先级" required>
-          <RadioGroup :value="'6'">
+          <RadioGroup value="6">
             <RadioButton value="6">6</RadioButton>
             <RadioButton value="5">5</RadioButton>
             <RadioButton value="4">4</RadioButton>
@@ -179,15 +181,15 @@ const goBack = () => {
 
         <FormItem label="存储" required>
           <Space class="mb-3">
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ 存储卷</Button
-            >
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ 临时卷</Button
-            >
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ S3</Button
-            >
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + 存储卷
+            </Button>
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + 临时卷
+            </Button>
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + S3
+            </Button>
           </Space>
           <div class="text-xs text-gray-400 leading-relaxed space-y-1">
             <div class="flex items-start">
@@ -306,9 +308,9 @@ const goBack = () => {
 
       <div class="flex items-center justify-between mt-8 border-t pt-4">
         <Space>
-          <Button type="primary" @click="showInfo('已提交创建任务模板')"
-            >确认</Button
-          >
+          <Button type="primary" @click="showInfo('已提交创建任务模板')">
+            确认
+          </Button>
           <Button @click="goBack">取消</Button>
         </Space>
         <div class="text-gray-500 text-sm">

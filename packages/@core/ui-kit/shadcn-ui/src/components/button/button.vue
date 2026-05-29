@@ -26,7 +26,10 @@ const isDisabled = computed(() => {
 });
 
 const computedClass = computed(() => {
-  return cn(buttonVariants({ variant: props.variant, size: props.size }), props.class);
+  return cn(
+    buttonVariants({ variant: props.variant, size: props.size }),
+    props.class,
+  );
 });
 </script>
 

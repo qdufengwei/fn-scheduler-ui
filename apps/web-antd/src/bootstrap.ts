@@ -7,9 +7,17 @@ import { initStores } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/antd';
 
-import './styles/global-fixes.css';
-
+import { useTitle } from '@vueuse/core';
 import { Pagination } from 'ant-design-vue';
+
+import { $t, setupI18n } from '#/locales';
+
+import { initComponentAdapter } from './adapter/component';
+import { initSetupVbenForm } from './adapter/form';
+import App from './app.vue';
+import { router } from './router';
+
+import './styles/global-fixes.css';
 
 // 统一为全站所有的 Pagination 分页组件配置默认显示总条数
 if (Pagination.props) {
@@ -18,15 +26,6 @@ if (Pagination.props) {
     default: (total: number) => `共 ${total} 条`,
   };
 }
-
-import { useTitle } from '@vueuse/core';
-
-import { $t, setupI18n } from '#/locales';
-
-import { initComponentAdapter } from './adapter/component';
-import { initSetupVbenForm } from './adapter/form';
-import App from './app.vue';
-import { router } from './router';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器

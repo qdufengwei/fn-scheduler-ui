@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { Button, Card, DatePicker, Select, Space } from 'ant-design-vue';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { IconifyIcon } from '@vben/icons';
-import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 
-import { getNodeList } from '#/api/node';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+
+import { IconifyIcon } from '@vben/icons';
+
+import { Button, Card, DatePicker, Select, Space } from 'ant-design-vue';
+import dayjs from 'dayjs';
+
 import { getNodeMetricHistory } from '#/api/monitor';
+import { getNodeList } from '#/api/node';
 import { showError, showNotify } from '#/utils/notify';
+
 import MetricCardGroup from './components/MetricCardGroup.vue';
 
 interface MetricDataPoint {
@@ -158,11 +162,12 @@ onBeforeUnmount(() => {
             />
           </div>
           <Button @click="onDownloadReport" :disabled="metricsLoading">
-            <template #icon
-              ><IconifyIcon
+            <template #icon>
+              <IconifyIcon
                 icon="lucide:download"
                 class="size-4 inline-block align-middle"
-            /></template>
+              />
+            </template>
             报表下载
           </Button>
         </div>
@@ -187,21 +192,23 @@ onBeforeUnmount(() => {
           :type="viewMode === 'small' ? 'primary' : 'default'"
           @click="viewMode = 'small'"
         >
-          <template #icon
-            ><IconifyIcon
+          <template #icon>
+            <IconifyIcon
               icon="lucide:layout-grid"
               class="size-4 inline-block align-middle"
-          /></template>
+            />
+          </template>
         </Button>
         <Button
           :type="viewMode === 'large' ? 'primary' : 'default'"
           @click="viewMode = 'large'"
         >
-          <template #icon
-            ><IconifyIcon
+          <template #icon>
+            <IconifyIcon
               icon="lucide:layout-list"
               class="size-4 inline-block align-middle"
-          /></template>
+            />
+          </template>
         </Button>
       </Space>
     </div>

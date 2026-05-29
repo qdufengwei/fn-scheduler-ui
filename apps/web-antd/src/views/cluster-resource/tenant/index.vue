@@ -1,5 +1,6 @@
 <script setup lang="tsx">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
+
 import {
   Button,
   Card,
@@ -39,7 +40,7 @@ const columns = [
         children: (
           <div>
             <span class="font-medium text-gray-800">{record.tenant}</span>
-            <span class="text-gray-400 ml-1">{record.alias}</span>
+            <span class="ml-1 text-gray-400">{record.alias}</span>
           </div>
         ),
         props: { rowSpan },
@@ -239,7 +240,7 @@ const dataSource = computed(() => {
     if (!tenantMap.has(key)) {
       tenantMap.set(key, []);
     }
-    tenantMap.get(key)!.push(item);
+    (tenantMap.get(key) as any).push(item);
   });
 
   // 为每条记录添加合并信息
@@ -266,7 +267,7 @@ const dataSource = computed(() => {
 // 租户选项
 const tenantOptions = computed(() => {
   const tenants = new Set(rawDataSource.value.map((item) => item.tenant));
-  return Array.from(tenants).map((t) => ({ label: t, value: t }));
+  return [...tenants].map((t) => ({ label: t, value: t }));
 });
 
 // 根据筛选过滤数据

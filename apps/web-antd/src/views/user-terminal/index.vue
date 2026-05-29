@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Button, Card, Input, Space, Table, Tag } from 'ant-design-vue';
 import { ref } from 'vue';
+
+import { Button, Card, Input, Space, Table, Tag } from 'ant-design-vue';
 
 const keyword = ref('');
 const rows = ref([
@@ -54,14 +55,14 @@ const rows = ref([
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'status'">
-            <Tag :color="record.status === '运行中' ? 'success' : 'default'">{{
-              record.status
-            }}</Tag>
+            <Tag :color="record.status === '运行中' ? 'success' : 'default'">
+              {{ record.status }}
+            </Tag>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
-            <Space :size="0"
-              ><a>进入</a><a>停止</a><a class="text-red-500">删除</a></Space
-            >
+            <Space :size="0">
+              <a>进入</a><a>停止</a><a class="text-red-500">删除</a>
+            </Space>
           </template>
         </template>
       </Table>

@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  PROJECT_OPTIONS,
-  DEVBOX_OPTIONS,
-  TASK_NAME_OPTIONS,
-  INSTANCE_OPTIONS,
   CONTAINER_OPTIONS,
+  DEVBOX_OPTIONS,
+  INSTANCE_OPTIONS,
+  PROJECT_OPTIONS,
+  TASK_NAME_OPTIONS,
 } from '../options';
 
 describe('options constants', () => {

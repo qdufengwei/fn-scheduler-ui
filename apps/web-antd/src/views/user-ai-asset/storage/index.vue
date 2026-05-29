@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
 import { ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import { ChevronLeft, Plus, Trash2 } from '@vben/icons';
+
 import {
   Button,
   Form,
   FormItem,
   Input,
+  message,
   Pagination,
   Popconfirm,
   Progress,
   Select,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { ChevronLeft, Plus, Trash2 } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -156,9 +158,10 @@ function handleAdd() {
     message.warning('请填写所有必填字段');
     return;
   }
-  const newId = dataSource.value.length
-    ? Math.max(...dataSource.value.map((item) => item.id)) + 1
-    : 1;
+  const newId =
+    dataSource.value.length > 0
+      ? Math.max(...dataSource.value.map((item) => item.id)) + 1
+      : 1;
   const now = new Date();
   const formatTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
@@ -275,9 +278,9 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
           </template>
           <template v-if="column.dataIndex === 'action'">
             <div class="flex items-center gap-1">
-              <Button type="link" size="small" @click="openUpdateModal(record)"
-                >更新</Button
-              >
+              <Button type="link" size="small" @click="openUpdateModal(record)">
+                更新
+              </Button>
               <Popconfirm
                 title="确认删除该存储卷？"
                 ok-text="确认"
@@ -294,7 +297,7 @@ const [UpdateDrawer, updateDrawerApi] = useVbenDrawer({
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="dataSource.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

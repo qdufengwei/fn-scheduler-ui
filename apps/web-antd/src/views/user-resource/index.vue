@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
+import { createIconifyIcon } from '@vben/icons';
+
 import {
   Button,
   Drawer,
   Form,
   FormItem,
   InputNumber,
+  message,
   Popconfirm,
   Radio,
   Select,
   Space,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { createIconifyIcon } from '@vben/icons';
+
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
 // Lucide 图标引用
@@ -77,9 +80,7 @@ const resourceRows = ref<UserResource[]>([
     createdAt: '2026-04-28 06:44:37',
     endedAt: '-',
     price: '¥0.00 / 时',
-    nodes: [
-      { id: 'node201 - 0', migConfig: 'Whole GPU' },
-    ],
+    nodes: [{ id: 'node201 - 0', migConfig: 'Whole GPU' }],
   },
   {
     id: 'res-02',
@@ -124,8 +125,10 @@ const resourceRows = ref<UserResource[]>([
 const filteredRows = computed(() => {
   return resourceRows.value.filter((row) => {
     const matchSpec = !selectedSpec.value || row.spec === selectedSpec.value;
-    const matchStatus = !selectedStatus.value || row.status === selectedStatus.value;
-    const matchCycle = !selectedCycle.value || row.cycle === selectedCycle.value;
+    const matchStatus =
+      !selectedStatus.value || row.status === selectedStatus.value;
+    const matchCycle =
+      !selectedCycle.value || row.cycle === selectedCycle.value;
     return matchSpec && matchStatus && matchCycle;
   });
 });
@@ -157,10 +160,10 @@ const innerColumns = [
 
 // MIG Drawer 相关配置与 State
 const isDrawerVisible = ref(false);
-const activeInstance = ref<UserResource | null>(null);
+const activeInstance = ref<null | UserResource>(null);
 const activeNode = ref<NodeResource | null>(null);
 
-const migType = ref<'template' | 'custom'>('template');
+const migType = ref<'custom' | 'template'>('template');
 const selectedTemplate = ref<string>('Whole GPU');
 
 interface CustomMigItem {
@@ -227,8 +230,14 @@ const openMigDrawer = (record: any, node?: any) => {
   activeNode.value = node || null;
 
   // 恢复之前配置的默认值
-  const currentConfig = node ? node.migConfig : record.nodes[0]?.migConfig || 'Whole GPU';
-  if (['Whole GPU', '1g.10gb', '2g.20gb', '3g.40gb', '4g.40gb'].includes(currentConfig)) {
+  const currentConfig = node
+    ? node.migConfig
+    : record.nodes[0]?.migConfig || 'Whole GPU';
+  if (
+    ['1g.10gb', '2g.20gb', '3g.40gb', '4g.40gb', 'Whole GPU'].includes(
+      currentConfig,
+    )
+  ) {
     migType.value = 'template';
     selectedTemplate.value = currentConfig;
   } else {
@@ -238,11 +247,12 @@ const openMigDrawer = (record: any, node?: any) => {
       const match = part.trim().match(/(\d+)g\.(\d+)gb/);
       return {
         id: Date.now() + idx + Math.random(),
-        compute: match ? parseInt(match[1], 10) : 0,
-        memory: match ? parseInt(match[2], 10) : 0,
+        compute: match ? Number.parseInt(match[1], 10) : 0,
+        memory: match ? Number.parseInt(match[2], 10) : 0,
       };
     });
-    customConfigs.value = parsed.length ? parsed : [{ id: Date.now(), compute: 0, memory: 0 }];
+    customConfigs.value =
+      parsed.length > 0 ? parsed : [{ id: Date.now(), compute: 0, memory: 0 }];
   }
 
   isDrawerVisible.value = true;
@@ -269,27 +279,31 @@ const handleSaveMig = () => {
   }
 
   let finalConfig = '';
-  if (migType.value === 'template') {
-    finalConfig = selectedTemplate.value;
-  } else {
-    finalConfig =
-      customConfigs.value
-        .map((c) => `${c.compute}g.${c.memory}gb`)
-        .join(', ') || 'Whole GPU';
-  }
+  finalConfig =
+    migType.value === 'template'
+      ? selectedTemplate.value
+      : customConfigs.value
+          .map((c) => `${c.compute}g.${c.memory}gb`)
+          .join(', ') || 'Whole GPU';
 
   if (activeNode.value && activeInstance.value) {
     // 仅修改单个物理 GPU 卡的配置
-    const targetInst = resourceRows.value.find((r) => r.id === activeInstance.value!.id);
+    const targetInst = resourceRows.value.find(
+      (r) => r.id === activeInstance.value?.id,
+    );
     if (targetInst) {
-      const targetNode = targetInst.nodes.find((n) => n.id === activeNode.value!.id);
+      const targetNode = targetInst.nodes.find(
+        (n) => n.id === activeNode.value?.id,
+      );
       if (targetNode) {
         targetNode.migConfig = finalConfig;
       }
     }
   } else if (activeInstance.value) {
     // 修改该实例包含的所有物理 GPU 卡配置
-    const targetInst = resourceRows.value.find((r) => r.id === activeInstance.value!.id);
+    const targetInst = resourceRows.value.find(
+      (r) => r.id === activeInstance.value?.id,
+    );
     if (targetInst) {
       targetInst.nodes.forEach((n) => {
         n.migConfig = finalConfig;
@@ -352,7 +366,9 @@ const handleSaveMig = () => {
       >
         <!-- 子列表：GPU 节点折叠展开详情 -->
         <template #expandedRowRender="{ record }">
-          <div class="bg-slate-50/50 p-4 rounded-lg border border-slate-100 shadow-inner">
+          <div
+            class="bg-slate-50/50 p-4 rounded-lg border border-slate-100 shadow-inner"
+          >
             <Table
               row-key="id"
               :columns="innerColumns"
@@ -393,23 +409,27 @@ const handleSaveMig = () => {
             <Tag
               v-if="record.status === '整机分配'"
               class="px-2.5 py-0.5 rounded-full bg-slate-100/70 border-slate-200 text-slate-600 font-medium"
-              >整机分配</Tag
             >
+              整机分配
+            </Tag>
             <Tag
               v-else-if="record.status === '弹性分配'"
               class="px-2.5 py-0.5 rounded-full bg-blue-50 border-blue-100 text-blue-500 font-medium"
-              >弹性分配</Tag
             >
+              弹性分配
+            </Tag>
             <Tag
               v-else-if="record.status === 'MIG分配'"
               class="px-2.5 py-0.5 rounded-full bg-purple-50 border-purple-100 text-purple-500 font-medium"
-              >MIG分配</Tag
             >
+              MIG分配
+            </Tag>
             <Tag
               v-else-if="record.status === 'vGPU分配'"
               class="px-2.5 py-0.5 rounded-full bg-emerald-50 border-emerald-100 text-emerald-500 font-medium"
-              >vGPU分配</Tag
             >
+              vGPU分配
+            </Tag>
           </template>
 
           <!-- 操作列 -->
@@ -474,21 +494,17 @@ const handleSaveMig = () => {
                 button-style="solid"
                 class="w-full flex"
               >
-                <Radio.Button value="template" class="flex-1 text-center"
-                  >MIG模版</Radio.Button
-                >
-                <Radio.Button value="custom" class="flex-1 text-center"
-                  >自定义MIG</Radio.Button
-                >
+                <Radio.Button value="template" class="flex-1 text-center">
+                  MIG模版
+                </Radio.Button>
+                <Radio.Button value="custom" class="flex-1 text-center">
+                  自定义MIG
+                </Radio.Button>
               </Radio.Group>
             </FormItem>
 
             <!-- 模板选择模式 -->
-            <FormItem
-              v-if="migType === 'template'"
-              label="MIG模版"
-              required
-            >
+            <FormItem v-if="migType === 'template'" label="MIG模版" required>
               <Select
                 v-model:value="selectedTemplate"
                 placeholder="请选择MIG模版"
@@ -562,7 +578,9 @@ const handleSaveMig = () => {
         <!-- 底部数据统计与动作区域 -->
         <div class="space-y-6">
           <!-- 统计信息框 -->
-          <div class="rounded-xl bg-slate-50 border border-slate-100 p-5 space-y-4">
+          <div
+            class="rounded-xl bg-slate-50 border border-slate-100 p-5 space-y-4"
+          >
             <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
               <div class="flex justify-between items-center">
                 <span class="text-slate-500 font-medium">计算单元</span>
@@ -572,7 +590,9 @@ const handleSaveMig = () => {
                 <span class="text-slate-500 font-medium">已分配计算单元</span>
                 <span
                   class="font-bold font-mono"
-                  :class="allocatedCompute > 7 ? 'text-rose-500' : 'text-slate-800'"
+                  :class="
+                    allocatedCompute > 7 ? 'text-rose-500' : 'text-slate-800'
+                  "
                   >{{ allocatedCompute }} g</span
                 >
               </div>
@@ -584,7 +604,9 @@ const handleSaveMig = () => {
                 <span class="text-slate-500 font-medium">已分配显存单元</span>
                 <span
                   class="font-bold font-mono"
-                  :class="allocatedMemory > 80 ? 'text-rose-500' : 'text-slate-800'"
+                  :class="
+                    allocatedMemory > 80 ? 'text-rose-500' : 'text-slate-800'
+                  "
                   >{{ allocatedMemory }} GiB</span
                 >
               </div>
@@ -600,16 +622,17 @@ const handleSaveMig = () => {
 
           <!-- Drawer 动作按钮 -->
           <div class="flex gap-4 border-t border-slate-100 pt-4">
-            <Button class="flex-1" @click="isDrawerVisible = false"
-              >取消</Button
-            >
+            <Button class="flex-1" @click="isDrawerVisible = false">
+              取消
+            </Button>
             <Button
               type="primary"
               class="flex-1"
               :disabled="isOverLimit"
               @click="handleSaveMig"
-              >确定</Button
             >
+              确定
+            </Button>
           </div>
         </div>
       </div>

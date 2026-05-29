@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
+import { BookOpenText, Download, Inbox, Settings } from '@vben/icons';
+
 import {
   Button,
   Card,
@@ -14,7 +17,6 @@ import {
   Space,
   Table,
 } from 'ant-design-vue';
-import { BookOpenText, Download, Inbox, Settings } from '@vben/icons';
 
 const billingCycle = ref('day');
 const selectedTenant = ref<string>();
@@ -22,9 +24,9 @@ const pageSize = ref(10);
 const currentPage = ref(1);
 
 const billingStats = ref({
-  totalAmount: 0.0,
-  totalUsageTime: 20.0,
-  paid: 0.0,
+  totalAmount: 0,
+  totalUsageTime: 20,
+  paid: 0,
 });
 
 const columns = [
@@ -178,7 +180,7 @@ const dataSource = ref([
         <div class="flex items-center justify-end mt-4 pt-4 border-t">
           <Pagination
             v-model:current="currentPage"
-            v-model:pageSize="pageSize"
+            v-model:page-size="pageSize"
             :total="3"
             :show-size-changer="true"
             :show-quick-jumper="true"

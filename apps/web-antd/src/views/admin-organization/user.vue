@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
-import { ref, computed } from 'vue';
-import { Page } from '@vben/common-ui';
+import type { MenuProps } from 'ant-design-vue';
+
+import { computed, ref } from 'vue';
+
+import { Page, useVbenDrawer } from '@vben/common-ui';
+import { Ellipsis, Plus, Search, UserRoundPen } from '@vben/icons';
+
 import {
   Button,
   Card,
-  Input,
-  Pagination,
-  Space,
-  Table,
+  Dropdown,
   Form,
   FormItem,
-  Select,
-  Dropdown,
+  Input,
   Menu,
+  Pagination,
+  Select,
+  Space,
+  Table,
 } from 'ant-design-vue';
-import { Plus, Search, UserRoundPen, Ellipsis } from '@vben/icons';
-import type { MenuProps } from 'ant-design-vue';
 
 import { showNotify, showWarning } from '#/utils/notify';
 
-type Key = string | number;
+type Key = number | string;
 
 const userSearchText = ref('');
 const selectedTenant = ref<string | undefined>(undefined);
@@ -280,7 +282,7 @@ function handleRowSelectionChange(keys: Key[]) {
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'checkbox'">
-            <div />
+            <div></div>
           </template>
           <template v-if="column.dataIndex === 'username'">
             <span>{{ record.username }}</span>
@@ -332,7 +334,7 @@ function handleRowSelectionChange(keys: Key[]) {
       <div class="flex items-center justify-end mt-4 pt-4 border-t">
         <Pagination
           v-model:current="userCurrentPage"
-          v-model:pageSize="userPageSize"
+          v-model:page-size="userPageSize"
           :total="filteredUserData.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

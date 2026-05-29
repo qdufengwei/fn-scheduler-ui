@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { useVbenDrawer } from '@vben/common-ui';
+import { Plus, RotateCw } from '@vben/icons';
+
 import {
   Button,
   Pagination,
@@ -9,9 +14,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Plus, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showInfo } from '#/utils/notify';
@@ -126,7 +128,10 @@ const resetFilters = () => {
       </template>
 
       <template #toolbar>
-        <Button type="primary" @click="router.push('/user-task/latest/devbox/create')">
+        <Button
+          type="primary"
+          @click="router.push('/user-task/latest/devbox/create')"
+        >
           <template #icon><Plus class="size-4" /></template>
           创建开发机
         </Button>
@@ -196,7 +201,7 @@ const resetFilters = () => {
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredRows().length"
           :show-size-changer="true"
           :show-quick-jumper="true"

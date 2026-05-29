@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
+import { computed, ref } from 'vue';
+
 import {
   Button,
   Empty,
+  message,
   Pagination,
   Popconfirm,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { ref, computed } from 'vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -60,7 +61,7 @@ const paginatedData = computed(() => {
 function handleDelete(record: any) {
   message.success(`已删除任务 ${record.name}`);
   const index = imageTasks.value.findIndex((item) => item.id === record.id);
-  if (index > -1) {
+  if (index !== -1) {
     imageTasks.value.splice(index, 1);
   }
 }

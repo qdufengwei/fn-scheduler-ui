@@ -1,6 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import { message } from 'ant-design-vue';
+import { describe, expect, it, vi } from 'vitest';
 
 import { safeCopyText } from '../clipboard';
 import { formatDateTime } from '../date';

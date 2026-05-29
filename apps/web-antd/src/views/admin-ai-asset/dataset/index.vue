@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
+import { computed, ref } from 'vue';
+
+import { ArrowLeft, Copy, RotateCw } from '@vben/icons';
+
 import {
   Button,
   Card,
   Input,
+  message,
   Pagination,
   Popconfirm,
   Progress,
@@ -12,15 +17,12 @@ import {
   Space,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { ref, computed } from 'vue';
-import { RotateCw, ArrowLeft, Copy } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
 // 详情页控制
-const activeDetailId = ref<string | null>(null);
+const activeDetailId = ref<null | string>(null);
 const activeRecord = ref<any>(null);
 
 // 筛选条件
@@ -160,7 +162,7 @@ function handleRefresh() {
 function handleDelete(record: any) {
   message.success(`已删除数据集 ${record.name}`);
   const index = datasets.value.findIndex((item) => item.id === record.id);
-  if (index > -1) {
+  if (index !== -1) {
     datasets.value.splice(index, 1);
   }
   if (activeDetailId.value === record.id) {
@@ -196,7 +198,7 @@ function openDetail(record: any) {
       path: `/home/shuguang/modelrepo/dataset/${record.id}/1`,
       size: record.size || '19.90 KB',
       updateTime: record.updateTime || '2026-03-03 10:41:38',
-      description: record.description !== '-' ? record.description : '-',
+      description: record.description === '-' ? '-' : record.description,
     },
   ];
 }
@@ -444,9 +446,9 @@ const detailRowSelection = computed(() => ({
             @confirm="handleBatchDeleteVersions"
             :disabled="detailSelectedRowKeys.length === 0"
           >
-            <Button :disabled="detailSelectedRowKeys.length === 0" class="px-4"
-              >批量删除</Button
-            >
+            <Button :disabled="detailSelectedRowKeys.length === 0" class="px-4">
+              批量删除
+            </Button>
           </Popconfirm>
         </template>
 

@@ -1,5 +1,3 @@
-// 节点管理相关 Mock 数据
-
 export interface NodeInfo {
   id: number;
   name: string;
@@ -8,13 +6,13 @@ export interface NodeInfo {
   allocatedGpu: number;
   totalGpu: number;
   allocationType:
-    | '整机分配'
-    | '弹性分配'
     | 'MIG分配'
-    | 'vGPU分配'
-    | '弹性购买'
     | 'MIG购买'
+    | 'vGPU分配'
     | 'vGPU购买'
+    | '弹性分配'
+    | '弹性购买'
+    | '整机分配'
     | '未出售';
   status: '就绪' | '未就绪' | '维护中';
   createTime: string;
@@ -158,7 +156,7 @@ export const MOCK_NODES: NodeInfo[] = [
     ipAddress: '10.1.5.102',
     isOnline: true,
     onlineTime: '2026-02-20 14:10:00',
-    price: 15.0,
+    price: 15,
   },
   {
     id: 10,
@@ -173,50 +171,6 @@ export const MOCK_NODES: NodeInfo[] = [
     ipAddress: '10.1.6.103',
     isOnline: true,
     onlineTime: '2026-03-10 08:05:00',
-    price: 12.0,
+    price: 12,
   },
 ];
-
-// 节点监控指标 Mock 数据
-export interface NodeMonitorData {
-  nodeId: number;
-  nodeName: string;
-  gpuUtilization: number;
-  gpuTemperature: number;
-  gpuPower: number;
-  gpuMemoryUtilization: number;
-  gpuMemoryUsed: number;
-  gpuMemoryTotal: number;
-  nvLinkBandwidth: number;
-  nvLinkHealth: string;
-  eccErrors: number;
-  xidErrors: number;
-  tensorCoreUtilization: number;
-  encodeUtilization: number;
-  decodeUtilization: number;
-  memoryUtilization: number;
-  cpuUtilization: number;
-}
-
-export const generateMockMonitorData = (nodeId: number): NodeMonitorData => {
-  const node = MOCK_NODES.find((n) => n.id === nodeId);
-  return {
-    nodeId,
-    nodeName: node?.name || 'unknown',
-    gpuUtilization: Math.floor(Math.random() * 100),
-    gpuTemperature: Math.floor(Math.random() * 30) + 50,
-    gpuPower: Math.floor(Math.random() * 200) + 100,
-    gpuMemoryUtilization: Math.floor(Math.random() * 100),
-    gpuMemoryUsed: Math.floor(Math.random() * 40) + 10,
-    gpuMemoryTotal: 80,
-    nvLinkBandwidth: Math.floor(Math.random() * 50),
-    nvLinkHealth: Math.random() > 0.9 ? '异常' : '正常',
-    eccErrors: Math.floor(Math.random() * 5),
-    xidErrors: Math.floor(Math.random() * 3),
-    tensorCoreUtilization: Math.floor(Math.random() * 100),
-    encodeUtilization: Math.floor(Math.random() * 50),
-    decodeUtilization: Math.floor(Math.random() * 50),
-    memoryUtilization: Math.floor(Math.random() * 100),
-    cpuUtilization: Math.floor(Math.random() * 100),
-  };
-};

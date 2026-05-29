@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { Plus, RotateCw } from '@vben/icons';
+
 import {
   Button,
   Input,
@@ -9,9 +14,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Plus, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showInfo } from '#/utils/notify';
@@ -121,13 +123,17 @@ const getStatusColor = (status: string) => {
             keyword = '';
             ownership = 'all';
           "
-          >重置</Button
         >
+          重置
+        </Button>
       </Space>
     </template>
 
     <template #toolbar>
-      <Button type="primary" @click="router.push('/user-task/latest/training/create')">
+      <Button
+        type="primary"
+        @click="router.push('/user-task/latest/training/create')"
+      >
         <template #icon><Plus class="size-4" /></template>
         创建任务
       </Button>
@@ -167,7 +173,13 @@ const getStatusColor = (status: string) => {
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
-          <a class="text-blue-600 hover:text-blue-700" @click="router.push(`/user-task/latest/training/detail/${record.id}`)">{{ record.name }}</a>
+          <a
+            class="text-blue-600 hover:text-blue-700"
+            @click="
+              router.push(`/user-task/latest/training/detail/${record.id}`)
+            "
+            >{{ record.name }}</a
+          >
         </template>
         <template v-if="column.dataIndex === 'status'">
           <Tag :color="getStatusColor(record.status)" class="rounded-full">
@@ -176,7 +188,12 @@ const getStatusColor = (status: string) => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="router.push(`/user-task/latest/training/detail/${record.id}`)">详情</a>
+            <a
+              @click="
+                router.push(`/user-task/latest/training/detail/${record.id}`)
+              "
+              >详情</a
+            >
             <a
               :class="{
                 'pointer-events-none text-gray-300': record.status !== '运行中',
@@ -201,7 +218,7 @@ const getStatusColor = (status: string) => {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="filteredRows().length"
         :show-size-changer="true"
         :show-quick-jumper="true"

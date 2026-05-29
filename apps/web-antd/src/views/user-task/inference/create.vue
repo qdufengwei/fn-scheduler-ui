@@ -1,21 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
+import { ArrowLeft, Info, Plus } from '@vben/icons';
+
 import {
   Button,
   Card,
+  Divider,
   Form,
   FormItem,
   Input,
-  Space,
-  Switch,
-  Divider,
-  Select,
   InputNumber,
   Segmented,
+  Select,
+  Space,
+  Switch,
 } from 'ant-design-vue';
-import { Info, Plus, ArrowLeft } from '@vben/icons';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { showInfo } from '#/utils/notify';
 
@@ -139,15 +141,15 @@ const goBack = () => {
 
         <FormItem label="存储">
           <Space class="mb-3">
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ 存储卷</Button
-            >
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ 临时卷</Button
-            >
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ S3</Button
-            >
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + 存储卷
+            </Button>
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + 临时卷
+            </Button>
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + S3
+            </Button>
           </Space>
           <div class="text-xs text-gray-400 leading-relaxed space-y-1">
             <div class="flex items-start">
@@ -188,9 +190,9 @@ const goBack = () => {
 
       <div class="flex items-center justify-between mt-8 border-t pt-4">
         <Space>
-          <Button type="primary" @click="showInfo('已提交推理任务')"
-            >确认</Button
-          >
+          <Button type="primary" @click="showInfo('已提交推理任务')">
+            确认
+          </Button>
           <Button @click="goBack">取消</Button>
         </Space>
       </div>

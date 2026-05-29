@@ -1,5 +1,5 @@
-import { requestClient } from '#/api/request';
+import { MOCK_VGPU } from '#/mock/vgpu';
 
 export async function getVgpuList() {
-  return requestClient.get('/vgpu/list');
+  return { data: MOCK_VGPU };
 }

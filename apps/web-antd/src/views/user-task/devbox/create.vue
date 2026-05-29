@@ -1,20 +1,22 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
+import { ArrowLeft, Info } from '@vben/icons';
+
 import {
   Button,
   Card,
+  Divider,
   Form,
   FormItem,
   Input,
+  InputNumber,
   Select,
   Space,
   Switch,
-  Divider,
-  InputNumber,
 } from 'ant-design-vue';
-import { Info, ArrowLeft } from '@vben/icons';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { showInfo } from '#/utils/notify';
 
@@ -134,17 +136,17 @@ const goBack = () => {
         <h3 class="font-bold mb-4 text-base">资源配置</h3>
         <FormItem label="实例配置" required>
           <div class="flex items-center gap-6 mb-2">
-            <Space
-              ><Switch v-model:checked="form.mig" size="small" />
-              启用MIG模式</Space
-            >
-            <Space
-              ><Switch v-model:checked="form.dedicated" size="small" />
-              整机调度</Space
-            >
-            <Space
-              ><Switch v-model:checked="form.vgpu" size="small" /> vGPU</Space
-            >
+            <Space>
+              <Switch v-model:checked="form.mig" size="small" />
+              启用MIG模式
+            </Space>
+            <Space>
+              <Switch v-model:checked="form.dedicated" size="small" />
+              整机调度
+            </Space>
+            <Space>
+              <Switch v-model:checked="form.vgpu" size="small" /> vGPU
+            </Space>
           </div>
           <div class="mb-4 text-gray-500 text-sm flex items-center">
             <Info class="mr-1 size-4" /> 当前所选类型暂无资源，可点击
@@ -177,12 +179,12 @@ const goBack = () => {
 
         <FormItem label="存储" required>
           <Space class="mb-3">
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ 存储卷</Button
-            >
-            <Button size="small" class="text-blue-500 border-blue-500"
-              >+ S3</Button
-            >
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + 存储卷
+            </Button>
+            <Button size="small" class="text-blue-500 border-blue-500">
+              + S3
+            </Button>
           </Space>
           <div class="text-xs text-gray-400 leading-relaxed space-y-1">
             <div class="flex items-start">
@@ -223,9 +225,9 @@ const goBack = () => {
 
       <div class="flex items-center justify-between mt-8 border-t pt-4">
         <Space>
-          <Button type="primary" @click="showInfo('已提交创建开发机')"
-            >确认</Button
-          >
+          <Button type="primary" @click="showInfo('已提交创建开发机')">
+            确认
+          </Button>
           <Button @click="goBack">取消</Button>
         </Space>
       </div>

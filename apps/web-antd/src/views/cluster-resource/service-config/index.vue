@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
+import { Check, Plus, RotateCw, Trash2 } from '@vben/icons';
+
 import {
   Button,
   Card,
@@ -12,7 +15,6 @@ import {
   Row,
   Switch,
 } from 'ant-design-vue';
-import { Check, Plus, Trash2, RotateCw } from '@vben/icons';
 
 import { showNotify } from '#/utils/notify';
 

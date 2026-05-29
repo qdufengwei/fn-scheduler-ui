@@ -1,10 +1,22 @@
 import type { UserInfo } from '@vben/types';
 
-import { requestClient } from '#/api/request';
+import { useAccessStore } from '@vben/stores';
 
-/**
- * 获取用户信息
- */
-export async function getUserInfoApi() {
-  return requestClient.get<UserInfo>('/user/info');
+import { MOCK_USERS } from '#/mock/auth';
+
+export async function getUserInfoApi(): Promise<UserInfo> {
+  const accessStore = useAccessStore();
+  const token = accessStore.accessToken || '';
+  const username = token.split('-')[3] || 'admin';
+  const user = MOCK_USERS.find((item) => item.username === username);
+  return {
+    avatar: '',
+    desc: `${user?.realName || username} 的个人描述`,
+    homePath: user?.homePath || '/',
+    realName: user?.realName || username,
+    roles: user?.roles || [],
+    token,
+    userId: String(user?.id ?? 0),
+    username: user?.username || username,
+  };
 }

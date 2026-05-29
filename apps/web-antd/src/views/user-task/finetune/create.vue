@@ -1,20 +1,22 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
+import { ArrowLeft, Info, Plus } from '@vben/icons';
+
 import {
   Button,
   Card,
+  Divider,
   Form,
   FormItem,
   Input,
+  InputNumber,
+  Select,
   Space,
   Switch,
-  Divider,
-  Select,
-  InputNumber,
 } from 'ant-design-vue';
-import { Info, Plus, ArrowLeft } from '@vben/icons';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { showInfo } from '#/utils/notify';
 
@@ -79,8 +81,9 @@ const goBack = () => {
             type="primary"
             ghost
             class="px-6 rounded border-blue-400 bg-blue-50"
-            >LoRA</Button
           >
+            LoRA
+          </Button>
         </FormItem>
         <FormItem label="参数配置">
           <div class="border border-gray-200 rounded overflow-hidden">
@@ -308,9 +311,9 @@ const goBack = () => {
 
       <div class="flex items-center justify-between mt-8 border-t pt-4">
         <Space>
-          <Button type="primary" @click="showInfo('已提交微调任务')"
-            >确认</Button
-          >
+          <Button type="primary" @click="showInfo('已提交微调任务')">
+            确认
+          </Button>
           <Button>存为模版</Button>
           <Button @click="goBack">取消</Button>
         </Space>

@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-
 import type { ImageRecord } from '../types';
+
+import { describe, expect, it } from 'vitest';
 
 import { useImageList } from '../use-image-list';
 

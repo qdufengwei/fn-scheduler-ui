@@ -47,7 +47,12 @@
       }
 
       body {
-        font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family:
+          'Inter',
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
         background: var(--bg-primary);
         color: var(--text-primary);
         line-height: 1.7;
@@ -63,9 +68,21 @@
         width: 200%;
         height: 200%;
         background:
-          radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 80%, rgba(8, 145, 178, 0.03) 0%, transparent 50%),
-          radial-gradient(ellipse at 50% 50%, rgba(5, 150, 105, 0.02) 0%, transparent 60%);
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(99, 102, 241, 0.04) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(8, 145, 178, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(5, 150, 105, 0.02) 0%,
+            transparent 60%
+          );
         pointer-events: none;
         z-index: 0;
       }
@@ -418,7 +435,8 @@
       }
 
       /* Lists */
-      ul, ol {
+      ul,
+      ol {
         margin: 8px 0 16px 20px;
         color: var(--text-secondary);
         font-size: 14px;
@@ -438,22 +456,26 @@
         margin: 0 2px;
       }
 
-      .tag-blue, .tag-primary {
+      .tag-blue,
+      .tag-primary {
         background: var(--accent-indigo-dim);
         color: var(--accent-indigo);
       }
 
-      .tag-green, .tag-success {
+      .tag-green,
+      .tag-success {
         background: var(--accent-emerald-dim);
         color: var(--accent-emerald);
       }
 
-      .tag-yellow, .tag-warning {
+      .tag-yellow,
+      .tag-warning {
         background: var(--accent-amber-dim);
         color: var(--accent-amber);
       }
 
-      .tag-red, .tag-error {
+      .tag-red,
+      .tag-error {
         background: var(--accent-rose-dim);
         color: var(--accent-rose);
       }
@@ -737,7 +759,11 @@
       .flow-category {
         margin: 32px 0 16px;
         padding: 16px 20px;
-        background: linear-gradient(135deg, var(--accent-indigo-dim) 0%, var(--accent-cyan-dim) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--accent-indigo-dim) 0%,
+          var(--accent-cyan-dim) 100%
+        );
         border-radius: var(--radius-lg);
         border: 1px solid var(--border-subtle);
       }
@@ -768,19 +794,37 @@
             <div class="toc-group">角色功能菜单</div>
           </li>
           <li><a href="#roles" class="toc-link">二、角色与权限体系</a></li>
-          <li><a href="#admin-functions" class="toc-sublink">2.3 管理员功能菜单</a></li>
-          <li><a href="#user-functions" class="toc-sublink">2.4 普通用户功能菜单</a></li>
+          <li>
+            <a href="#admin-functions" class="toc-sublink"
+              >2.3 管理员功能菜单</a
+            >
+          </li>
+          <li>
+            <a href="#user-functions" class="toc-sublink"
+              >2.4 普通用户功能菜单</a
+            >
+          </li>
           <li>
             <div class="toc-group">功能流程</div>
           </li>
           <li><a href="#flows" class="toc-link">三、功能流程</a></li>
-          <li><a href="#init-flow" class="toc-sublink">3.1 平台初始化流程</a></li>
+          <li>
+            <a href="#init-flow" class="toc-sublink">3.1 平台初始化流程</a>
+          </li>
           <li><a href="#node-flow" class="toc-sublink">3.2 节点管理流程</a></li>
-          <li><a href="#resource-flow" class="toc-sublink">3.3 资源分配流程</a></li>
+          <li>
+            <a href="#resource-flow" class="toc-sublink">3.3 资源分配流程</a>
+          </li>
           <li><a href="#task-flow" class="toc-sublink">3.4 任务运行流程</a></li>
-          <li><a href="#monitor-flow" class="toc-sublink">3.5 监控管理流程</a></li>
-          <li><a href="#billing-flow" class="toc-sublink">3.6 计费管理流程</a></li>
-          <li><a href="#ai-asset-flow" class="toc-sublink">3.7 AI资产管理流程</a></li>
+          <li>
+            <a href="#monitor-flow" class="toc-sublink">3.5 监控管理流程</a>
+          </li>
+          <li>
+            <a href="#billing-flow" class="toc-sublink">3.6 计费管理流程</a>
+          </li>
+          <li>
+            <a href="#ai-asset-flow" class="toc-sublink">3.7 AI资产管理流程</a>
+          </li>
           <li>
             <div class="toc-group">附录</div>
           </li>
@@ -797,7 +841,10 @@
         <section class="section" id="overview">
           <h2>一、平台概述</h2>
 
-          <p><strong>算网调度系统</strong>是一个面向GPU算力资源的智能调度与管理平台，为AI训练、模型推理、模型微调、交互式开发等场景提供GPU算力资源的分配、调度和监控能力。平台覆盖从物理GPU节点管理到AI任务执行的全链路算力资源生命周期管理，采用"管理员-租户"两级角色体系，通过白名单机制实现资源的精准分配。</p>
+          <p>
+            <strong>算网调度系统</strong
+            >是一个面向GPU算力资源的智能调度与管理平台，为AI训练、模型推理、模型微调、交互式开发等场景提供GPU算力资源的分配、调度和监控能力。平台覆盖从物理GPU节点管理到AI任务执行的全链路算力资源生命周期管理，采用"管理员-租户"两级角色体系，通过白名单机制实现资源的精准分配。
+          </p>
 
           <h3>1.1 平台定位与核心能力</h3>
 
@@ -835,7 +882,9 @@
             <div class="card">
               <div class="card-title">API服务能力</div>
               <div class="card-desc">
-                推理服务部署后通过<strong>API KEY</strong>对外提供API能力。支持API KEY的创建、管理和权限控制，方便与外部系统集成。
+                推理服务部署后通过<strong>API KEY</strong
+                >对外提供API能力。支持API
+                KEY的创建、管理和权限控制，方便与外部系统集成。
               </div>
             </div>
           </div>
@@ -869,7 +918,17 @@
             </div>
           </div>
 
-          <p style="text-align: center; color: var(--text-tertiary); font-size: 13px; margin-top: 12px;">管理员初始化平台 → 接入GPU节点 → 分配资源给租户 → 租户创建任务执行 → 系统监控计费</p>
+          <p
+            style="
+              text-align: center;
+              color: var(--text-tertiary);
+              font-size: 13px;
+              margin-top: 12px;
+            "
+          >
+            管理员初始化平台 → 接入GPU节点 → 分配资源给租户 → 租户创建任务执行 →
+            系统监控计费
+          </p>
         </section>
 
         <!-- 二、角色与权限体系 -->
@@ -898,7 +957,10 @@
                     <li>系统配置：服务配置、审计日志查看</li>
                   </ul>
                 </td>
-                <td><strong>平台运营者</strong>：负责算力资源的供给、分配、监控和计费，确保平台稳定运行和收益统计</td>
+                <td>
+                  <strong>平台运营者</strong
+                  >：负责算力资源的供给、分配、监控和计费，确保平台稳定运行和收益统计
+                </td>
               </tr>
               <tr>
                 <td><span class="tag tag-green">普通用户</span></td>
@@ -911,7 +973,10 @@
                     <li>查看账单和费用</li>
                   </ul>
                 </td>
-                <td><strong>资源使用者</strong>：利用分配的算力资源执行AI任务，管理任务生命周期和AI资产</td>
+                <td>
+                  <strong>资源使用者</strong
+                  >：利用分配的算力资源执行AI任务，管理任务生命周期和AI资产
+                </td>
               </tr>
             </tbody>
           </table>
@@ -922,7 +987,9 @@
             <strong>关键权限规则：</strong>
             <ul style="margin-top: 8px; padding-left: 20px">
               <li>租户必须分配租户管理员后才能被分配GPU资源</li>
-              <li>管理员可查看所有租户的任务和资源，普通用户只能查看本租户数据</li>
+              <li>
+                管理员可查看所有租户的任务和资源，普通用户只能查看本租户数据
+              </li>
               <li>资源分配采用白名单机制，由管理员主动分配，非租户自主申请</li>
               <li>计费账单对管理员可见全部，对普通用户仅可见本租户账单</li>
             </ul>
@@ -938,20 +1005,44 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>集群监控</div>
-                <div class="menu-desc">查看集群整体GPU资源利用率、GPU卡数、未调度任务数、满载节点数、碎片节点等关键指标。<strong>帮助管理员掌握集群整体负载状况，识别资源瓶颈和调度问题。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>集群监控
+                </div>
+                <div class="menu-desc">
+                  查看集群整体GPU资源利用率、GPU卡数、未调度任务数、满载节点数、碎片节点等关键指标。<strong
+                    >帮助管理员掌握集群整体负载状况，识别资源瓶颈和调度问题。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>节点监控</div>
-                <div class="menu-desc">查看单节点的GPU功率、温度、显存、利用率、NVLink带宽等详细指标，支持卡片/图表视图切换。<strong>帮助管理员深入分析节点运行状态，定位硬件异常和性能问题。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>节点监控
+                </div>
+                <div class="menu-desc">
+                  查看单节点的GPU功率、温度、显存、利用率、NVLink带宽等详细指标，支持卡片/图表视图切换。<strong
+                    >帮助管理员深入分析节点运行状态，定位硬件异常和性能问题。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>租售监控</div>
-                <div class="menu-desc">统计GPU单卡总数、已出租数、未出租数、租售率。<strong>帮助管理员了解资源出租情况，优化资源配置和定价策略。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>租售监控
+                </div>
+                <div class="menu-desc">
+                  统计GPU单卡总数、已出租数、未出租数、租售率。<strong
+                    >帮助管理员了解资源出租情况，优化资源配置和定价策略。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>任务监控</div>
-                <div class="menu-desc">跨租户查看所有任务的运行状态和资源使用情况。<strong>帮助管理员监控任务执行情况，处理异常任务。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>任务监控
+                </div>
+                <div class="menu-desc">
+                  跨租户查看所有任务的运行状态和资源使用情况。<strong
+                    >帮助管理员监控任务执行情况，处理异常任务。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -963,24 +1054,54 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>节点管理</div>
-                <div class="menu-desc">管理物理GPU节点的上架/下架、维护、MIG配置、资源分配、资源释放。<strong>帮助管理员完成节点生命周期管理，将物理资源纳入平台调度。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>节点管理
+                </div>
+                <div class="menu-desc">
+                  管理物理GPU节点的上架/下架、维护、MIG配置、资源分配、资源释放。<strong
+                    >帮助管理员完成节点生命周期管理，将物理资源纳入平台调度。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>租户资源</div>
-                <div class="menu-desc">查看和管理租户的GPU配额分配、缩减、释放。<strong>帮助管理员为租户分配和调整算力资源，实现资源的精细化管理。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>租户资源
+                </div>
+                <div class="menu-desc">
+                  查看和管理租户的GPU配额分配、缩减、释放。<strong
+                    >帮助管理员为租户分配和调整算力资源，实现资源的精细化管理。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>vGPU管理</div>
-                <div class="menu-desc">配置vGPU规格（算力、显存参数）。<strong>帮助管理员定义vGPU实例规格，为vGPU分配提供规格模板。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>vGPU管理
+                </div>
+                <div class="menu-desc">
+                  配置vGPU规格（算力、显存参数）。<strong
+                    >帮助管理员定义vGPU实例规格，为vGPU分配提供规格模板。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>审计日志</div>
-                <div class="menu-desc">查看登录、任务、资源、配置等操作行为记录。<strong>帮助管理员追溯操作历史，排查问题，满足安全审计需求。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>审计日志
+                </div>
+                <div class="menu-desc">
+                  查看登录、任务、资源、配置等操作行为记录。<strong
+                    >帮助管理员追溯操作历史，排查问题，满足安全审计需求。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>服务配置</div>
-                <div class="menu-desc">设置内存/CPU上限、默认镜像、日志配置等全局参数。<strong>帮助管理员统一配置平台运行参数，确保系统稳定运行。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>服务配置
+                </div>
+                <div class="menu-desc">
+                  设置内存/CPU上限、默认镜像、日志配置等全局参数。<strong
+                    >帮助管理员统一配置平台运行参数，确保系统稳定运行。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -992,12 +1113,24 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>商品定价</div>
-                <div class="menu-desc">配置GPU和存储资源的基础价格、包月折扣、包年折扣。<strong>帮助管理员制定灵活的定价策略，实现收益最大化。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>商品定价
+                </div>
+                <div class="menu-desc">
+                  配置GPU和存储资源的基础价格、包月折扣、包年折扣。<strong
+                    >帮助管理员制定灵活的定价策略，实现收益最大化。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>收益</div>
-                <div class="menu-desc">查看账单概览（日/周/月/季度/年）、总金额、使用时长、已支付金额。<strong>帮助管理员了解平台收益情况，进行经营分析。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>收益
+                </div>
+                <div class="menu-desc">
+                  查看账单概览（日/周/月/季度/年）、总金额、使用时长、已支付金额。<strong
+                    >帮助管理员了解平台收益情况，进行经营分析。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1009,16 +1142,34 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>最新任务</div>
-                <div class="menu-desc">跨租户查看训练/微调/推理/开发机任务列表。<strong>帮助管理员监控全平台任务执行情况，及时发现异常。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>最新任务
+                </div>
+                <div class="menu-desc">
+                  跨租户查看训练/微调/推理/开发机任务列表。<strong
+                    >帮助管理员监控全平台任务执行情况，及时发现异常。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>任务模板</div>
-                <div class="menu-desc">查看管理保存的任务模板。<strong>帮助管理员了解常用任务配置，优化资源配置建议。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>任务模板
+                </div>
+                <div class="menu-desc">
+                  查看管理保存的任务模板。<strong
+                    >帮助管理员了解常用任务配置，优化资源配置建议。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>任务回收站</div>
-                <div class="menu-desc">查看已删除的任务记录。<strong>帮助管理员追溯历史任务，处理数据恢复需求。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>任务回收站
+                </div>
+                <div class="menu-desc">
+                  查看已删除的任务记录。<strong
+                    >帮助管理员追溯历史任务，处理数据恢复需求。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1030,20 +1181,44 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>模型仓库</div>
-                <div class="menu-desc">管理预置模型（Qwen/Llama/DeepSeek）和自定义模型。<strong>帮助管理员为租户提供开箱即用的模型资源，降低使用门槛。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>模型仓库
+                </div>
+                <div class="menu-desc">
+                  管理预置模型（Qwen/Llama/DeepSeek）和自定义模型。<strong
+                    >帮助管理员为租户提供开箱即用的模型资源，降低使用门槛。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>模型服务市场</div>
-                <div class="menu-desc">管理模型即服务（MaaS）配置。<strong>帮助管理员提供模型API服务，拓展平台服务能力。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>模型服务市场
+                </div>
+                <div class="menu-desc">
+                  管理模型即服务（MaaS）配置。<strong
+                    >帮助管理员提供模型API服务，拓展平台服务能力。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>数据集</div>
-                <div class="menu-desc">管理训练/推理数据集。<strong>帮助管理员为租户提供数据集资源，支持AI任务执行。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>数据集
+                </div>
+                <div class="menu-desc">
+                  管理训练/推理数据集。<strong
+                    >帮助管理员为租户提供数据集资源，支持AI任务执行。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>镜像仓库</div>
-                <div class="menu-desc">管理预置镜像（Jupyter/VSCode/BusyBox）和自定义镜像。<strong>帮助管理员提供运行环境镜像，确保任务正常运行。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>镜像仓库
+                </div>
+                <div class="menu-desc">
+                  管理预置镜像（Jupyter/VSCode/BusyBox）和自定义镜像。<strong
+                    >帮助管理员提供运行环境镜像，确保任务正常运行。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1055,12 +1230,24 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>租户管理</div>
-                <div class="menu-desc">创建、编辑、删除租户，设置租户折扣。<strong>帮助管理员管理租户账户，建立租户体系。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>租户管理
+                </div>
+                <div class="menu-desc">
+                  创建、编辑、删除租户，设置租户折扣。<strong
+                    >帮助管理员管理租户账户，建立租户体系。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>用户管理</div>
-                <div class="menu-desc">创建、编辑、禁用用户，分配用户角色。<strong>帮助管理员管理平台用户，控制用户权限。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>用户管理
+                </div>
+                <div class="menu-desc">
+                  创建、编辑、禁用用户，分配用户角色。<strong
+                    >帮助管理员管理平台用户，控制用户权限。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1075,8 +1262,14 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>概览</div>
-                <div class="menu-desc">展示任务数量统计（训练任务、开发机、推理服务、模型微调）、计费信息（总使用量、待支付、已支付）、消息通知、资源概览（标准/MIG/vGPU实例的利用率、总计、活跃、空闲）。<strong>帮助用户快速了解整体资源使用情况和任务状态，掌握账户动态。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>概览
+                </div>
+                <div class="menu-desc">
+                  展示任务数量统计（训练任务、开发机、推理服务、模型微调）、计费信息（总使用量、待支付、已支付）、消息通知、资源概览（标准/MIG/vGPU实例的利用率、总计、活跃、空闲）。<strong
+                    >帮助用户快速了解整体资源使用情况和任务状态，掌握账户动态。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1088,8 +1281,14 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>我的资源</div>
-                <div class="menu-desc">查看租户拥有的GPU资源实例，支持查看详情、MIG配置、关闭MIG。<strong>帮助用户了解已分配的算力资源，管理资源配置。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>我的资源
+                </div>
+                <div class="menu-desc">
+                  查看租户拥有的GPU资源实例，支持查看详情、MIG配置、关闭MIG。<strong
+                    >帮助用户了解已分配的算力资源，管理资源配置。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1101,20 +1300,44 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>训练任务</div>
-                <div class="menu-desc">创建、管理训练任务，支持任务模板和回收站。<strong>帮助用户执行深度学习模型训练，管理训练生命周期。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>训练任务
+                </div>
+                <div class="menu-desc">
+                  创建、管理训练任务，支持任务模板和回收站。<strong
+                    >帮助用户执行深度学习模型训练，管理训练生命周期。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>模型微调</div>
-                <div class="menu-desc">基于预训练模型进行微调（支持LoRA/全量微调）。<strong>帮助用户快速适配领域场景，定制化模型能力。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>模型微调
+                </div>
+                <div class="menu-desc">
+                  基于预训练模型进行微调（支持LoRA/全量微调）。<strong
+                    >帮助用户快速适配领域场景，定制化模型能力。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>推理服务</div>
-                <div class="menu-desc">部署模型在线推理服务（支持vLLM/TGI/TensorRT-LLM）。<strong>帮助用户将模型部署为API服务，实现在线推理。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>推理服务
+                </div>
+                <div class="menu-desc">
+                  部署模型在线推理服务（支持vLLM/TGI/TensorRT-LLM）。<strong
+                    >帮助用户将模型部署为API服务，实现在线推理。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag core">核心</span>开发机</div>
-                <div class="menu-desc">创建Jupyter/VSCode交互式开发环境。<strong>帮助用户在GPU环境中进行模型开发、调试和实验。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag core">核心</span>开发机
+                </div>
+                <div class="menu-desc">
+                  创建Jupyter/VSCode交互式开发环境。<strong
+                    >帮助用户在GPU环境中进行模型开发、调试和实验。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1126,24 +1349,54 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>模型仓库</div>
-                <div class="menu-desc">查看和使用预置模型、上传自定义模型。<strong>帮助用户获取模型资源，为任务提供模型支撑。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>模型仓库
+                </div>
+                <div class="menu-desc">
+                  查看和使用预置模型、上传自定义模型。<strong
+                    >帮助用户获取模型资源，为任务提供模型支撑。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>模型服务市场</div>
-                <div class="menu-desc">浏览和使用模型即服务。<strong>帮助用户快速使用预置模型能力，无需自行部署。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>模型服务市场
+                </div>
+                <div class="menu-desc">
+                  浏览和使用模型即服务。<strong
+                    >帮助用户快速使用预置模型能力，无需自行部署。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>数据集</div>
-                <div class="menu-desc">管理训练/推理数据集。<strong>帮助用户组织和管理数据资源，支持任务执行。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>数据集
+                </div>
+                <div class="menu-desc">
+                  管理训练/推理数据集。<strong
+                    >帮助用户组织和管理数据资源，支持任务执行。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>镜像中心</div>
-                <div class="menu-desc">查看镜像仓库、管理镜像任务。<strong>帮助用户选择和使用运行环境镜像。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>镜像中心
+                </div>
+                <div class="menu-desc">
+                  查看镜像仓库、管理镜像任务。<strong
+                    >帮助用户选择和使用运行环境镜像。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>存储管理</div>
-                <div class="menu-desc">管理持久化存储。<strong>帮助用户管理数据存储，确保数据持久化和安全。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>存储管理
+                </div>
+                <div class="menu-desc">
+                  管理持久化存储。<strong
+                    >帮助用户管理数据存储，确保数据持久化和安全。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1155,24 +1408,54 @@
 
             <div class="feature-group">
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>API KEY</div>
-                <div class="menu-desc">创建、编辑、禁用API密钥，用于推理服务鉴权。<strong>帮助用户管理API访问凭证，控制服务调用权限。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>API KEY
+                </div>
+                <div class="menu-desc">
+                  创建、编辑、禁用API密钥，用于推理服务鉴权。<strong
+                    >帮助用户管理API访问凭证，控制服务调用权限。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>任务监控</div>
-                <div class="menu-desc">查看任务运行状态和资源使用。<strong>帮助用户监控任务执行情况，及时发现异常。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>任务监控
+                </div>
+                <div class="menu-desc">
+                  查看任务运行状态和资源使用。<strong
+                    >帮助用户监控任务执行情况，及时发现异常。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>云终端</div>
-                <div class="menu-desc">Web终端访问。<strong>帮助用户通过浏览器直接访问命令行环境。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>云终端
+                </div>
+                <div class="menu-desc">
+                  Web终端访问。<strong
+                    >帮助用户通过浏览器直接访问命令行环境。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>账单</div>
-                <div class="menu-desc">钱包、账单概览、预算管理、账单明细。<strong>帮助用户了解费用情况，进行成本管理。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>账单
+                </div>
+                <div class="menu-desc">
+                  钱包、账单概览、预算管理、账单明细。<strong
+                    >帮助用户了解费用情况，进行成本管理。</strong
+                  >
+                </div>
               </div>
               <div class="menu-item">
-                <div class="menu-name"><span class="menu-tag aux">辅助</span>用户管理</div>
-                <div class="menu-desc">租户内用户管理（租户管理员功能）。<strong>帮助租户管理员管理本租户用户。</strong></div>
+                <div class="menu-name">
+                  <span class="menu-tag aux">辅助</span>用户管理
+                </div>
+                <div class="menu-desc">
+                  租户内用户管理（租户管理员功能）。<strong
+                    >帮助租户管理员管理本租户用户。</strong
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1184,8 +1467,12 @@
 
           <!-- 3.1 平台初始化流程 -->
           <div class="flow-category">
-            <h3 class="flow-category-title" id="init-flow">3.1 平台初始化流程</h3>
-            <p class="flow-category-desc">平台初始化是系统上线前的必要准备工作，包括组织架构建立、物理资源接入、资源配置和节点上架四个阶段。初始化完成后，平台即可对外提供算力服务。</p>
+            <h3 class="flow-category-title" id="init-flow">
+              3.1 平台初始化流程
+            </h3>
+            <p class="flow-category-desc">
+              平台初始化是系统上线前的必要准备工作，包括组织架构建立、物理资源接入、资源配置和节点上架四个阶段。初始化完成后，平台即可对外提供算力服务。
+            </p>
           </div>
 
           <h4>流程泳道图</h4>
@@ -1216,7 +1503,9 @@
                 <div class="swimlane-connector">↓</div>
                 <div class="swimlane-step system-action">绑定租户管理员</div>
                 <div class="swimlane-connector">↓</div>
-                <div class="swimlane-step system-action">节点自动注册/手动添加</div>
+                <div class="swimlane-step system-action">
+                  节点自动注册/手动添加
+                </div>
                 <div class="swimlane-connector">↓</div>
                 <div class="swimlane-step system-action">保存定价配置</div>
                 <div class="swimlane-connector">↓</div>
@@ -1239,7 +1528,9 @@
               <tr>
                 <td>1</td>
                 <td>创建租户</td>
-                <td>在"组织管理 > 租户管理"中创建租户，设置租户名称和基本信息</td>
+                <td>
+                  在"组织管理 > 租户管理"中创建租户，设置租户名称和基本信息
+                </td>
               </tr>
               <tr>
                 <td>2</td>
@@ -1249,7 +1540,10 @@
               <tr>
                 <td>3</td>
                 <td>分配租户管理员</td>
-                <td><strong>必须步骤</strong>，将用户分配到租户并设置为租户管理员，否则无法为租户分配资源</td>
+                <td>
+                  <strong>必须步骤</strong
+                  >，将用户分配到租户并设置为租户管理员，否则无法为租户分配资源
+                </td>
               </tr>
               <tr>
                 <td>4</td>
@@ -1283,7 +1577,9 @@
           <!-- 3.2 节点管理流程 -->
           <div class="flow-category">
             <h3 class="flow-category-title" id="node-flow">3.2 节点管理流程</h3>
-            <p class="flow-category-desc">节点管理是平台资源供给的核心功能，负责物理GPU节点的生命周期管理。包括节点状态监控、上架/下架操作、维护模式切换、MIG配置等功能。</p>
+            <p class="flow-category-desc">
+              节点管理是平台资源供给的核心功能，负责物理GPU节点的生命周期管理。包括节点状态监控、上架/下架操作、维护模式切换、MIG配置等功能。
+            </p>
           </div>
 
           <h4>节点状态流转</h4>
@@ -1298,7 +1594,15 @@
             <div class="status-box warning">已分配</div>
           </div>
 
-          <p style="text-align: center; color: var(--text-tertiary); font-size: 13px;">维护中 ← 就绪 ← 已上架（可下架）</p>
+          <p
+            style="
+              text-align: center;
+              color: var(--text-tertiary);
+              font-size: 13px;
+            "
+          >
+            维护中 ← 就绪 ← 已上架（可下架）
+          </p>
 
           <h4>流程泳道图 - 节点上架</h4>
 
@@ -1318,7 +1622,9 @@
               <div class="swimlane-lane">
                 <div class="swimlane-step system-action">校验节点状态=就绪</div>
                 <div class="swimlane-connector">↓</div>
-                <div class="swimlane-step system-action">更新为已上架，记录上架时间</div>
+                <div class="swimlane-step system-action">
+                  更新为已上架，记录上架时间
+                </div>
               </div>
             </div>
           </div>
@@ -1397,17 +1703,23 @@
           <h4>重要说明</h4>
 
           <div class="highlight-box">
-            <strong>上架规则：</strong>节点状态必须为"就绪"，上架后节点变为可分配状态。
+            <strong>上架规则：</strong
+            >节点状态必须为"就绪"，上架后节点变为可分配状态。
           </div>
 
           <div class="highlight-box warning">
-            <strong>下架规则：</strong>上架状态下可下架，有运行任务时禁止下架，下架后节点从资源池移除。
+            <strong>下架规则：</strong
+            >上架状态下可下架，有运行任务时禁止下架，下架后节点从资源池移除。
           </div>
 
           <!-- 3.3 资源分配流程 -->
           <div class="flow-category">
-            <h3 class="flow-category-title" id="resource-flow">3.3 资源分配流程</h3>
-            <p class="flow-category-desc">资源分配采用<strong>白名单机制</strong>，由管理员主动将GPU资源分配给租户。支持四种分配模式：整机分配、弹性分配、MIG分配、vGPU分配，满足不同场景的资源隔离需求。</p>
+            <h3 class="flow-category-title" id="resource-flow">
+              3.3 资源分配流程
+            </h3>
+            <p class="flow-category-desc">
+              资源分配采用<strong>白名单机制</strong>，由管理员主动将GPU资源分配给租户。支持四种分配模式：整机分配、弹性分配、MIG分配、vGPU分配，满足不同场景的资源隔离需求。
+            </p>
           </div>
 
           <h4>流程泳道图</h4>
@@ -1441,11 +1753,15 @@
                 <div class="swimlane-connector">↓</div>
                 <div class="swimlane-step system-action">动态加载规格选项</div>
                 <div class="swimlane-connector">↓</div>
-                <div class="swimlane-step system-action">预检查资源是否足够</div>
+                <div class="swimlane-step system-action">
+                  预检查资源是否足够
+                </div>
                 <div class="swimlane-connector">↓</div>
                 <div class="swimlane-step system-action">创建分配记录</div>
                 <div class="swimlane-connector">↓</div>
-                <div class="swimlane-step system-action">执行配置（K8s/驱动）</div>
+                <div class="swimlane-step system-action">
+                  执行配置（K8s/驱动）
+                </div>
               </div>
               <div class="swimlane-lane">
                 <div class="swimlane-step"></div>
@@ -1475,7 +1791,9 @@
               <tr>
                 <td>1</td>
                 <td>选择租户</td>
-                <td>仅显示已分配租户管理员的租户，未分配管理员的租户置灰不可选</td>
+                <td>
+                  仅显示已分配租户管理员的租户，未分配管理员的租户置灰不可选
+                </td>
               </tr>
               <tr>
                 <td>2</td>
@@ -1485,7 +1803,9 @@
               <tr>
                 <td>3</td>
                 <td>选择资源规格</td>
-                <td>根据分配模式动态过滤，整机显示如"8xH100-PCIE"，MIG显示如"1g.5GB"</td>
+                <td>
+                  根据分配模式动态过滤，整机显示如"8xH100-PCIE"，MIG显示如"1g.5GB"
+                </td>
               </tr>
               <tr>
                 <td>4</td>
@@ -1558,7 +1878,9 @@
           <!-- 3.4 任务运行流程 -->
           <div class="flow-category">
             <h3 class="flow-category-title" id="task-flow">3.4 任务运行流程</h3>
-            <p class="flow-category-desc">任务运行是租户使用算力资源的核心场景，包括训练任务、模型微调、推理服务、开发机四种类型。任务创建后由系统自动调度执行，支持实时监控和灵活控制。</p>
+            <p class="flow-category-desc">
+              任务运行是租户使用算力资源的核心场景，包括训练任务、模型微调、推理服务、开发机四种类型。任务创建后由系统自动调度执行，支持实时监控和灵活控制。
+            </p>
           </div>
 
           <h4>任务状态流转</h4>
@@ -1573,7 +1895,15 @@
             <div class="status-box gray">停止</div>
           </div>
 
-          <p style="text-align: center; color: var(--text-tertiary); font-size: 13px;">排队中（资源不足等待调度）→ 运行中 → 失败（异常情况）</p>
+          <p
+            style="
+              text-align: center;
+              color: var(--text-tertiary);
+              font-size: 13px;
+            "
+          >
+            排队中（资源不足等待调度）→ 运行中 → 失败（异常情况）
+          </p>
 
           <h4>流程泳道图</h4>
 
@@ -1698,8 +2028,12 @@
 
           <!-- 3.5 监控管理流程 -->
           <div class="flow-category">
-            <h3 class="flow-category-title" id="monitor-flow">3.5 监控管理流程</h3>
-            <p class="flow-category-desc">监控管理提供集群、节点、任务三级监控体系，帮助管理员实时掌握平台运行状态，及时发现和处理异常。支持自动刷新、报表下载、历史数据查询等功能。</p>
+            <h3 class="flow-category-title" id="monitor-flow">
+              3.5 监控管理流程
+            </h3>
+            <p class="flow-category-desc">
+              监控管理提供集群、节点、任务三级监控体系，帮助管理员实时掌握平台运行状态，及时发现和处理异常。支持自动刷新、报表下载、历史数据查询等功能。
+            </p>
           </div>
 
           <h4>监控指标体系</h4>
@@ -1802,8 +2136,12 @@
 
           <!-- 3.6 计费管理流程 -->
           <div class="flow-category">
-            <h3 class="flow-category-title" id="billing-flow">3.6 计费管理流程</h3>
-            <p class="flow-category-desc">计费管理支持按需计费、包月、包年三种计费模式。管理员可配置商品定价，系统自动统计资源使用并生成账单。</p>
+            <h3 class="flow-category-title" id="billing-flow">
+              3.6 计费管理流程
+            </h3>
+            <p class="flow-category-desc">
+              计费管理支持按需计费、包月、包年三种计费模式。管理员可配置商品定价，系统自动统计资源使用并生成账单。
+            </p>
           </div>
 
           <h4>流程泳道图</h4>
@@ -1898,8 +2236,12 @@
 
           <!-- 3.7 AI资产管理流程 -->
           <div class="flow-category">
-            <h3 class="flow-category-title" id="ai-asset-flow">3.7 AI资产管理流程</h3>
-            <p class="flow-category-desc">AI资产管理为AI任务提供模型、数据集、镜像等资源支撑。包括模型仓库、模型服务市场、数据集管理、镜像仓库、存储管理等功能。</p>
+            <h3 class="flow-category-title" id="ai-asset-flow">
+              3.7 AI资产管理流程
+            </h3>
+            <p class="flow-category-desc">
+              AI资产管理为AI任务提供模型、数据集、镜像等资源支撑。包括模型仓库、模型服务市场、数据集管理、镜像仓库、存储管理等功能。
+            </p>
           </div>
 
           <h4>资产流转关系</h4>
@@ -2018,7 +2360,9 @@
 
         <!-- 附录：关键业务规则 -->
         <section class="section" id="rules">
-          <h2 style="border-left-color: var(--accent-amber);">附录：关键业务规则</h2>
+          <h2 style="border-left-color: var(--accent-amber)">
+            附录：关键业务规则
+          </h2>
 
           <h3>租户与资源配额规则</h3>
 
@@ -2150,7 +2494,9 @@
           </div>
 
           <div class="divider"></div>
-          <p class="page-footer">算网调度系统 - 智算平台业务流程梳理 | 生成时间：2026年5月28日</p>
+          <p class="page-footer">
+            算网调度系统 - 智算平台业务流程梳理 | 生成时间：2026年5月28日
+          </p>
         </section>
       </main>
     </div>

@@ -1,7 +1,7 @@
-import { requestClient } from '#/api/request';
+import { getMockNodeMetricHistory, MOCK_CLUSTER_MONITOR } from '#/mock/monitor';
 
 export async function getNodeMonitor() {
-  return requestClient.get('/monitor/node');
+  return { data: MOCK_CLUSTER_MONITOR };
 }
 
 export async function getNodeMetricHistory(params: {
@@ -9,5 +9,6 @@ export async function getNodeMetricHistory(params: {
   nodeId: number;
   startTime?: string;
 }) {
-  return requestClient.get('/node/metrics-history', { params });
+  const data = getMockNodeMetricHistory(params);
+  return { data };
 }

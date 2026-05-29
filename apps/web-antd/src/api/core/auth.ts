@@ -1,51 +1,37 @@
-import { baseRequestClient, requestClient } from '#/api/request';
+import { useAccessStore } from '@vben/stores';
+
+import { MOCK_CODES, MOCK_USERS } from '#/mock/auth';
 
 export namespace AuthApi {
-  /** 登录接口参数 */
   export interface LoginParams {
     password?: string;
+    selectAccount?: string;
     username?: string;
   }
 
-  /** 登录接口返回值 */
   export interface LoginResult {
     accessToken: string;
   }
-
-  export interface RefreshTokenResult {
-    data: string;
-    status: number;
-  }
 }
 
-/**
- * 登录
- */
 export async function loginApi(data: AuthApi.LoginParams) {
-  return requestClient.post<AuthApi.LoginResult>('/auth/login', data);
+  const username = data.username || data.selectAccount || 'admin';
+  const findUser = MOCK_USERS.find((item) => item.username === username);
+
+  if (!findUser) {
+    throw new Error('用户不存在');
+  }
+
+  const accessToken = `mock-access-token-${findUser.username}-${Date.now()}`;
+
+  return { accessToken } as AuthApi.LoginResult;
 }
 
-/**
- * 刷新accessToken
- */
-export async function refreshTokenApi() {
-  return baseRequestClient.post<AuthApi.RefreshTokenResult>('/auth/refresh', {
-    withCredentials: true,
-  });
-}
-
-/**
- * 退出登录
- */
-export async function logoutApi() {
-  return baseRequestClient.post('/auth/logout', {
-    withCredentials: true,
-  });
-}
-
-/**
- * 获取用户权限码
- */
 export async function getAccessCodesApi() {
-  return requestClient.get<string[]>('/auth/codes');
+  const accessStore = useAccessStore();
+  const token = accessStore.accessToken || '';
+  const username = token.split('-')[3] || 'admin';
+  const codes =
+    MOCK_CODES.find((item) => item.username === username)?.codes ?? [];
+  return codes;
 }

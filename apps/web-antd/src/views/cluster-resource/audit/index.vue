@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+
+import { Download, RotateCw } from '@vben/icons';
+
 import {
   Button,
   DatePicker,
@@ -9,7 +12,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { Download, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -283,8 +285,9 @@ function handleDownload() {
           <Tag
             :color="record.method === 'POST' ? 'blue' : 'green'"
             class="rounded-full"
-            >{{ record.method }}</Tag
           >
+            {{ record.method }}
+          </Tag>
         </template>
       </template>
     </Table>
@@ -292,7 +295,7 @@ function handleDownload() {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="53"
         :show-size-changer="true"
         :show-quick-jumper="true"

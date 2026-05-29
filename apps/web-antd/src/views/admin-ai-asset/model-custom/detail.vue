@@ -3,16 +3,18 @@ import type { Key } from 'ant-design-vue/es/_util/type';
 
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
 import { ArrowLeft, Copy } from '@vben/icons';
+
 import {
   Button,
   Card,
+  message,
   Pagination,
   Popconfirm,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
 
 const route = useRoute();
@@ -234,9 +236,9 @@ function copyModelPath(path: string) {
             @confirm="handleBatchDelete"
             :disabled="selectedRowKeys.length === 0"
           >
-            <Button :disabled="selectedRowKeys.length === 0" class="px-4"
-              >批量删除</Button
-            >
+            <Button :disabled="selectedRowKeys.length === 0" class="px-4">
+              批量删除
+            </Button>
           </Popconfirm>
         </template>
 

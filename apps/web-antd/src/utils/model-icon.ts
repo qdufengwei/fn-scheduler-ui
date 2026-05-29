@@ -59,7 +59,7 @@ const MODEL_PREFIX_MAP: Record<string, string> = {
 /**
  * 根据模型名称获取图标名称
  */
-function getIconNameByModel(modelName: string): string | null {
+function getIconNameByModel(modelName: string): null | string {
   const lowerName = modelName.toLowerCase();
 
   for (const [prefix, iconName] of Object.entries(MODEL_PREFIX_MAP)) {
@@ -74,7 +74,7 @@ function getIconNameByModel(modelName: string): string | null {
 /**
  * 根据提供商名称获取图标名称
  */
-function getIconNameByProvider(provider: string): string | null {
+function getIconNameByProvider(provider: string): null | string {
   return PROVIDER_ICON_MAP[provider] || null;
 }
 
@@ -87,7 +87,7 @@ function getIconNameByProvider(provider: string): string | null {
 export function getModelIconUrl(
   modelName: string,
   provider?: string,
-  variant: 'default' | 'color' | 'text' = 'color',
+  variant: 'color' | 'default' | 'text' = 'color',
 ): string {
   // 优先根据模型名称匹配
   let iconName = getIconNameByModel(modelName);

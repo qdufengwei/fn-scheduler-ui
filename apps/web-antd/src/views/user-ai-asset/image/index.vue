@@ -9,7 +9,9 @@ import { ref } from 'vue';
 import { Button, Input, Radio, Select, Space } from 'ant-design-vue';
 
 import { mockUserDetailRows, mockUserImageRows } from '#/mock/user-image';
-
+import { safeCopyText } from '#/utils/clipboard';
+import { formatDateTime } from '#/utils/date';
+import { showNotify } from '#/utils/notify';
 import ImageDetail from '#/views/admin-ai-asset/image/components/image-detail.vue';
 import ImageDrawer from '#/views/admin-ai-asset/image/components/image-drawer.vue';
 import ImageList from '#/views/admin-ai-asset/image/components/image-list.vue';
@@ -17,9 +19,6 @@ import { useImageFilter } from '#/views/admin-ai-asset/image/composables/use-ima
 import { useImageList } from '#/views/admin-ai-asset/image/composables/use-image-list';
 import { usePagination } from '#/views/admin-ai-asset/image/composables/use-pagination';
 import { PROJECT_OPTIONS } from '#/views/admin-ai-asset/image/constants';
-import { formatDateTime } from '#/utils/date';
-import { safeCopyText } from '#/utils/clipboard';
-import { showNotify } from '#/utils/notify';
 
 const { rows, selectedRowKeys, deleteImage, batchDelete, addImage } =
   useImageList(mockUserImageRows);
@@ -77,8 +76,8 @@ function handleCreateImage() {
 
 function handleSaveCreate(form: {
   directory: string;
-  name: string;
   isLatest: boolean;
+  name: string;
   version: string;
 }) {
   const newName = `${form.directory}/${form.name}`;
@@ -128,70 +127,70 @@ function handleResetFilters() {
     <Transition name="fade-slide" mode="out-in">
       <div v-if="!showDetail" key="list">
         <ImageList
-            :data="paginatedData"
-            :selected-row-keys="selectedRowKeys"
-            :total="total"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :page-size-options="pageSizeOptions"
-            @view-detail="handleViewDetail"
-            @delete="handleDelete"
-            @batch-delete="handleBatchDelete"
-            @selection-change="selectedRowKeys = $event"
-            @create="handleCreateImage"
-            @update:current-page="currentPage = $event"
-            @update:page-size="pageSize = $event"
-          >
-            <template #filters>
-              <div class="flex flex-wrap items-center gap-3">
-                <Radio.Group v-model:value="imageScope" button-style="solid">
-                  <Radio.Button value="public">公共镜像</Radio.Button>
-                  <Radio.Button value="private">私有镜像</Radio.Button>
-                </Radio.Group>
-                <div class="filter-control">
-                  <span class="filter-label">项目</span>
-                  <Select
-                    v-model:value="project"
-                    class="filter-select"
-                    :options="PROJECT_OPTIONS"
-                  />
-                </div>
-                <div class="filter-control">
-                  <span class="filter-label">镜像名称</span>
-                  <Input
-                    v-model:value="keyword"
-                    allow-clear
-                    class="filter-input"
-                    placeholder="请输入"
-                  />
-                </div>
+          :data="paginatedData"
+          :selected-row-keys="selectedRowKeys"
+          :total="total"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-size-options="pageSizeOptions"
+          @view-detail="handleViewDetail"
+          @delete="handleDelete"
+          @batch-delete="handleBatchDelete"
+          @selection-change="selectedRowKeys = $event"
+          @create="handleCreateImage"
+          @update:current-page="currentPage = $event"
+          @update:page-size="pageSize = $event"
+        >
+          <template #filters>
+            <div class="flex flex-wrap items-center gap-3">
+              <Radio.Group v-model:value="imageScope" button-style="solid">
+                <Radio.Button value="public">公共镜像</Radio.Button>
+                <Radio.Button value="private">私有镜像</Radio.Button>
+              </Radio.Group>
+              <div class="filter-control">
+                <span class="filter-label">项目</span>
+                <Select
+                  v-model:value="project"
+                  class="filter-select"
+                  :options="PROJECT_OPTIONS"
+                />
               </div>
-            </template>
+              <div class="filter-control">
+                <span class="filter-label">镜像名称</span>
+                <Input
+                  v-model:value="keyword"
+                  allow-clear
+                  class="filter-input"
+                  placeholder="请输入"
+                />
+              </div>
+            </div>
+          </template>
 
-            <template #filterActions>
-              <Space>
-                <Button type="primary">筛选</Button>
-                <Button @click="handleResetFilters">重置</Button>
-              </Space>
-            </template>
-          </ImageList>
-        </div>
+          <template #filterActions>
+            <Space>
+              <Button type="primary">筛选</Button>
+              <Button @click="handleResetFilters">重置</Button>
+            </Space>
+          </template>
+        </ImageList>
+      </div>
 
-        <ImageDetail
-          v-else
-          key="detail"
-          :image="selectedImage"
-          :detail-data="detailRows"
-          :detail-page="detailPage"
-          :detail-page-size="detailPageSize"
-          @back="handleBack"
-          @delete-repo="handleDeleteImageRepo"
-          @delete-detail="handleDeleteDetailRow"
-          @copy="handleCopyText"
-          @update:detail-page="detailPage = $event"
-          @update:detail-page-size="detailPageSize = $event"
-        />
-      </Transition>
+      <ImageDetail
+        v-else
+        key="detail"
+        :image="selectedImage"
+        :detail-data="detailRows"
+        :detail-page="detailPage"
+        :detail-page-size="detailPageSize"
+        @back="handleBack"
+        @delete-repo="handleDeleteImageRepo"
+        @delete-detail="handleDeleteDetailRow"
+        @copy="handleCopyText"
+        @update:detail-page="detailPage = $event"
+        @update:detail-page-size="detailPageSize = $event"
+      />
+    </Transition>
 
     <ImageDrawer
       ref="drawerRef"

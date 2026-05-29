@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import { RotateCw, Search } from '@vben/icons';
+
 import {
   Button,
   Pagination,
@@ -8,8 +12,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { RotateCw, Search } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -82,8 +84,9 @@ const statusColor: Record<string, string> = {
             searchText = '';
             selectedTenant = undefined;
           "
-          >重置</Button
         >
+          重置
+        </Button>
       </Space>
     </template>
 
@@ -110,9 +113,9 @@ const statusColor: Record<string, string> = {
           </div>
         </template>
         <template v-if="column.dataIndex === 'status'">
-          <Tag :color="statusColor[record.status]" class="rounded-full">{{
-            record.status
-          }}</Tag>
+          <Tag :color="statusColor[record.status]" class="rounded-full">
+            {{ record.status }}
+          </Tag>
         </template>
         <template v-if="column.dataIndex === 'type'">
           <Tag class="rounded-full">{{ record.type }}</Tag>
@@ -139,7 +142,7 @@ const statusColor: Record<string, string> = {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="1"
         :show-size-changer="true"
         :show-quick-jumper="true"

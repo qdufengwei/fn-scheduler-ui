@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
+import { RotateCw } from '@vben/icons';
+
 import {
   Button,
   Card,
@@ -11,7 +14,6 @@ import {
   Tag,
   Tooltip,
 } from 'ant-design-vue';
-import { RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { getModelIconSrc } from '#/utils/model-icon';
@@ -604,7 +606,7 @@ function getModelIcon(model: { name: string; provider: string }): string {
       >
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredModels.length"
           :show-size-changer="true"
           :show-quick-jumper="true"
@@ -628,8 +630,8 @@ function getModelIcon(model: { name: string; provider: string }): string {
 
 /* 卡片悬浮效果 */
 .model-card:hover {
-  transform: translateY(-2px);
   border-color: #e2e8f0;
+  transform: translateY(-2px);
 }
 
 /* 卡片边框 */

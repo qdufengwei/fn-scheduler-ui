@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
 import { computed, onMounted, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+
 import {
   Button,
   Card,
@@ -18,7 +20,7 @@ import {
 } from 'ant-design-vue';
 
 import { getNodeList } from '#/api/node';
-import { showNotify, showWarning, showError } from '#/utils/notify';
+import { showError, showNotify, showWarning } from '#/utils/notify';
 
 interface NodeRow {
   allocatedGpu: number;
@@ -141,9 +143,9 @@ const distributionForm = ref({
 });
 const currentNode = ref<NodeRow | null>(null);
 
-const maintenanceAction = ref<'排空' | '恢复'>('排空');
+const maintenanceAction = ref<'恢复' | '排空'>('排空');
 
-const migAction = ref<'配置MIG' | '关闭MIG'>('配置MIG');
+const migAction = ref<'关闭MIG' | '配置MIG'>('配置MIG');
 
 const canConfigMig = (r: NodeRow) =>
   (r.gpuModel.includes('A100') || r.gpuModel.includes('H100')) &&
@@ -189,12 +191,7 @@ const openDistribution = (r: NodeRow) => {
 };
 
 const handleDistributionClick = () => {
-  const node =
-    filteredRows.value.length > 0
-      ? filteredRows.value[0]
-      : rows.value.length > 0
-        ? rows.value[0]
-        : null;
+  const node = filteredRows.value[0] ?? rows.value[0] ?? null;
   if (node) {
     openDistribution(node);
   }
@@ -219,12 +216,7 @@ const openMaintenance = (r: NodeRow) => {
 };
 
 const handleMaintenanceClick = () => {
-  const node =
-    filteredRows.value.length > 0
-      ? filteredRows.value[0]
-      : rows.value.length > 0
-        ? rows.value[0]
-        : null;
+  const node = filteredRows.value[0] ?? rows.value[0] ?? null;
   if (node) {
     openMaintenance(node);
   }
@@ -376,9 +368,9 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
     <Card>
       <div class="mb-3 flex items-center justify-between">
         <Space wrap>
-          <Button type="primary" @click="handleDistributionClick"
-            >资源分配</Button
-          >
+          <Button type="primary" @click="handleDistributionClick">
+            资源分配
+          </Button>
           <Button @click="batchOnline">批量上架</Button>
           <Button @click="batchOffline">批量下架</Button>
           <Button @click="handleMaintenanceClick">维护</Button>
@@ -397,27 +389,27 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
         :scroll="{ x: 2200 }"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'allocatedGpu'"
-            >{{ (record as NodeRow).allocatedGpu }} 卡</template
-          >
+          <template v-if="column.key === 'allocatedGpu'">
+            {{ (record as NodeRow).allocatedGpu }} 卡
+          </template>
           <template v-else-if="column.key === 'allocationType'">
             <Tag
               :color="allocationTagColor((record as NodeRow).allocationType)"
-              >{{ (record as NodeRow).allocationType }}</Tag
             >
+              {{ (record as NodeRow).allocationType }}
+            </Tag>
           </template>
           <template v-else-if="column.key === 'status'">
-            <Tag :color="statusColor[(record as NodeRow).status]">{{
-              (record as NodeRow).status
-            }}</Tag>
+            <Tag :color="statusColor[(record as NodeRow).status]">
+              {{ (record as NodeRow).status }}
+            </Tag>
           </template>
-          <template v-else-if="column.key === 'isOnline'">{{
-            (record as NodeRow).isOnline ? '是' : '否'
-          }}</template>
-          <template v-else-if="column.key === 'price'"
-            >¥{{ Number((record as NodeRow).price || 0).toFixed(2) }} /
-            时</template
-          >
+          <template v-else-if="column.key === 'isOnline'">
+            {{ (record as NodeRow).isOnline ? '是' : '否' }}
+          </template>
+          <template v-else-if="column.key === 'price'">
+            ¥{{ Number((record as NodeRow).price || 0).toFixed(2) }} / 时
+          </template>
           <template v-else-if="column.key === 'action'">
             <Space :size="0">
               <Button
@@ -428,8 +420,9 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
                   (record as NodeRow).status !== '就绪'
                 "
                 @click="onShelf(record as NodeRow)"
-                >上架</Button
               >
+                上架
+              </Button>
               <Popconfirm
                 title="下架后该节点将无法被分配，确认下架吗？"
                 @confirm="offShelf(record as NodeRow)"
@@ -439,8 +432,9 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
                   type="link"
                   size="small"
                   :disabled="!(record as NodeRow).isOnline"
-                  >下架</Button
                 >
+                  下架
+                </Button>
               </Popconfirm>
               <Dropdown trigger="click">
                 <Button type="link" size="small">...</Button>
@@ -453,19 +447,22 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
                     <Menu.Item
                       key="distribute"
                       :disabled="!canDistribute(record as NodeRow)"
-                      >资源分配</Menu.Item
                     >
+                      资源分配
+                    </Menu.Item>
                     <Menu.Item key="maintain">维护</Menu.Item>
                     <Menu.Item
                       key="migConfig"
                       :disabled="!canConfigMig(record as NodeRow)"
-                      >MIG配置</Menu.Item
                     >
+                      MIG配置
+                    </Menu.Item>
                     <Menu.Item
                       key="migClose"
                       :disabled="!canCloseMig(record as NodeRow)"
-                      >关闭MIG</Menu.Item
                     >
+                      关闭MIG
+                    </Menu.Item>
                     <Menu.Item key="release">资源释放</Menu.Item>
                   </Menu>
                 </template>
@@ -484,9 +481,9 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
             placeholder="请选择租户"
           >
             <Select.Option value="tenant-a">租户A</Select.Option>
-            <Select.Option value="tenant-b" disabled
-              >租户B（未分配管理员）</Select.Option
-            >
+            <Select.Option value="tenant-b" disabled>
+              租户B（未分配管理员）
+            </Select.Option>
             <Select.Option value="tenant-c">租户C</Select.Option>
           </Select>
         </FormItem>
@@ -503,24 +500,27 @@ const [MigDrawer, migDrawerApi] = useVbenDrawer({
         <FormItem label="资源规格" required>
           <Input v-model:value="distributionForm.spec" />
         </FormItem>
-        <FormItem label="CPU(核)"
-          ><InputNumber
+        <FormItem label="CPU(核)">
+          <InputNumber
             v-model:value="distributionForm.cpu"
             :min="0"
             style="width: 100%"
-        /></FormItem>
-        <FormItem label="内存(GiB)"
-          ><InputNumber
+          />
+        </FormItem>
+        <FormItem label="内存(GiB)">
+          <InputNumber
             v-model:value="distributionForm.memory"
             :min="0"
             style="width: 100%"
-        /></FormItem>
-        <FormItem label="包括共享存储(GB)"
-          ><InputNumber
+          />
+        </FormItem>
+        <FormItem label="包括共享存储(GB)">
+          <InputNumber
             v-model:value="distributionForm.sharedStorage"
             :min="0"
             style="width: 100%"
-        /></FormItem>
+          />
+        </FormItem>
         <FormItem label="节点" required>
           <Select
             v-model:value="distributionForm.nodeId"

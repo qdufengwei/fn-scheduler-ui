@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { useVbenDrawer } from '@vben/common-ui';
+import { Plus } from '@vben/icons';
+
 import {
   Button,
   Form,
@@ -11,8 +15,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { Plus } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -93,8 +95,9 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
         <Button
           :disabled="selectedRowKeys.length === 0"
           @click="showNotify('开始绑定支付方式')"
-          >支付方式绑定</Button
         >
+          支付方式绑定
+        </Button>
         <Button @click="showNotify('刷新成功')">刷新</Button>
       </template>
 
@@ -145,7 +148,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="rows.length"
           :show-size-changer="true"
           :show-quick-jumper="true"
@@ -175,8 +178,9 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
               showNotify('添加成功');
               createDrawerApi.close();
             "
-            >确认</Button
           >
+            确认
+          </Button>
         </Space>
       </template>
     </CreateDrawer>

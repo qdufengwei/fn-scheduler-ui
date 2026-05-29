@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { Plus, RotateCw } from '@vben/icons';
+
 import {
   Button,
   Input,
@@ -7,9 +12,6 @@ import {
   Space,
   Table,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Plus, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showInfo } from '#/utils/notify';
@@ -75,10 +77,7 @@ const filteredRows = () => {
     </template>
 
     <template #toolbar>
-      <Button
-        type="primary"
-        @click="router.push('/user-task/template/create')"
-      >
+      <Button type="primary" @click="router.push('/user-task/template/create')">
         <template #icon><Plus class="size-4" /></template>
         创建任务模版
       </Button>
@@ -122,7 +121,9 @@ const filteredRows = () => {
         </template>
         <template v-if="column.dataIndex === 'action'">
           <Space :size="12">
-            <a @click="router.push('/user-task/latest/training/create')">创建任务</a>
+            <a @click="router.push('/user-task/latest/training/create')"
+              >创建任务</a
+            >
             <a @click="router.push('/user-task/template/create')">修改</a>
             <Popconfirm
               title="确认删除模板？"
@@ -138,7 +139,7 @@ const filteredRows = () => {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="filteredRows().length"
         :show-size-changer="true"
         :show-quick-jumper="true"

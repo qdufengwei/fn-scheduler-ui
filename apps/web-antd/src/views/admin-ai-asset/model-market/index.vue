@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
 import { createIconifyIcon, RotateCw, Search } from '@vben/icons';
+
 import {
   Button,
+  Drawer,
   Input,
+  message,
   Pagination,
+  Popconfirm,
   Select,
   Tag,
-  message,
-  Popconfirm,
-  Drawer,
 } from 'ant-design-vue';
 
 import { getModelIconSrc } from '#/utils/model-icon';
@@ -83,7 +85,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.008,
     serviceName: 'deepseek-r1-inference',
     tenant: 'platform',
-    totalCalls: 128362,
+    totalCalls: 128_362,
     user: 'admin',
     status: 'active',
   },
@@ -96,7 +98,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.012,
     serviceName: 'qwen-coder-assistant',
     tenant: 'cd-aic',
-    totalCalls: 86420,
+    totalCalls: 86_420,
     user: 'test01',
     status: 'active',
   },
@@ -109,7 +111,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.0048,
     serviceName: 'vision-inspection-vl',
     tenant: 'sz-vision',
-    totalCalls: 61044,
+    totalCalls: 61_044,
     user: 'test02',
     status: 'active',
   },
@@ -122,7 +124,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.0035,
     serviceName: 'speech-transcribe-whisper',
     tenant: 'platform',
-    totalCalls: 43190,
+    totalCalls: 43_190,
     user: 'admin',
     status: 'active',
   },
@@ -135,7 +137,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.045,
     serviceName: 'gpt-4o-mini-service',
     tenant: 'cd-aic',
-    totalCalls: 39720,
+    totalCalls: 39_720,
     user: 'test01',
     status: 'active',
   },
@@ -148,7 +150,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.0096,
     serviceName: 'llama-405b-heavy',
     tenant: 'sz-vision',
-    totalCalls: 27560,
+    totalCalls: 27_560,
     user: 'test02',
     status: 'suspended',
   },
@@ -161,7 +163,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.05,
     serviceName: 'sd3-image-generation',
     tenant: 'platform',
-    totalCalls: 18450,
+    totalCalls: 18_450,
     user: 'admin',
     status: 'active',
   },
@@ -174,7 +176,7 @@ const modelServices = ref<ModelService[]>([
     outputPrice: 0.004,
     serviceName: 'sensevoice-speed-asr',
     tenant: 'cd-aic',
-    totalCalls: 12530,
+    totalCalls: 12_530,
     user: 'test01',
     status: 'active',
   },
@@ -642,7 +644,7 @@ function getModelIcon(modelName: string): string {
                     >调用
                     <span class="font-semibold text-gray-700 font-mono">{{
                       service.totalCalls >= 10000
-                        ? (service.totalCalls / 10000).toFixed(1) + 'W'
+                        ? `${(service.totalCalls / 10000).toFixed(1)}W`
                         : service.totalCalls
                     }}</span>
                     次</span
@@ -705,8 +707,9 @@ function getModelIcon(modelName: string): string {
               size="small"
               class="mt-4 px-4"
               @click="handleReset"
-              >重置筛选</Button
             >
+              重置筛选
+            </Button>
           </div>
         </div>
 
@@ -922,9 +925,9 @@ function getModelIcon(modelName: string): string {
         <div
           class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0"
         >
-          <Button class="rounded-lg text-xs" @click="detailVisible = false"
-            >关闭窗口</Button
-          >
+          <Button class="rounded-lg text-xs" @click="detailVisible = false">
+            关闭窗口
+          </Button>
         </div>
       </div>
     </Drawer>

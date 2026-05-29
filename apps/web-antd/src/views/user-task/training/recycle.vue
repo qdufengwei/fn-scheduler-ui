@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import { RotateCw } from '@vben/icons';
+
 import {
   Button,
   Input,
@@ -8,8 +12,6 @@ import {
   Space,
   Table,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showInfo } from '#/utils/notify';
@@ -76,8 +78,9 @@ const filteredRows = () => {
             keyword = '';
             ownership = 'all';
           "
-          >重置</Button
         >
+          重置
+        </Button>
       </Space>
     </template>
 
@@ -134,7 +137,7 @@ const filteredRows = () => {
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="filteredRows().length"
         :show-size-changer="true"
         :show-quick-jumper="true"

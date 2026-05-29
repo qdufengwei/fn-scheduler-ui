@@ -1,5 +1,17 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+
 import { useVbenDrawer } from '@vben/common-ui';
+import {
+  Check,
+  Copy,
+  Inbox,
+  Info,
+  LockKeyhole,
+  Plus,
+  Trash2,
+} from '@vben/icons';
+
 import {
   Button,
   Checkbox,
@@ -18,16 +30,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref, computed } from 'vue';
-import {
-  Plus,
-  Trash2,
-  Copy,
-  LockKeyhole,
-  Check,
-  Inbox,
-  Info,
-} from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify, showWarning } from '#/utils/notify';
@@ -41,9 +43,9 @@ interface ApiKey {
   id: string;
   name: string;
   permissions: string[];
-  expireType: 'never' | 'custom';
-  expireDate: string | null;
-  status: '运行' | '禁用';
+  expireType: 'custom' | 'never';
+  expireDate: null | string;
+  status: '禁用' | '运行';
   owner: string;
   created: string;
   lastUsed: string;
@@ -60,11 +62,11 @@ const form = ref({
   id: '',
   name: '',
   permissions: [] as string[],
-  expireType: 'never' as 'never' | 'custom',
+  expireType: 'never' as 'custom' | 'never',
   expireDate: undefined as string | undefined,
   boundTasks: [] as Array<{
-    tenant: string | undefined;
     taskName: string | undefined;
+    tenant: string | undefined;
   }>,
 });
 
@@ -287,9 +289,9 @@ function handleSave() {
   if (isEdit.value) {
     const idx = rows.value.findIndex((item) => item.id === form.value.id);
     if (idx !== -1) {
-      const current = rows.value[idx]!;
+      const existing = rows.value[idx] as ApiKey;
       rows.value[idx] = {
-        id: current.id,
+        id: existing.id,
         name: form.value.name,
         permissions: [...form.value.permissions],
         expireType: form.value.expireType,
@@ -297,13 +299,13 @@ function handleSave() {
           form.value.expireType === 'custom'
             ? (form.value.expireDate ?? null)
             : null,
-        status: current.status,
-        owner: current.owner,
-        created: current.created,
-        lastUsed: current.lastUsed,
+        status: existing.status,
+        owner: existing.owner,
+        created: existing.created,
+        lastUsed: existing.lastUsed,
         boundTasks: form.value.boundTasks.map((t) => ({
-          tenant: t.tenant!,
-          taskName: t.taskName!,
+          tenant: t.tenant as string,
+          taskName: t.taskName as string,
         })),
       };
       showNotify(`编辑 API KEY [${form.value.name}] 成功`);
@@ -327,8 +329,8 @@ function handleSave() {
       created: formatTime,
       lastUsed: '-',
       boundTasks: form.value.boundTasks.map((t) => ({
-        tenant: t.tenant!,
-        taskName: t.taskName!,
+        tenant: t.tenant as string,
+        taskName: t.taskName as string,
       })),
     });
     showNotify(`创建 API KEY [${form.value.name}] 成功`);
@@ -564,9 +566,9 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
                 >
                 <template #overlay>
                   <Menu>
-                    <Menu.Item key="viewTasks" @click="handleViewTasks(record)"
-                      >查看绑定推理任务</Menu.Item
-                    >
+                    <Menu.Item key="viewTasks" @click="handleViewTasks(record)">
+                      查看绑定推理任务
+                    </Menu.Item>
                     <Menu.Item key="delete">
                       <Popconfirm
                         title="确认删除该API KEY？"
@@ -589,7 +591,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredData.length"
           :show-size-changer="true"
           :show-quick-jumper="true"
@@ -718,7 +720,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       v-model:open="tasksModalVisible"
       :title="
         selectedKeyForTasks
-          ? 'API KEY [' + selectedKeyForTasks.name + '] 绑定推理任务'
+          ? `API KEY [${selectedKeyForTasks.name}] 绑定推理任务`
           : ''
       "
       :footer="null"

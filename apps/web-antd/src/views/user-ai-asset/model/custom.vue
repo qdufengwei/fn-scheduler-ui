@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import { Plus, Search, Trash2 } from '@vben/icons';
+
 import {
   Button,
   Divider,
@@ -15,7 +18,7 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { Plus, Search, Trash2 } from '@vben/icons';
+
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
@@ -340,7 +343,7 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredData.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

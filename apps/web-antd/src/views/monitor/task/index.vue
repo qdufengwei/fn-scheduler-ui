@@ -18,6 +18,7 @@ import {
 import dayjs from 'dayjs';
 
 import { showNotify } from '#/utils/notify';
+
 import MetricChart from '../../resource/monitor/components/MetricChart.vue';
 
 interface MetricItem {
@@ -31,7 +32,7 @@ interface TaskItem {
   id: string;
   name: string;
   runTime: string;
-  status: '排队中' | '运行中' | '已停止';
+  status: '已停止' | '排队中' | '运行中';
   type: string;
 }
 
@@ -151,7 +152,7 @@ const refreshOptions = [
 ];
 
 const taskTypeOptions = computed(() =>
-  Array.from(new Set(tasks.map((task) => task.type))).map((type) => ({
+  [...new Set(tasks.map((task) => task.type))].map((type) => ({
     label: type,
     value: type,
   })),
@@ -167,7 +168,7 @@ const taskNameOptions = computed(() =>
 );
 
 const currentTask = computed<TaskItem>(
-  () => tasks.find((task) => task.id === taskId.value) ?? tasks[0]!,
+  () => tasks.find((task) => task.id === taskId.value) ?? (tasks as any)[0],
 );
 const metricGridClass = computed(() =>
   viewMode.value === 'small'
@@ -283,9 +284,9 @@ onBeforeUnmount(() => {
               />
             </Space>
             <Button type="primary" @click="onDownloadReport">
-              <template #icon
-                ><IconifyIcon icon="lucide:download" class="size-4"
-              /></template>
+              <template #icon>
+                <IconifyIcon icon="lucide:download" class="size-4" />
+              </template>
               报表下载
             </Button>
           </div>
@@ -296,9 +297,9 @@ onBeforeUnmount(() => {
                 :type="viewMode === 'small' ? 'primary' : 'default'"
                 @click="viewMode = 'small'"
               >
-                <template #icon
-                  ><IconifyIcon icon="lucide:layout-grid" class="size-4"
-                /></template>
+                <template #icon>
+                  <IconifyIcon icon="lucide:layout-grid" class="size-4" />
+                </template>
               </Button>
             </Tooltip>
             <Tooltip title="大卡片">
@@ -306,9 +307,9 @@ onBeforeUnmount(() => {
                 :type="viewMode === 'large' ? 'primary' : 'default'"
                 @click="viewMode = 'large'"
               >
-                <template #icon
-                  ><IconifyIcon icon="lucide:list" class="size-4"
-                /></template>
+                <template #icon>
+                  <IconifyIcon icon="lucide:list" class="size-4" />
+                </template>
               </Button>
             </Tooltip>
           </Space>

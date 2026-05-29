@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Button, Pagination, Popconfirm, Table, Tag } from 'ant-design-vue';
+
 import { Trash2 } from '@vben/icons';
+
+import { Button, Pagination, Popconfirm, Table, Tag } from 'ant-design-vue';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -141,7 +143,7 @@ function handleSelectionChange(keys: Array<number | string>) {
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="dataSource.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

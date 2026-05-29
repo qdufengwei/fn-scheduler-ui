@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
 import { computed, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import { Plus, Search, Trash2 } from '@vben/icons';
+
 import {
   Button,
   Divider,
   Form,
   FormItem,
   Input,
+  message,
   Pagination,
   Popconfirm,
   Progress,
-  Select,
   Segmented,
+  Select,
   Space,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { Plus, Search, Trash2 } from '@vben/icons';
+
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
 
@@ -202,9 +205,10 @@ function handleCreateSave() {
     return;
   }
 
-  const newId = dataSource.value.length
-    ? Math.max(...dataSource.value.map((item) => item.id)) + 1
-    : 1;
+  const newId =
+    dataSource.value.length > 0
+      ? Math.max(...dataSource.value.map((item) => item.id)) + 1
+      : 1;
   const now = new Date();
   const formatTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
@@ -226,7 +230,7 @@ function handleCreateSave() {
 function handleAddVersion(record: any) {
   selectedDataset.value = record;
   const currentVer = record.version;
-  const majorNum = parseInt(currentVer.replace(/[^0-9]/g, '')) || 1;
+  const majorNum = Number.parseInt(currentVer.replaceAll(/[^0-9]/g, '')) || 1;
   versionForm.value = {
     version: `v${(majorNum + 0.1).toFixed(1)}`,
     storageType: 'share',
@@ -384,9 +388,9 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
 
         <template v-if="column.dataIndex === 'action'">
           <div class="flex items-center gap-1">
-            <Button type="link" size="small" @click="handleAddVersion(record)"
-              >添加版本</Button
-            >
+            <Button type="link" size="small" @click="handleAddVersion(record)">
+              添加版本
+            </Button>
             <Popconfirm
               title="确认删除该数据集吗？"
               ok-text="确认"
@@ -403,7 +407,7 @@ const [VersionDrawer, versionDrawerApi] = useVbenDrawer({
     <div class="fn-list-pagination flex items-center justify-end">
       <Pagination
         v-model:current="currentPage"
-        v-model:pageSize="pageSize"
+        v-model:page-size="pageSize"
         :total="filteredData.length"
         :show-size-changer="true"
         :show-quick-jumper="true"

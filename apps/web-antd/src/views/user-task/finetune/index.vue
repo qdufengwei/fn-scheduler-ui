@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { useVbenDrawer } from '@vben/common-ui';
+import { Plus, RotateCw } from '@vben/icons';
+
 import {
   Button,
   Input,
@@ -9,9 +14,6 @@ import {
   Table,
   Tag,
 } from 'ant-design-vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Plus, RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 import { showNotify } from '#/utils/notify';
@@ -199,7 +201,7 @@ const getStatusColor = (status: string) => {
       <div class="fn-list-pagination flex items-center justify-end">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="rows.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

@@ -1,4 +1,4 @@
-export interface UserInfo {
+export interface MockUserInfo {
   id: number;
   password: string;
   realName: string;
@@ -7,12 +7,7 @@ export interface UserInfo {
   homePath?: string;
 }
 
-export interface TimezoneOption {
-  offset: number;
-  timezone: string;
-}
-
-export const MOCK_USERS: UserInfo[] = [
+export const MOCK_USERS: MockUserInfo[] = [
   {
     id: 0,
     password: 'infrawaves',
@@ -75,28 +70,6 @@ export const MOCK_CODES = [
   },
 ];
 
-/**
- * 时区选项
- */
-export const TIME_ZONE_OPTIONS: TimezoneOption[] = [
-  {
-    offset: 8,
-    timezone: 'Asia/Shanghai',
-  },
-];
-
-export function getMenuIds(menus: any[]) {
-  const ids: number[] = [];
-  menus.forEach((item) => {
-    ids.push(item.id);
-    if (item.children && item.children.length > 0) {
-      ids.push(...getMenuIds(item.children));
-    }
-  });
-  return ids;
-}
-
-// 前端模式不需要后端返回菜单数据，但接口需要兼容
 export const MOCK_MENUS = [
   {
     menus: [],
@@ -107,5 +80,3 @@ export const MOCK_MENUS = [
     username: 'test01',
   },
 ];
-
-export const MOCK_MENU_LIST: any[] = [];

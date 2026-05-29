@@ -1,10 +1,21 @@
 <script setup lang="ts">
+import type { EchartsUIType } from '@vben/plugins/echarts';
+
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
-import { ArrowLeft, Copy, Search, Maximize, ArrowUp, ArrowDown, createIconifyIcon } from '@vben/icons';
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Copy,
+  createIconifyIcon,
+  Maximize,
+  Search,
+} from '@vben/icons';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
-import type { EchartsUIType } from '@vben/plugins/echarts';
+
 import {
   Button,
   Card,
@@ -15,19 +26,22 @@ import {
   Input,
   Menu,
   MenuItem,
+  message,
   Modal,
   Row,
   Select,
   Switch,
   Table,
-  Tag,
-  Tabs,
   TabPane,
+  Tabs,
+  Tag,
   Timeline,
   TimelineItem,
-  message,
 } from 'ant-design-vue';
 
+const props = withDefaults(defineProps<Props>(), {
+  backRouteName: '',
+});
 // 路由
 const route = useRoute();
 const router = useRouter();
@@ -36,35 +50,37 @@ const router = useRouter();
 interface Props {
   backRouteName?: string;
 }
-const props = withDefaults(defineProps<Props>(), {});
 
 // 任务基础数据
 const fallbackTaskId = 'job-0482129d4b7b-20260415210402';
 const taskId = computed(() => String(route.params.id || fallbackTaskId));
 
-const tasksMockMap: Record<string, {
-  name: string;
-  status: string;
-  readyStatus: string;
-  runTime: string;
-  createTime: string;
-  creator: string;
-  tenant: string;
-  image: string;
-  taskType: string;
-  workDir: string;
-  priority: string;
-  replicas: number;
-  recyclePolicy: string;
-  storage: string;
-  autoRetry: string;
-  entryCmd: string;
-  env: string;
-  tolerations: string;
-  desc: string;
-  gpuCount: number;
-  spec: string;
-}> = {
+const tasksMockMap: Record<
+  string,
+  {
+    autoRetry: string;
+    createTime: string;
+    creator: string;
+    desc: string;
+    entryCmd: string;
+    env: string;
+    gpuCount: number;
+    image: string;
+    name: string;
+    priority: string;
+    readyStatus: string;
+    recyclePolicy: string;
+    replicas: number;
+    runTime: string;
+    spec: string;
+    status: string;
+    storage: string;
+    taskType: string;
+    tenant: string;
+    tolerations: string;
+    workDir: string;
+  }
+> = {
   'job-0482129d4b7b-20260415210402': {
     name: 'cpu6',
     status: '运行中',
@@ -160,7 +176,7 @@ const tasksMockMap: Record<string, {
 };
 
 const taskInfo = computed(() => {
-  return tasksMockMap[taskId.value] || tasksMockMap[fallbackTaskId]!;
+  return tasksMockMap[taskId.value] || (tasksMockMap as any)[fallbackTaskId];
 });
 
 // 运行时长计时器
@@ -174,9 +190,9 @@ function parseAndStartTimer(runtimeStr: string) {
     tickingRuntime.value = runtimeStr;
     return;
   }
-  let h = parseInt(match[1] || '0');
-  let m = parseInt(match[2] || '0');
-  let s = parseInt(match[3] || '0');
+  let h = Number.parseInt(match[1] || '0');
+  let m = Number.parseInt(match[2] || '0');
+  let s = Number.parseInt(match[3] || '0');
 
   tickingRuntime.value = `${h}h ${m}m ${s}s`;
 
@@ -196,11 +212,15 @@ function parseAndStartTimer(runtimeStr: string) {
   }
 }
 
-watch(() => taskInfo.value, (newVal) => {
-  if (newVal) {
-    parseAndStartTimer(newVal.runTime);
-  }
-}, { immediate: true });
+watch(
+  () => taskInfo.value,
+  (newVal) => {
+    if (newVal) {
+      parseAndStartTimer(newVal.runTime);
+    }
+  },
+  { immediate: true },
+);
 
 onUnmounted(() => {
   if (timerId) clearInterval(timerId);
@@ -311,10 +331,10 @@ const yamlLines = computed(() => {
 const highlightedYamlLines = computed(() => {
   return yamlLines.value.map((line) => {
     // 转义 HTML 实体防止渲染解析错误
-    let html = line
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const html = line
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
 
     if (html.trim().startsWith('#')) {
       return `<span class="text-slate-500">${html}</span>`;
@@ -322,26 +342,29 @@ const highlightedYamlLines = computed(() => {
 
     const colonIndex = html.indexOf(':');
     if (colonIndex !== -1) {
-      const key = html.substring(0, colonIndex);
-      const rest = html.substring(colonIndex);
+      const key = html.slice(0, Math.max(0, colonIndex));
+      const rest = html.slice(Math.max(0, colonIndex));
 
       // 高亮 key，根据缩进层级赋以不同颜色以展现高级编辑器的质感
       const indentCount = key.length - key.trimStart().length;
-      const indent = key.substring(0, indentCount);
+      const indent = key.slice(0, Math.max(0, indentCount));
       const keyName = key.trimStart();
 
       let valHtml = rest;
-      const valTrim = rest.substring(1).trim();
+      const valTrim = rest.slice(1).trim();
       if (valTrim) {
         const valStart = rest.indexOf(valTrim);
-        const prefix = rest.substring(0, valStart);
-        let val = rest.substring(valStart);
+        const prefix = rest.slice(0, Math.max(0, valStart));
+        let val = rest.slice(Math.max(0, valStart));
 
         if (val === 'null' || val === 'true' || val === 'false') {
           val = `<span class="text-[#ae81ff] font-medium">${val}</span>`;
-        } else if (!isNaN(Number(val))) {
+        } else if (!Number.isNaN(Number(val))) {
           val = `<span class="text-[#ae81ff]">${val}</span>`;
-        } else if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+        } else if (
+          (val.startsWith('"') && val.endsWith('"')) ||
+          (val.startsWith("'") && val.endsWith("'"))
+        ) {
           val = `<span class="text-[#e6db74]">${val}</span>`;
         } else {
           val = `<span class="text-[#a6e22e]">${val}</span>`;
@@ -350,14 +373,11 @@ const highlightedYamlLines = computed(() => {
       }
 
       // 根据缩进层级指定高亮颜色
-      let keyColor = '#66d9ef'; // default blue
-      if (indentCount === 0) {
-        keyColor = '#f92672'; // top level keys (pink)
-      } else if (indentCount === 2) {
-        keyColor = '#66d9ef'; // level 2 (blue)
-      } else {
-        keyColor = '#a6e22e'; // level 3+ (green)
-      }
+      const keyColors: Record<number, string> = {
+        0: '#f92672',
+        2: '#66d9ef',
+      };
+      const keyColor = keyColors[indentCount] ?? '#a6e22e';
 
       return `${indent}<span style="color: ${keyColor}">${keyName}</span>${valHtml}`;
     }
@@ -406,9 +426,13 @@ function handleMenuClick(info: any) {
         setTimeout(() => {
           taskInfo.value.status = '运行中';
           parseAndStartTimer('0h 0m 1s');
-          message.success({ content: '任务已重新启动', key: 'op', duration: 2 });
+          message.success({
+            content: '任务已重新启动',
+            key: 'op',
+            duration: 2,
+          });
         }, 1200);
-      }
+      },
     });
   } else if (key === 'delete') {
     Modal.confirm({
@@ -423,7 +447,7 @@ function handleMenuClick(info: any) {
           message.success({ content: '任务删除成功', key: 'op', duration: 2 });
           handleBack();
         }, 1000);
-      }
+      },
     });
   }
 }
@@ -456,7 +480,13 @@ const replicaColumns = [
   { title: '节点IP', dataIndex: 'nodeIp', key: 'nodeIp' },
   { title: '运行节点', dataIndex: 'nodeName', key: 'nodeName' },
   { title: '创建时间', dataIndex: 'createTime', key: 'createTime' },
-  { title: '操作', dataIndex: 'action', key: 'action', width: 80, fixed: 'right' as const },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    key: 'action',
+    width: 80,
+    fixed: 'right' as const,
+  },
 ];
 
 function jumpToLogs() {
@@ -475,7 +505,16 @@ const { renderEcharts: renderCpu } = useEcharts(cpuChartRef);
 const { renderEcharts: renderMem } = useEcharts(memChartRef);
 
 // 模拟的监控数据时间轴与数值
-const timestamps = ['21:49', '21:50', '21:50', '21:51', '21:52', '21:52', '21:53', '21:54'];
+const timestamps = [
+  '21:49',
+  '21:50',
+  '21:50',
+  '21:51',
+  '21:52',
+  '21:52',
+  '21:53',
+  '21:54',
+];
 const cpuValues = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01];
 const memValues = [1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3]; // 单位：MB
 
@@ -506,7 +545,7 @@ const getCpuOption = (): any => ({
   yAxis: {
     type: 'value',
     min: 0,
-    max: 1.0,
+    max: 1,
     axisLine: { show: false },
     axisTick: { show: false },
     splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } },
@@ -689,7 +728,9 @@ const simulatedLogs = ref<string[]>([
 
 const filteredLogs = computed(() => {
   if (!logSearch.value) return simulatedLogs.value;
-  return simulatedLogs.value.filter(log => log.toLowerCase().includes(logSearch.value.toLowerCase()));
+  return simulatedLogs.value.filter((log) =>
+    log.toLowerCase().includes(logSearch.value.toLowerCase()),
+  );
 });
 
 function scrollToBottom() {
@@ -716,19 +757,63 @@ const eventLevel = ref('Warning');
 const eventSearch = ref('');
 
 const simulatedEvents = [
-  { time: '2026-05-21 09:01:19', type: 'Normal', reason: 'Scheduled', message: 'Successfully assigned job-0482129d4b7b-20260415210402-worker-0 to cpu105' },
-  { time: '2026-05-21 09:01:20', type: 'Normal', reason: 'Pulled', message: 'Container image "harbor.local.clusters/kubesphereio/ssh:v1.1-02141010" already present on machine' },
-  { time: '2026-05-21 09:01:21', type: 'Normal', reason: 'Created', message: 'Created container worker' },
-  { time: '2026-05-21 09:01:21', type: 'Normal', reason: 'Started', message: 'Started container worker' },
-  { time: '2026-05-21 09:01:22', type: 'Warning', reason: 'Unhealthy', message: 'Liveness probe failed: connection refused on port 8080' },
-  { time: '2026-05-21 09:01:40', type: 'Warning', reason: 'FailedScheduling', message: '0/5 nodes are available: 5 Insufficient cpu. Preemption list empty.' },
-  { time: '2026-05-21 09:01:55', type: 'Warning', reason: 'SandboxChanged', message: 'Pod sandbox changed, restarting container in sandbox.' },
+  {
+    time: '2026-05-21 09:01:19',
+    type: 'Normal',
+    reason: 'Scheduled',
+    message:
+      'Successfully assigned job-0482129d4b7b-20260415210402-worker-0 to cpu105',
+  },
+  {
+    time: '2026-05-21 09:01:20',
+    type: 'Normal',
+    reason: 'Pulled',
+    message:
+      'Container image "harbor.local.clusters/kubesphereio/ssh:v1.1-02141010" already present on machine',
+  },
+  {
+    time: '2026-05-21 09:01:21',
+    type: 'Normal',
+    reason: 'Created',
+    message: 'Created container worker',
+  },
+  {
+    time: '2026-05-21 09:01:21',
+    type: 'Normal',
+    reason: 'Started',
+    message: 'Started container worker',
+  },
+  {
+    time: '2026-05-21 09:01:22',
+    type: 'Warning',
+    reason: 'Unhealthy',
+    message: 'Liveness probe failed: connection refused on port 8080',
+  },
+  {
+    time: '2026-05-21 09:01:40',
+    type: 'Warning',
+    reason: 'FailedScheduling',
+    message:
+      '0/5 nodes are available: 5 Insufficient cpu. Preemption list empty.',
+  },
+  {
+    time: '2026-05-21 09:01:55',
+    type: 'Warning',
+    reason: 'SandboxChanged',
+    message: 'Pod sandbox changed, restarting container in sandbox.',
+  },
 ];
 
 const filteredEvents = computed(() => {
-  return simulatedEvents.filter(ev => {
-    if (eventLevel.value !== 'All' && ev.type !== eventLevel.value) return false;
-    if (eventSearch.value && !ev.message.toLowerCase().includes(eventSearch.value.toLowerCase()) && !ev.reason.toLowerCase().includes(eventSearch.value.toLowerCase())) return false;
+  return simulatedEvents.filter((ev) => {
+    if (eventLevel.value !== 'All' && ev.type !== eventLevel.value)
+      return false;
+    if (
+      eventSearch.value &&
+      !ev.message.toLowerCase().includes(eventSearch.value.toLowerCase()) &&
+      !ev.reason.toLowerCase().includes(eventSearch.value.toLowerCase())
+    )
+      return false;
     return true;
   });
 });
@@ -751,7 +836,11 @@ onMounted(() => {
   <Page auto-content-height>
     <div class="space-y-4 w-full pb-8">
       <!-- 头部：导航与主状态卡片 -->
-      <Card :bordered="false" class="shadow-sm rounded-2xl" :body-style="{ padding: '20px 24px' }">
+      <Card
+        :bordered="false"
+        class="shadow-sm rounded-2xl"
+        :body-style="{ padding: '20px 24px' }"
+      >
         <div class="flex flex-col gap-4">
           <!-- 上排：返回与控制按钮 -->
           <div class="flex items-center justify-between w-full">
@@ -763,11 +852,18 @@ onMounted(() => {
               >
                 <template #icon><ArrowLeft class="size-4.5" /></template>
               </Button>
-              <span class="text-xl font-bold text-slate-800">{{ taskInfo.name }}</span>
-              <Tag color="success" class="rounded-full px-2.5 py-0.5 border-0 bg-[#e6f4ea] text-[#137333] font-medium text-xs">
+              <span class="text-xl font-bold text-slate-800">{{
+                taskInfo.name
+              }}</span>
+              <Tag
+                color="success"
+                class="rounded-full px-2.5 py-0.5 border-0 bg-[#e6f4ea] text-[#137333] font-medium text-xs"
+              >
                 {{ taskInfo.status }}
               </Tag>
-              <Tag class="rounded-md px-1.5 py-0.2 border-0 bg-slate-100 text-slate-500 text-xs">
+              <Tag
+                class="rounded-md px-1.5 py-0.2 border-0 bg-slate-100 text-slate-500 text-xs"
+              >
                 {{ taskInfo.readyStatus }}
               </Tag>
               <span class="text-xs text-slate-400 font-normal ml-1">
@@ -777,7 +873,9 @@ onMounted(() => {
 
             <div class="flex items-center gap-3">
               <Dropdown :trigger="['click']">
-                <Button class="rounded-lg px-4 text-slate-600 hover:border-slate-300 hover:text-slate-800">
+                <Button
+                  class="rounded-lg px-4 text-slate-600 hover:border-slate-300 hover:text-slate-800"
+                >
                   更多
                 </Button>
                 <template #overlay>
@@ -810,98 +908,153 @@ onMounted(() => {
                   </Menu>
                 </template>
               </Dropdown>
-              <Button type="primary" class="rounded-lg px-4 bg-blue-600 border-0 hover:bg-blue-500" @click="yamlVisible = true">
+              <Button
+                type="primary"
+                class="rounded-lg px-4 bg-blue-600 border-0 hover:bg-blue-500"
+                @click="yamlVisible = true"
+              >
                 查看YAML
               </Button>
             </div>
           </div>
 
           <!-- 下排：网格展示ID和创建时间等 -->
-          <div class="bg-[#f8f9fc] rounded-xl p-5 border border-slate-100/50 grid grid-cols-2 gap-y-3.5 gap-x-12">
+          <div
+            class="bg-[#f8f9fc] rounded-xl p-5 border border-slate-100/50 grid grid-cols-2 gap-y-3.5 gap-x-12"
+          >
             <div class="flex items-center text-sm">
               <span class="text-slate-400 w-24">ID</span>
-              <span class="text-slate-700 font-mono font-medium select-all flex-1">{{ taskId }}</span>
+              <span
+                class="text-slate-700 font-mono font-medium select-all flex-1"
+                >{{ taskId }}</span
+              >
             </div>
             <div class="flex items-center text-sm">
               <span class="text-slate-400 w-24">创建时间</span>
-              <span class="text-slate-700 font-medium flex-1">{{ taskInfo.createTime }}</span>
+              <span class="text-slate-700 font-medium flex-1">{{
+                taskInfo.createTime
+              }}</span>
             </div>
             <div class="flex items-center text-sm">
               <span class="text-slate-400 w-24">创建者</span>
-              <span class="text-slate-700 font-medium flex-1">{{ taskInfo.creator }}</span>
+              <span class="text-slate-700 font-medium flex-1">{{
+                taskInfo.creator
+              }}</span>
             </div>
             <div class="flex items-center text-sm">
               <span class="text-slate-400 w-24">租户</span>
-              <span class="text-slate-700 font-medium flex-1">{{ taskInfo.tenant }}</span>
+              <span class="text-slate-700 font-medium flex-1">{{
+                taskInfo.tenant
+              }}</span>
             </div>
           </div>
         </div>
       </Card>
 
       <!-- 下部：选项卡内容区 -->
-      <Card :bordered="false" class="shadow-sm rounded-2xl" :body-style="{ padding: '0 24px 24px' }">
-        <Tabs v-model:activeKey="activeTab" class="custom-tabs font-medium text-slate-600">
+      <Card
+        :bordered="false"
+        class="shadow-sm rounded-2xl"
+        :body-style="{ padding: '0 24px 24px' }"
+      >
+        <Tabs
+          v-model:active-key="activeTab"
+          class="custom-tabs font-medium text-slate-600"
+        >
           <!-- 概览信息 Tab -->
           <TabPane key="overview" tab="概览信息">
             <div class="py-4 space-y-6">
               <!-- 基础信息 -->
               <div>
-                <h3 class="text-base font-bold text-slate-800 mb-4">基础信息</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 px-1">
+                <h3 class="text-base font-bold text-slate-800 mb-4">
+                  基础信息
+                </h3>
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 px-1"
+                >
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">镜像</span>
-                    <span class="flex-1 text-slate-700 font-mono break-all font-medium select-all">{{ taskInfo.image }}</span>
+                    <span
+                      class="flex-1 text-slate-700 font-mono break-all font-medium select-all"
+                      >{{ taskInfo.image }}</span
+                    >
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">任务类型</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.taskType }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.taskType
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">工作目录</span>
-                    <span class="flex-1 text-slate-700 font-mono font-medium">{{ taskInfo.workDir }}</span>
+                    <span class="flex-1 text-slate-700 font-mono font-medium">{{
+                      taskInfo.workDir
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">优先级</span>
-                    <span class="flex-1 text-slate-700 font-mono font-medium">{{ taskInfo.priority }}</span>
+                    <span class="flex-1 text-slate-700 font-mono font-medium">{{
+                      taskInfo.priority
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">实例数量</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.replicas }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.replicas
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">回收策略</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.recyclePolicy }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.recyclePolicy
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">存储</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.storage }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.storage
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">自动重试</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.autoRetry }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.autoRetry
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">入口命令</span>
-                    <span class="flex-1 text-slate-700 font-mono font-medium break-all">{{ taskInfo.entryCmd }}</span>
+                    <span
+                      class="flex-1 text-slate-700 font-mono font-medium break-all"
+                      >{{ taskInfo.entryCmd }}</span
+                    >
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">环境变量</span>
-                    <span class="flex-1 text-slate-700 font-mono font-medium break-all">{{ taskInfo.env }}</span>
+                    <span
+                      class="flex-1 text-slate-700 font-mono font-medium break-all"
+                      >{{ taskInfo.env }}</span
+                    >
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">容忍度</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.tolerations }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.tolerations
+                    }}</span>
                   </div>
                   <div class="flex items-start text-sm py-0.5">
                     <span class="w-32 text-slate-400">描述</span>
-                    <span class="flex-1 text-slate-700 font-medium">{{ taskInfo.desc }}</span>
+                    <span class="flex-1 text-slate-700 font-medium">{{
+                      taskInfo.desc
+                    }}</span>
                   </div>
                 </div>
               </div>
 
               <!-- 实例信息 -->
               <div class="pt-2">
-                <h3 class="text-base font-bold text-slate-800 mb-4">实例信息</h3>
+                <h3 class="text-base font-bold text-slate-800 mb-4">
+                  实例信息
+                </h3>
                 <Table
                   row-key="name"
                   :columns="replicaColumns"
@@ -912,7 +1065,9 @@ onMounted(() => {
                 >
                   <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'name'">
-                      <div class="flex items-center gap-1.5 font-medium text-slate-700">
+                      <div
+                        class="flex items-center gap-1.5 font-medium text-slate-700"
+                      >
                         <span>{{ record.name }}</span>
                         <Button
                           type="text"
@@ -925,12 +1080,19 @@ onMounted(() => {
                       </div>
                     </template>
                     <template v-else-if="column.key === 'status'">
-                      <Tag color="success" class="rounded-full px-2 border-0 bg-[#e6f4ea] text-[#137333]">
+                      <Tag
+                        color="success"
+                        class="rounded-full px-2 border-0 bg-[#e6f4ea] text-[#137333]"
+                      >
                         {{ record.status }}
                       </Tag>
                     </template>
                     <template v-else-if="column.key === 'action'">
-                      <a class="text-blue-600 hover:text-blue-700 font-semibold text-sm" @click="jumpToLogs">日志</a>
+                      <a
+                        class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                        @click="jumpToLogs"
+                        >日志</a
+                      >
                     </template>
                   </template>
                 </Table>
@@ -942,17 +1104,27 @@ onMounted(() => {
           <TabPane key="monitor" tab="资源监控">
             <div class="py-4 space-y-4">
               <!-- 筛选和参数 -->
-              <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
+              <div
+                class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50"
+              >
                 <div class="flex items-center gap-4 flex-wrap">
                   <div class="flex items-center gap-2">
                     <span class="text-xs text-slate-400">筛选条件</span>
-                    <Select v-model:value="monitorInstance" style="width: 320px" class="rounded-lg">
-                      <Select.Option :value="`${taskId}-worker-0`">{{ taskId }}-worker-0</Select.Option>
+                    <Select
+                      v-model:value="monitorInstance"
+                      style="width: 320px"
+                      class="rounded-lg"
+                    >
+                      <Select.Option :value="`${taskId}-worker-0`">
+                        {{ taskId }}-worker-0
+                      </Select.Option>
                     </Select>
                   </div>
                 </div>
 
-                <div class="flex items-center gap-4 flex-wrap text-xs text-slate-500 font-medium">
+                <div
+                  class="flex items-center gap-4 flex-wrap text-xs text-slate-500 font-medium"
+                >
                   <div class="flex items-center gap-2">
                     <span>数据展示</span>
                     <Select v-model:value="monitorType" style="width: 90px">
@@ -971,7 +1143,11 @@ onMounted(() => {
                   </div>
                   <div class="flex items-center gap-2">
                     <span>时间范围</span>
-                    <DatePicker.RangePicker v-model:value="timeRange" :placeholder="['开始日期', '结束日期']" style="width: 260px" />
+                    <DatePicker.RangePicker
+                      v-model:value="timeRange"
+                      :placeholder="['开始日期', '结束日期']"
+                      style="width: 260px"
+                    />
                   </div>
                 </div>
               </div>
@@ -979,17 +1155,29 @@ onMounted(() => {
               <!-- 图表展示 -->
               <Row :gutter="16" class="mt-4">
                 <Col :span="12">
-                  <Card :bordered="true" class="rounded-xl border border-slate-100" :body-style="{ padding: '16px' }">
+                  <Card
+                    :bordered="true"
+                    class="rounded-xl border border-slate-100"
+                    :body-style="{ padding: '16px' }"
+                  >
                     <div class="mb-4">
-                      <span class="text-sm font-bold text-slate-700">CPU使用量</span>
+                      <span class="text-sm font-bold text-slate-700"
+                        >CPU使用量</span
+                      >
                     </div>
                     <EchartsUI ref="cpuChartRef" height="300px" />
                   </Card>
                 </Col>
                 <Col :span="12">
-                  <Card :bordered="true" class="rounded-xl border border-slate-100" :body-style="{ padding: '16px' }">
+                  <Card
+                    :bordered="true"
+                    class="rounded-xl border border-slate-100"
+                    :body-style="{ padding: '16px' }"
+                  >
                     <div class="mb-4">
-                      <span class="text-sm font-bold text-slate-700">内存使用量</span>
+                      <span class="text-sm font-bold text-slate-700"
+                        >内存使用量</span
+                      >
                     </div>
                     <EchartsUI ref="memChartRef" height="300px" />
                   </Card>
@@ -1002,17 +1190,35 @@ onMounted(() => {
           <TabPane key="logs" tab="日志">
             <div class="py-4 space-y-4">
               <!-- 过滤器栏 -->
-              <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
+              <div
+                class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50"
+              >
                 <div class="flex items-center gap-3 flex-wrap">
-                  <Select v-model:value="logInstance" style="width: 320px" class="rounded-lg">
-                    <Select.Option :value="`${taskId}-worker-0`">{{ taskId }}-worker-0</Select.Option>
+                  <Select
+                    v-model:value="logInstance"
+                    style="width: 320px"
+                    class="rounded-lg"
+                  >
+                    <Select.Option :value="`${taskId}-worker-0`">
+                      {{ taskId }}-worker-0
+                    </Select.Option>
                   </Select>
-                  <Select v-model:value="logPod" style="width: 120px" class="rounded-lg">
+                  <Select
+                    v-model:value="logPod"
+                    style="width: 120px"
+                    class="rounded-lg"
+                  >
                     <Select.Option value="worker">worker</Select.Option>
                     <Select.Option value="init">init</Select.Option>
                   </Select>
-                  <Select v-model:value="logType" style="width: 140px" class="rounded-lg">
-                    <Select.Option value="stdout&stderr">stdout&stderr</Select.Option>
+                  <Select
+                    v-model:value="logType"
+                    style="width: 140px"
+                    class="rounded-lg"
+                  >
+                    <Select.Option value="stdout&stderr">
+                      stdout&stderr
+                    </Select.Option>
                     <Select.Option value="stdout">stdout</Select.Option>
                     <Select.Option value="stderr">stderr</Select.Option>
                   </Select>
@@ -1020,47 +1226,86 @@ onMounted(() => {
 
                 <div class="flex items-center gap-4 flex-wrap">
                   <div class="flex items-center gap-1.5">
-                    <Tag color="processing" class="rounded-full border-0 bg-blue-50 text-blue-600 px-2.5 py-0.5 animate-pulse text-xs font-semibold">
+                    <Tag
+                      color="processing"
+                      class="rounded-full border-0 bg-blue-50 text-blue-600 px-2.5 py-0.5 animate-pulse text-xs font-semibold"
+                    >
                       实时加载中
                     </Tag>
                   </div>
-                  <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                  <div
+                    class="flex items-center gap-1.5 text-xs text-slate-500 font-medium"
+                  >
                     <span>自动更新</span>
                     <Switch v-model:checked="logAutoUpdate" size="small" />
                   </div>
-                  <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                  <div
+                    class="flex items-center gap-1.5 text-xs text-slate-500 font-medium"
+                  >
                     <span>查看最新</span>
-                    <Select v-model:value="logLines" style="width: 80px" size="small">
+                    <Select
+                      v-model:value="logLines"
+                      style="width: 80px"
+                      size="small"
+                    >
                       <Select.Option value="100">100行</Select.Option>
                       <Select.Option value="500">500行</Select.Option>
                       <Select.Option value="1000">1000行</Select.Option>
                     </Select>
                   </div>
-                  <Input v-model:value="logSearch" placeholder="搜索日志..." style="width: 160px" size="small" allow-clear class="rounded">
-                    <template #prefix><Search class="size-3.5 text-slate-400" /></template>
+                  <Input
+                    v-model:value="logSearch"
+                    placeholder="搜索日志..."
+                    style="width: 160px"
+                    size="small"
+                    allow-clear
+                    class="rounded"
+                  >
+                    <template #prefix>
+                      <Search class="size-3.5 text-slate-400" />
+                    </template>
                   </Input>
-                  <Button type="text" class="flex items-center justify-center p-0 h-7 w-7 text-slate-400 hover:text-slate-600 rounded">
+                  <Button
+                    type="text"
+                    class="flex items-center justify-center p-0 h-7 w-7 text-slate-400 hover:text-slate-600 rounded"
+                  >
                     <template #icon><Maximize class="size-4" /></template>
                   </Button>
                 </div>
               </div>
 
               <!-- 日志控制台终端 -->
-              <div class="relative w-full rounded-xl overflow-hidden shadow-inner bg-[#141414] border border-slate-900">
+              <div
+                class="relative w-full rounded-xl overflow-hidden shadow-inner bg-[#141414] border border-slate-900"
+              >
                 <div
                   ref="terminalLogRef"
                   class="h-[480px] p-5 overflow-y-auto font-mono text-[12.5px] leading-relaxed text-[#d4d4d4] space-y-1.5 scroll-smooth"
                 >
-                  <div v-for="(log, idx) in filteredLogs" :key="idx" class="whitespace-pre-wrap hover:bg-slate-800/40 px-1 rounded transition-colors">
-                    <span class="text-slate-500 select-none mr-3 inline-block w-8 text-right">{{ idx + 1 }}</span>
-                    <span :class="{
-                      'text-red-400 font-bold': log.includes('ERROR'),
-                      'text-amber-400': log.includes('WARNING'),
-                      'text-blue-400': log.includes('DEBUG'),
-                      'text-emerald-400 font-medium': log.includes('INFO') && idx < 5
-                    }">{{ log }}</span>
+                  <div
+                    v-for="(log, idx) in filteredLogs"
+                    :key="idx"
+                    class="whitespace-pre-wrap hover:bg-slate-800/40 px-1 rounded transition-colors"
+                  >
+                    <span
+                      class="text-slate-500 select-none mr-3 inline-block w-8 text-right"
+                      >{{ idx + 1 }}</span
+                    >
+                    <span
+                      :class="{
+                        'text-red-400 font-bold': log.includes('ERROR'),
+                        'text-amber-400': log.includes('WARNING'),
+                        'text-blue-400': log.includes('DEBUG'),
+                        'text-emerald-400 font-medium':
+                          log.includes('INFO') && idx < 5,
+                      }"
+                      >{{ log }}</span
+                    >
                   </div>
-                  <div v-if="filteredLogs.length === 0" class="flex items-center justify-center h-full text-slate-500">
+                  <div
+                    v-if="filteredLogs.length === 0"
+                    class="flex items-center justify-center h-full text-slate-500"
+                  >
                     未检索到相关日志内容
                   </div>
                 </div>
@@ -1090,38 +1335,79 @@ onMounted(() => {
           <TabPane key="events" tab="事件">
             <div class="py-4 space-y-4">
               <!-- 过滤器 -->
-              <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
+              <div
+                class="flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50"
+              >
                 <div class="flex items-center gap-3 flex-wrap">
-                  <Select v-model:value="eventInstance" style="width: 320px" class="rounded-lg">
-                    <Select.Option :value="`${taskId}-worker-0`">{{ taskId }}-worker-0</Select.Option>
+                  <Select
+                    v-model:value="eventInstance"
+                    style="width: 320px"
+                    class="rounded-lg"
+                  >
+                    <Select.Option :value="`${taskId}-worker-0`">
+                      {{ taskId }}-worker-0
+                    </Select.Option>
                   </Select>
-                  <Select v-model:value="eventLevel" style="width: 120px" class="rounded-lg">
+                  <Select
+                    v-model:value="eventLevel"
+                    style="width: 120px"
+                    class="rounded-lg"
+                  >
                     <Select.Option value="All">全部等级</Select.Option>
                     <Select.Option value="Warning">Warning</Select.Option>
                     <Select.Option value="Normal">Normal</Select.Option>
                   </Select>
                 </div>
 
-                <Input v-model:value="eventSearch" placeholder="过滤事件信息..." style="width: 220px" size="small" allow-clear class="rounded">
-                  <template #prefix><Search class="size-3.5 text-slate-400" /></template>
+                <Input
+                  v-model:value="eventSearch"
+                  placeholder="过滤事件信息..."
+                  style="width: 220px"
+                  size="small"
+                  allow-clear
+                  class="rounded"
+                >
+                  <template #prefix>
+                    <Search class="size-3.5 text-slate-400" />
+                  </template>
                 </Input>
               </div>
 
               <!-- 事件终端 -->
-              <div class="w-full rounded-xl overflow-hidden bg-[#141414] border border-slate-900">
-                <div class="h-[400px] p-5 overflow-y-auto font-mono text-[12.5px] leading-relaxed text-[#d4d4d4] space-y-2">
-                  <div v-for="(ev, idx) in filteredEvents" :key="idx" class="flex gap-4 py-1 border-b border-slate-800/50 hover:bg-slate-800/30 px-2 rounded">
-                    <span class="text-slate-500 font-normal w-36 select-none shrink-0">{{ ev.time }}</span>
+              <div
+                class="w-full rounded-xl overflow-hidden bg-[#141414] border border-slate-900"
+              >
+                <div
+                  class="h-[400px] p-5 overflow-y-auto font-mono text-[12.5px] leading-relaxed text-[#d4d4d4] space-y-2"
+                >
+                  <div
+                    v-for="(ev, idx) in filteredEvents"
+                    :key="idx"
+                    class="flex gap-4 py-1 border-b border-slate-800/50 hover:bg-slate-800/30 px-2 rounded"
+                  >
+                    <span
+                      class="text-slate-500 font-normal w-36 select-none shrink-0"
+                      >{{ ev.time }}</span
+                    >
                     <span
                       class="shrink-0 w-20 font-bold"
-                      :class="ev.type === 'Warning' ? 'text-amber-500' : 'text-emerald-500'"
+                      :class="
+                        ev.type === 'Warning'
+                          ? 'text-amber-500'
+                          : 'text-emerald-500'
+                      "
                     >
                       [{{ ev.type }}]
                     </span>
-                    <span class="text-blue-400 font-semibold shrink-0 w-28">{{ ev.reason }}</span>
+                    <span class="text-blue-400 font-semibold shrink-0 w-28">{{
+                      ev.reason
+                    }}</span>
                     <span class="text-slate-200">{{ ev.message }}</span>
                   </div>
-                  <div v-if="filteredEvents.length === 0" class="flex items-center justify-center h-full text-slate-500">
+                  <div
+                    v-if="filteredEvents.length === 0"
+                    class="flex items-center justify-center h-full text-slate-500"
+                  >
                     暂无相关的事件记录
                   </div>
                 </div>
@@ -1133,30 +1419,62 @@ onMounted(() => {
           <TabPane key="schedule" tab="调度详情">
             <div class="py-4 space-y-4">
               <!-- 过滤栏 -->
-              <div class="flex flex-wrap items-center gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
-                <Select v-model:value="scheduleJob" style="width: 320px" class="rounded-lg">
+              <div
+                class="flex flex-wrap items-center gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50"
+              >
+                <Select
+                  v-model:value="scheduleJob"
+                  style="width: 320px"
+                  class="rounded-lg"
+                >
                   <Select.Option :value="taskId">{{ taskId }}</Select.Option>
                 </Select>
-                <Select v-model:value="scheduleType" style="width: 100px" class="rounded-lg">
+                <Select
+                  v-model:value="scheduleType"
+                  style="width: 100px"
+                  class="rounded-lg"
+                >
                   <Select.Option value="调度">调度</Select.Option>
                   <Select.Option value="全部">全部</Select.Option>
                 </Select>
               </div>
 
               <!-- 终端 -->
-              <div class="w-full rounded-xl overflow-hidden bg-[#141414] border border-slate-900">
-                <div class="p-5 font-mono text-[12.5px] leading-relaxed text-[#d4d4d4] space-y-2">
+              <div
+                class="w-full rounded-xl overflow-hidden bg-[#141414] border border-slate-900"
+              >
+                <div
+                  class="p-5 font-mono text-[12.5px] leading-relaxed text-[#d4d4d4] space-y-2"
+                >
                   <div>Start allocating resource at 2026-05-21 09:01:21</div>
                   <div class="text-slate-400">
-                    Job &lt;{{ taskInfo.tenant }}/{{ taskId }}&gt; has &lt;{{ taskInfo.replicas }}&gt; tasks to allocate resource, totalRequest is &lt;cpu 1000.00, memory 1073741824.00, enflame-tech.com/gcu 0.00, pods 1.00&gt;, there have &lt;5&gt; nodes in scheduler, job priority &lt;110000&gt; queue &lt;{{ taskInfo.tenant }}&gt; inPreemptableQueue &lt;false&gt; isReclaimable &lt;true&gt;
+                    Job &lt;{{ taskInfo.tenant }}/{{ taskId }}&gt; has &lt;{{
+                      taskInfo.replicas
+                    }}&gt; tasks to allocate resource, totalRequest is &lt;cpu
+                    1000.00, memory 1073741824.00, enflame-tech.com/gcu 0.00,
+                    pods 1.00&gt;, there have &lt;5&gt; nodes in scheduler, job
+                    priority &lt;110000&gt; queue &lt;{{ taskInfo.tenant }}&gt;
+                    inPreemptableQueue &lt;false&gt; isReclaimable &lt;true&gt;
                   </div>
                   <div class="flex items-center flex-wrap gap-1">
-                    <span>Task &lt;{{ taskId }}-worker-0&gt; scheduled successfully on node &lt;cpu105&gt;</span>
-                    <span class="bg-[#123924] text-[#4edb95] text-[10px] px-1.5 py-0.5 rounded font-bold ml-1.5 scale-90 origin-left">success</span>
+                    <span
+                      >Task &lt;{{ taskId }}-worker-0&gt; scheduled successfully
+                      on node &lt;cpu105&gt;</span
+                    >
+                    <span
+                      class="bg-[#123924] text-[#4edb95] text-[10px] px-1.5 py-0.5 rounded font-bold ml-1.5 scale-90 origin-left"
+                      >success</span
+                    >
                   </div>
                   <div class="flex items-center flex-wrap gap-1">
-                    <span>Job &lt;{{ taskInfo.tenant }}/{{ taskId }}&gt; scheduled successfully</span>
-                    <span class="bg-[#123924] text-[#4edb95] text-[10px] px-1.5 py-0.5 rounded font-bold ml-1.5 scale-90 origin-left">success</span>
+                    <span
+                      >Job &lt;{{ taskInfo.tenant }}/{{ taskId }}&gt; scheduled
+                      successfully</span
+                    >
+                    <span
+                      class="bg-[#123924] text-[#4edb95] text-[10px] px-1.5 py-0.5 rounded font-bold ml-1.5 scale-90 origin-left"
+                      >success</span
+                    >
                   </div>
                   <div>End allocating resource at 2026-05-21 09:01:21</div>
                 </div>
@@ -1170,47 +1488,83 @@ onMounted(() => {
               <Timeline>
                 <TimelineItem>
                   <template #dot>
-                    <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">✓</div>
+                    <div
+                      class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold"
+                    >
+                      ✓
+                    </div>
                   </template>
                   <div class="pb-6 pl-2">
-                    <div class="text-sm font-semibold text-slate-800">任务运行中</div>
-                    <div class="text-xs text-slate-400 mt-1 font-mono">2026-05-21 01:10:58</div>
+                    <div class="text-sm font-semibold text-slate-800">
+                      任务运行中
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1 font-mono">
+                      2026-05-21 01:10:58
+                    </div>
                   </div>
                 </TimelineItem>
                 <TimelineItem>
                   <template #dot>
-                    <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ml-1.5 mr-1.5"></div>
+                    <div
+                      class="w-2.5 h-2.5 rounded-full bg-slate-300 ml-1.5 mr-1.5"
+                    ></div>
                   </template>
                   <div class="pb-6 pl-2">
-                    <div class="text-sm font-semibold text-slate-800">任务排队中</div>
-                    <div class="text-xs text-slate-400 mt-1 font-mono">2026-05-21 01:01:19</div>
+                    <div class="text-sm font-semibold text-slate-800">
+                      任务排队中
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1 font-mono">
+                      2026-05-21 01:01:19
+                    </div>
                   </div>
                 </TimelineItem>
                 <TimelineItem>
                   <template #dot>
-                    <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">✓</div>
+                    <div
+                      class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold"
+                    >
+                      ✓
+                    </div>
                   </template>
                   <div class="pb-6 pl-2">
-                    <div class="text-sm font-semibold text-slate-800">任务运行中</div>
-                    <div class="text-xs text-slate-400 mt-1 font-mono">2026-04-15 13:04:13</div>
+                    <div class="text-sm font-semibold text-slate-800">
+                      任务运行中
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1 font-mono">
+                      2026-04-15 13:04:13
+                    </div>
                   </div>
                 </TimelineItem>
                 <TimelineItem>
                   <template #dot>
-                    <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ml-1.5 mr-1.5"></div>
+                    <div
+                      class="w-2.5 h-2.5 rounded-full bg-slate-300 ml-1.5 mr-1.5"
+                    ></div>
                   </template>
                   <div class="pb-6 pl-2">
-                    <div class="text-sm font-semibold text-slate-800">任务排队中</div>
-                    <div class="text-xs text-slate-400 mt-1 font-mono">2026-04-15 13:04:03</div>
+                    <div class="text-sm font-semibold text-slate-800">
+                      任务排队中
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1 font-mono">
+                      2026-04-15 13:04:03
+                    </div>
                   </div>
                 </TimelineItem>
                 <TimelineItem>
                   <template #dot>
-                    <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">✓</div>
+                    <div
+                      class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold"
+                    >
+                      ✓
+                    </div>
                   </template>
                   <div class="pb-2 pl-2">
-                    <div class="text-sm font-semibold text-slate-800">任务创建中</div>
-                    <div class="text-xs text-slate-400 mt-1 font-mono">2026-04-15 13:04:03</div>
+                    <div class="text-sm font-semibold text-slate-800">
+                      任务创建中
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1 font-mono">
+                      2026-04-15 13:04:03
+                    </div>
                   </div>
                 </TimelineItem>
               </Timeline>
@@ -1229,18 +1583,39 @@ onMounted(() => {
       destroy-on-close
     >
       <div class="h-full flex flex-col justify-between">
-        <div class="w-full bg-[#1e1e24] border border-[#141416] rounded-xl overflow-hidden shadow-2xl flex font-mono text-[12.5px] leading-relaxed max-h-[calc(100vh-180px)] overflow-y-auto flex-1">
+        <div
+          class="w-full bg-[#1e1e24] border border-[#141416] rounded-xl overflow-hidden shadow-2xl flex font-mono text-[12.5px] leading-relaxed max-h-[calc(100vh-180px)] overflow-y-auto flex-1"
+        >
           <!-- 行号列 -->
-          <div class="py-4 text-slate-500 text-right select-none pr-3 pl-4 border-r border-[#26262b] bg-[#1e1e24] shrink-0 text-opacity-50">
-            <div v-for="n in highlightedYamlLines.length" :key="n" class="h-[21px]">{{ n }}</div>
+          <div
+            class="py-4 text-slate-500 text-right select-none pr-3 pl-4 border-r border-[#26262b] bg-[#1e1e24] shrink-0 text-opacity-50"
+          >
+            <div
+              v-for="n in highlightedYamlLines.length"
+              :key="n"
+              class="h-[21px]"
+            >
+              {{ n }}
+            </div>
           </div>
           <!-- 代码行列 -->
-          <div class="py-4 pl-4 pr-6 overflow-x-auto flex-1 bg-[#1e1e24] text-slate-200 whitespace-pre">
-            <div v-for="(line, idx) in highlightedYamlLines" :key="idx" class="h-[21px]" v-html="line"></div>
+          <div
+            class="py-4 pl-4 pr-6 overflow-x-auto flex-1 bg-[#1e1e24] text-slate-200 whitespace-pre"
+          >
+            <!-- eslint-disable vue/no-v-html -->
+            <div
+              v-for="(line, idx) in highlightedYamlLines"
+              :key="idx"
+              class="h-[21px]"
+              v-html="line"
+            ></div>
+            <!-- eslint-enable vue/no-v-html -->
           </div>
         </div>
 
-        <div class="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-4 shrink-0 bg-white">
+        <div
+          class="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-4 shrink-0 bg-white"
+        >
           <Button class="rounded-lg px-6" @click="yamlVisible = false">
             关闭
           </Button>

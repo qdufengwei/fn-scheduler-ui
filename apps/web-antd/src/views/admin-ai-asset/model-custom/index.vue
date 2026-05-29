@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type { Key } from 'ant-design-vue/es/_util/type';
 
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { RotateCw } from '@vben/icons';
+
 import {
   Button,
   Input,
+  message,
   Pagination,
   Popconfirm,
   Progress,
@@ -11,11 +17,7 @@ import {
   Space,
   Table,
   Tag,
-  message,
 } from 'ant-design-vue';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { RotateCw } from '@vben/icons';
 
 import ListPageLayout from '#/components/business/list-page-layout.vue';
 
@@ -129,7 +131,7 @@ function handleViewDetail(record: any) {
 function handleDelete(record: any) {
   message.success(`已删除模型 ${record.name}`);
   const index = customModels.value.findIndex((item) => item.id === record.id);
-  if (index > -1) {
+  if (index !== -1) {
     customModels.value.splice(index, 1);
   }
 }

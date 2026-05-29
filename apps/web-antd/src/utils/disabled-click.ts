@@ -25,7 +25,7 @@
  */
 export function createDisabledClickHandler<T extends (...args: any[]) => any>(
   handler: T,
-  disabled: boolean | (() => boolean),
+  disabled: (() => boolean) | boolean,
 ): T {
   return ((...args: any[]) => {
     const isDisabled = typeof disabled === 'function' ? disabled() : disabled;
@@ -42,7 +42,7 @@ export function createDisabledClickHandler<T extends (...args: any[]) => any>(
  * @returns 如果目标是禁用元素则返回 true
  */
 export function isEventTargetDisabled(
-  event: Event | MouseEvent | KeyboardEvent,
+  event: Event | KeyboardEvent | MouseEvent,
 ): boolean {
   const target = event.target as HTMLElement | null;
   if (!target) return false;

@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import type { EchartsUIType } from '@vben/plugins/echarts';
+
+import { nextTick, onMounted, ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
+import { Download, Grid, List } from '@vben/icons';
+import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+
 import {
   Button,
   Card,
@@ -10,9 +16,6 @@ import {
   Row,
   Select,
 } from 'ant-design-vue';
-import { Download, Grid, List } from '@vben/icons';
-import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
-import type { EchartsUIType } from '@vben/plugins/echarts';
 
 const resourceSpec = ref<string>();
 const autoRefresh = ref('40s');
@@ -275,7 +278,7 @@ function initCharts() {
     yAxis: {
       type: 'value',
       min: 0,
-      max: 1.0,
+      max: 1,
       interval: 0.2,
       axisLine: { show: false },
       axisTick: { show: false },

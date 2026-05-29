@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { useVbenDrawer } from '@vben/common-ui';
-import { ref, computed } from 'vue';
-import { Page } from '@vben/common-ui';
+import { computed, ref } from 'vue';
+
+import { Page, useVbenDrawer } from '@vben/common-ui';
+import { Plus, Search, Settings } from '@vben/icons';
+
 import {
   Button,
   Card,
+  Form,
+  FormItem,
   Input,
   Pagination,
   Popconfirm,
   Space,
   Table,
-  Form,
-  FormItem,
 } from 'ant-design-vue';
-import { Plus, Search, Settings } from '@vben/icons';
 
 import { showNotify } from '#/utils/notify';
 
@@ -149,7 +150,7 @@ const [CreateDrawer, createDrawerApi] = useVbenDrawer({
       <div class="flex items-center justify-end mt-4 pt-4 border-t">
         <Pagination
           v-model:current="currentPage"
-          v-model:pageSize="pageSize"
+          v-model:page-size="pageSize"
           :total="filteredData.length"
           :show-size-changer="true"
           :show-quick-jumper="true"

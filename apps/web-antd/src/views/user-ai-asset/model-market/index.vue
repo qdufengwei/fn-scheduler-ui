@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
 import { Page } from '@vben/common-ui';
 import { createIconifyIcon, RotateCw, Search } from '@vben/icons';
+
 import {
   Button,
+  Drawer,
   Input,
+  message,
   Pagination,
   Select,
-  Tag,
-  message,
-  Drawer,
-  Tabs,
   TabPane,
+  Tabs,
+  Tag,
 } from 'ant-design-vue';
 
 import { getModelIconSrc } from '#/utils/model-icon';
@@ -73,7 +75,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'Qwen2.5-72B-Instruct',
     outputPrice: 0.008,
     serviceName: 'qwen-chat-enterprise',
-    totalCalls: 128362,
+    totalCalls: 128_362,
     user: 'platform',
   },
   {
@@ -84,7 +86,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'DeepSeek-Coder-V2',
     outputPrice: 0.012,
     serviceName: 'deepseek-code-assistant',
-    totalCalls: 86420,
+    totalCalls: 86_420,
     user: 'test01',
   },
   {
@@ -95,7 +97,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'Qwen2.5-VL-32B',
     outputPrice: 0.0048,
     serviceName: 'vision-inspection-vl',
-    totalCalls: 61044,
+    totalCalls: 61_044,
     user: 'test02',
   },
   {
@@ -106,7 +108,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'SenseVoice-Large',
     outputPrice: 0.0035,
     serviceName: 'speech-transcribe-cn',
-    totalCalls: 43190,
+    totalCalls: 43_190,
     user: 'platform',
   },
   {
@@ -117,7 +119,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'Baichuan4-Turbo',
     outputPrice: 0.0072,
     serviceName: 'baichuan-knowledge-chat',
-    totalCalls: 39720,
+    totalCalls: 39_720,
     user: 'test01',
   },
   {
@@ -128,7 +130,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'CodeLlama-34B-Instruct',
     outputPrice: 0.0096,
     serviceName: 'codellama-review-api',
-    totalCalls: 27560,
+    totalCalls: 27_560,
     user: 'test02',
   },
   {
@@ -139,7 +141,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'Stable-Diffusion-3-Medium',
     outputPrice: 0.04,
     serviceName: 'stable-diffusion-image',
-    totalCalls: 18450,
+    totalCalls: 18_450,
     user: 'platform',
   },
   {
@@ -150,7 +152,7 @@ const modelServices = ref<ModelService[]>([
     modelName: 'Whisper-Large-V3',
     outputPrice: 0.004,
     serviceName: 'whisper-voice-to-text',
-    totalCalls: 12530,
+    totalCalls: 12_530,
     user: 'test01',
   },
 ]);
@@ -338,9 +340,9 @@ function getModelIcon(modelName: string): string {
 
 const curlCode = computed(() => {
   if (!selectedService.value) return '';
-  return `curl https://api.fn-compute.net/v1/chat/completions \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+  return String.raw`curl https://api.fn-compute.net/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
     "model": "${selectedService.value.modelName}",
     "messages": [
@@ -627,7 +629,7 @@ function handleCopyCode(code: string) {
                     >调用
                     <span class="font-semibold text-gray-700 font-mono">{{
                       service.totalCalls >= 10000
-                        ? (service.totalCalls / 10000).toFixed(1) + 'W'
+                        ? `${(service.totalCalls / 10000).toFixed(1)}W`
                         : service.totalCalls
                     }}</span>
                     次</span
@@ -683,8 +685,9 @@ function handleCopyCode(code: string) {
               size="small"
               class="mt-4 px-4"
               @click="handleReset"
-              >重置筛选</Button
             >
+              重置筛选
+            </Button>
           </div>
         </div>
 
@@ -857,7 +860,7 @@ function handleCopyCode(code: string) {
           </div>
 
           <Tabs
-            v-model:activeKey="activeTabKey"
+            v-model:active-key="activeTabKey"
             class="fn-integration-tabs flex-1 flex flex-col min-h-0"
           >
             <TabPane key="curl" tab="cURL">
@@ -930,9 +933,9 @@ function handleCopyCode(code: string) {
         <div
           class="mt-auto pt-3 border-t border-gray-100 flex justify-end shrink-0"
         >
-          <Button class="rounded-lg text-xs" @click="detailVisible = false"
-            >关闭窗口</Button
-          >
+          <Button class="rounded-lg text-xs" @click="detailVisible = false">
+            关闭窗口
+          </Button>
         </div>
       </div>
     </Drawer>

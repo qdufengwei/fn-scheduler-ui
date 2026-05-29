@@ -1,4 +1,4 @@
-import { showNotify, showError } from '#/utils/notify';
+import { showError, showNotify } from '#/utils/notify';
 
 /**
  * 安全复制文本到剪贴板
