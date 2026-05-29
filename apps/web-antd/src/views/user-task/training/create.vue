@@ -311,6 +311,7 @@ const goBack = () => {
           <Button type="primary" @click="showInfo('已提交创建任务')">
             确认
           </Button>
+          <Button @click="showInfo('已存为模板')">存为模板</Button>
           <Button @click="goBack">取消</Button>
         </Space>
         <div class="text-gray-500 text-sm">
